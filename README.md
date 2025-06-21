@@ -17,14 +17,18 @@ In development
   - [x] Album
   - [x] Genre
   - [ ] Artist
+  - [ ] Configuration
 - Add fields
   - [ ] Song -> Artist
   - [ ] Album -> Artist
   - [ ] Song -> duration
   - [ ] Song -> filesize
 - Solve album duplicates
-  - [ ] album name case difference -> ignore case
+  - [ ] ~~album name case difference -> ignore case~~
   - [ ] different years in album songs -> keep lowest one
+- Improve file scanning performance.
+  - [x] Get file tags only if not in database or if file modified since last scan
+  - [ ] Check performances of other mp3 tag libraries
 
 ## Scan performance
 

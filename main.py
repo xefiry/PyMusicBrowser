@@ -15,8 +15,8 @@ def timeit(func):
     def wrapper(*arg):
         t = time.time()
         res = func(*arg)
-        t = round(time.time() - t, 6)
-        print(f"{func.__name__} : {t}")
+        t = round(time.time() - t, 5)
+        print(f"{func.__name__} : {t}s")
         return res
 
     return wrapper
@@ -79,8 +79,9 @@ class Song(peewee.Model):
     genre = peewee.ForeignKeyField(Genre, backref="songs", null=True)
     album = peewee.ForeignKeyField(Album, backref="songs", null=True)
     artist = peewee.CharField(null=True)
-    filepath = peewee.CharField(unique=True, index=True)
     status = peewee.IntegerField()
+    file_path = peewee.CharField(unique=True, index=True)
+    file_mtime = peewee.IntegerField()
 
     class Meta:
         database = db
@@ -92,9 +93,10 @@ class Song(peewee.Model):
         genre: Genre | None,
         album: Album | None,
         artist: str | None,
-        filepath: str,
+        file_path: str,
+        file_mtime: int,
     ) -> "Song":
-        clause = (Song.filepath == filepath,)
+        clause = (Song.file_path == file_path,)
         count = Song.select().where(*clause).count()
 
         if count == 0:
@@ -104,8 +106,9 @@ class Song(peewee.Model):
                 genre=genre,
                 album=album,
                 artist=artist,
-                filepath=filepath,
                 status=1,
+                file_path=file_path,
+                file_mtime=file_mtime,
             )
         else:
             result = Song.get(*clause)
@@ -115,9 +118,21 @@ class Song(peewee.Model):
             result.album = album
             result.artist = artist
             result.status = 1
+            result.file_mtime = file_mtime
             result.save()
 
         return result
+
+    @staticmethod
+    def get_file_mtime(file_path: str) -> int:
+        try:
+            s = Song.get(Song.file_path == file_path)
+            s.status = 1
+            s.save()
+        except peewee.DoesNotExist:
+            return -1
+
+        return s.file_mtime
 
 
 @timeit
@@ -127,10 +142,23 @@ def scan_dir(path: str):
         for file in files:
             if pathlib.Path(file).suffix == ".mp3":
                 song_file = os.path.normpath(os.path.join(root, file))
-                tag = TinyTag.get(song_file)
-                genre = Genre.upsert(tag.genre)
-                album = Album.upsert(tag.album, tag.year)
-                Song.upsert(tag.track, tag.title, genre, album, tag.artist, song_file)
+                file_mtime = int(os.stat(song_file).st_mtime)
+                stored_mtime = Song.get_file_mtime(song_file)
+
+                if file_mtime != stored_mtime:
+                    tag = TinyTag.get(song_file)
+                    genre = Genre.upsert(tag.genre)
+                    album = Album.upsert(tag.album, tag.year)
+
+                    Song.upsert(
+                        tag.track,
+                        tag.title,
+                        genre,
+                        album,
+                        tag.artist,
+                        song_file,
+                        file_mtime,
+                    )
 
 
 def main():
