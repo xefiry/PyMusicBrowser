@@ -23,15 +23,15 @@ def timeit(func):
 
 
 class Album(peewee.Model):
-    name = peewee.CharField()
-    year = peewee.IntegerField()
+    name = peewee.CharField(null=True)
+    year = peewee.CharField(null=True)
     status = peewee.IntegerField()
 
     class Meta:
         database = db
 
     @staticmethod
-    def upsert(name: str, year: int) -> "Album":
+    def upsert(name: str | None, year: str | None) -> "Album":
         clause = (Album.name == name, Album.year == year)
         count = Album.select().where(*clause).count()
 
@@ -46,7 +46,7 @@ class Album(peewee.Model):
 
 
 class Song(peewee.Model):
-    track = peewee.IntegerField()
+    track = peewee.IntegerField(null=True)
     name = peewee.CharField(null=True)
     album = peewee.ForeignKeyField(Album, backref="songs", null=True)
     artist = peewee.CharField(null=True)
@@ -58,7 +58,11 @@ class Song(peewee.Model):
 
     @staticmethod
     def upsert(
-        track: int, name: str, album: Album, artist: str, filepath: str
+        track: int | None,
+        name: str | None,
+        album: Album | None,
+        artist: str | None,
+        filepath: str,
     ) -> "Song":
         clause = (Song.filepath == filepath,)
         count = Song.select().where(*clause).count()
