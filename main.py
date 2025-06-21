@@ -45,9 +45,38 @@ class Album(peewee.Model):
         return result
 
 
+class Genre(peewee.Model):
+    name = peewee.CharField(unique=True)
+    status = peewee.IntegerField()
+
+    class Meta:
+        database = db
+
+    @staticmethod
+    def upsert(name: str | None) -> "Genre|None":
+        if name is None:
+            return None
+
+        clause = (Genre.name == name,)
+        count = Genre.select().where(*clause).count()
+
+        if count == 0:
+            result = Genre.create(
+                name=name,
+                status=1,
+            )
+        else:
+            result = Genre.get(*clause)
+            result.status = 1
+            result.save()
+
+        return result
+
+
 class Song(peewee.Model):
     track = peewee.IntegerField(null=True)
     name = peewee.CharField(null=True)
+    genre = peewee.ForeignKeyField(Genre, backref="songs", null=True)
     album = peewee.ForeignKeyField(Album, backref="songs", null=True)
     artist = peewee.CharField(null=True)
     filepath = peewee.CharField(unique=True, index=True)
@@ -60,6 +89,7 @@ class Song(peewee.Model):
     def upsert(
         track: int | None,
         name: str | None,
+        genre: Genre | None,
         album: Album | None,
         artist: str | None,
         filepath: str,
@@ -71,6 +101,7 @@ class Song(peewee.Model):
             result = Song.create(
                 track=track,
                 name=name,
+                genre=genre,
                 album=album,
                 artist=artist,
                 filepath=filepath,
@@ -80,6 +111,7 @@ class Song(peewee.Model):
             result = Song.get(*clause)
             result.track = track
             result.name = name
+            result.genre = genre
             result.album = album
             result.artist = artist
             result.status = 1
@@ -96,21 +128,23 @@ def scan_dir(path: str):
             if pathlib.Path(file).suffix == ".mp3":
                 song_file = os.path.normpath(os.path.join(root, file))
                 tag = TinyTag.get(song_file)
+                genre = Genre.upsert(tag.genre)
                 album = Album.upsert(tag.album, tag.year)
-                Song.upsert(tag.track, tag.title, album, tag.artist, song_file)
+                Song.upsert(tag.track, tag.title, genre, album, tag.artist, song_file)
 
 
 def main():
     db.connect()
-    # db.drop_tables([Album, Song])  # ToDo: remove this line (here only for tests)
-    db.create_tables([Album, Song])
+    # db.drop_tables([Album, Genre, Song])  # ToDo: remove this line (here only for tests)
+    db.create_tables([Album, Genre, Song])
 
     db.execute_sql("PRAGMA journal_mode = off;")
     db.execute_sql("PRAGMA synchronous = 0;")
 
     # Set all data satatus to 0
-    Song.update(status=0).execute()
     Album.update(status=0).execute()
+    Genre.update(status=0).execute()
+    Song.update(status=0).execute()
 
     for pragma in ["journal_mode", "synchronous"]:
         for r in db.execute_sql(f"PRAGMA {pragma};"):
@@ -124,6 +158,8 @@ def main():
     # Delete data with status to 0
     Song.delete().where(Song.status == 0).execute()
     Album.delete().where(Album.status == 0).execute()
+    Genre.delete().where(Genre.status == 0).execute()
+    #ToDo: do a vacuum
 
 
 if __name__ == "__main__":
