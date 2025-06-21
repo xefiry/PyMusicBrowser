@@ -158,7 +158,8 @@ def main():
     # Delete data with status to 0
     for model in models:
         model.delete().where(model.status == 0).execute()
-    # ToDo: do a vacuum
+
+    db.execute_sql("VACUUM;")
 
 
 if __name__ == "__main__":
