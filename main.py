@@ -1,18 +1,13 @@
+import os
+import pathlib
 import time
 
 import peewee
 from tinytag import TinyTag
 
-SONG_LIST = [
-    "D:/Music/Compilations/Good music/Brutal Truth - Blue world.mp3",
-    "D:/Music/Compilations/Good music/Iggy Pop & Goran Bregovic - In the death car (Arizona dream).mp3",
-    "D:/Music/Dimmu Borgir/1996 - Stormblåst/02 - Broderskapets ring.mp3",
-    "D:/Music/Röyksopp/2022 - Profound mysteries I/01 - (Nothing but) ashes….mp3",
-    "D:/Music/Röyksopp/2022 - Profound mysteries II/01 - Denimclad baboons.mp3",
-    "D:/Music/Röyksopp/2014 - The inevitable end/CD 1/01 - Skulls.mp3",
-]
-
+DIR_LIST = ["D:/Music/Compilations/", "D:/Music/Röyksopp/"]
 DATABASE_FILE = "library.db"
+
 db: peewee.SqliteDatabase = peewee.SqliteDatabase(DATABASE_FILE)
 
 
@@ -35,7 +30,6 @@ class Album(peewee.Model):
     class Meta:
         database = db
 
-    @timeit
     @staticmethod
     def upsert(name: str, year: int) -> "Album":
         clause = (Album.name == name, Album.year == year)
@@ -50,12 +44,6 @@ class Album(peewee.Model):
 
         return result
 
-    @staticmethod
-    def print_all() -> None:
-        print("List of Album")
-        for album in Album.select():
-            print(album.__data__)
-
 
 class Song(peewee.Model):
     track = peewee.IntegerField()
@@ -68,7 +56,6 @@ class Song(peewee.Model):
     class Meta:
         database = db
 
-    @timeit
     @staticmethod
     def upsert(
         track: int, name: str, album: Album, artist: str, filepath: str
@@ -96,20 +83,17 @@ class Song(peewee.Model):
 
         return result
 
-    @staticmethod
-    def print_all() -> None:
-        print("List of Song")
-        for song in Song.select():
-            print(song.__data__)
-
 
 @timeit
-def do_db_insert():
-    with db.transaction():
-        for song in SONG_LIST:
-            tag = TinyTag.get(song)
-            album = Album.upsert(tag.album, tag.year)
-            Song.upsert(tag.track, tag.title, album, tag.artist, song)
+def scan_dir(path: str):
+    print(f"Scanning {path}")
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            if pathlib.Path(file).suffix == ".mp3":
+                song_file = os.path.normpath(os.path.join(root, file))
+                tag = TinyTag.get(song_file)
+                album = Album.upsert(tag.album, tag.year)
+                Song.upsert(tag.track, tag.title, album, tag.artist, song_file)
 
 
 def main():
@@ -129,14 +113,13 @@ def main():
             print(f"{pragma} - {r[0]}")
 
     # Insert/update data
-    do_db_insert()
+    # do_db_insert()
+    for dir in DIR_LIST:
+        scan_dir(dir)
 
     # Delete data with status to 0
     Song.delete().where(Song.status == 0).execute()
     Album.delete().where(Album.status == 0).execute()
-
-    Album.print_all()
-    Song.print_all()
 
 
 if __name__ == "__main__":
