@@ -134,32 +134,31 @@ def scan_dir(path: str):
 
 
 def main():
+    models = [Album, Genre, Song]
+
     db.connect()
-    # db.drop_tables([Album, Genre, Song])  # ToDo: remove this line (here only for tests)
-    db.create_tables([Album, Genre, Song])
+    # db.drop_tables(models)  # ToDo: remove this line (here only for tests)
+    db.create_tables(models)
 
     db.execute_sql("PRAGMA journal_mode = off;")
     db.execute_sql("PRAGMA synchronous = 0;")
 
     # Set all data satatus to 0
-    Album.update(status=0).execute()
-    Genre.update(status=0).execute()
-    Song.update(status=0).execute()
+    for model in models:
+        model.update(status=0).execute()
 
     for pragma in ["journal_mode", "synchronous"]:
         for r in db.execute_sql(f"PRAGMA {pragma};"):
             print(f"{pragma} - {r[0]}")
 
     # Insert/update data
-    # do_db_insert()
     for dir in DIR_LIST:
         scan_dir(dir)
 
     # Delete data with status to 0
-    Song.delete().where(Song.status == 0).execute()
-    Album.delete().where(Album.status == 0).execute()
-    Genre.delete().where(Genre.status == 0).execute()
-    #ToDo: do a vacuum
+    for model in models:
+        model.delete().where(model.status == 0).execute()
+    # ToDo: do a vacuum
 
 
 if __name__ == "__main__":
