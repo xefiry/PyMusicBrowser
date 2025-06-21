@@ -22,3 +22,17 @@ In development
   - [ ] Album -> Artist
   - [ ] Song -> duration
   - [ ] Song -> filesize
+- Solve album duplicates
+  - [ ] album name case difference -> ignore case
+  - [ ] different years in album songs -> keep lowest one
+
+## Scan performance
+
+- Items scanned (on a HDD)
+  - song : 6636
+  - album : 555
+  - genre : 46
+- Scan time
+  - initial : 12 min 49 sec
+  - update : 10 min 47 sec
+- Database file size : 1.36MB
