@@ -122,20 +122,20 @@ def main():
     db.execute_sql("PRAGMA journal_mode = off;")
     db.execute_sql("PRAGMA synchronous = 0;")
 
-    db.execute_sql("UPDATE song  SET status = 0;")
-    db.execute_sql("UPDATE album SET status = 0;")
+    # Set all data satatus to 0
+    Song.update(status=0).execute()
+    Album.update(status=0).execute()
 
     for pragma in ["journal_mode", "synchronous"]:
         for r in db.execute_sql(f"PRAGMA {pragma};"):
             print(f"{pragma} - {r[0]}")
 
+    # Insert/update data
     do_db_insert()
 
-    Album.print_all()
-    Song.print_all()
-
-    db.execute_sql("DELETE FROM song  WHERE status = 0;")
-    db.execute_sql("DELETE FROM album WHERE status = 0;")
+    # Delete data with status to 0
+    Song.delete().where(Song.status == 0).execute()
+    Album.delete().where(Album.status == 0).execute()
 
     Album.print_all()
     Song.print_all()
