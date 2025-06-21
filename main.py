@@ -35,16 +35,16 @@ class Album(peewee.Model):
     class Meta:
         database = db
 
-    @staticmethod
     @timeit
-    def create_or_update(name: str, year: int) -> "Album":
-        count = Album.select().where(Album.name == name).count()
+    @staticmethod
+    def upsert(name: str, year: int) -> "Album":
+        clause = (Album.name == name, Album.year == year)
+        count = Album.select().where(*clause).count()
 
         if count == 0:
             result = Album.create(name=name, year=year, status=1)
         else:
-            result = Album.get(Album.name == name)
-            result.year = year
+            result = Album.get(*clause)
             result.status = 1
             result.save()
 
@@ -68,15 +68,15 @@ class Song(peewee.Model):
     class Meta:
         database = db
 
-    @staticmethod
     @timeit
-    def create_or_update(
+    @staticmethod
+    def upsert(
         track: int, name: str, album: Album, artist: str, filepath: str
     ) -> "Song":
-        count = Song.select().where(Song.filepath == filepath).count()
+        clause = (Song.filepath == filepath,)
+        count = Song.select().where(*clause).count()
 
         if count == 0:
-            # print(f"Created song : {track} - {name}")
             result = Song.create(
                 track=track,
                 name=name,
@@ -86,8 +86,7 @@ class Song(peewee.Model):
                 status=1,
             )
         else:
-            # print(f"Updated song : {track} - {name}")
-            result = Song.get(Song.filepath == filepath)
+            result = Song.get(*clause)
             result.track = track
             result.name = name
             result.album = album
@@ -109,9 +108,8 @@ def do_db_insert():
     with db.transaction():
         for song in SONG_LIST:
             tag = TinyTag.get(song)
-            album = Album.create_or_update(tag.album, tag.year)
-
-            Song.create_or_update(tag.track, tag.title, album, tag.artist, song)
+            album = Album.upsert(tag.album, tag.year)
+            Song.upsert(tag.track, tag.title, album, tag.artist, song)
 
 
 def main():
