@@ -73,6 +73,10 @@ class Artist(peewee.Model):
     class Meta:
         database = db
 
+    def set_active(self) -> None:
+        self.status = 1
+        self.save()
+
     @staticmethod
     def upsert(name: str | None) -> "Artist|None":
         if name is None:
@@ -88,7 +92,6 @@ class Artist(peewee.Model):
             )
         else:
             result = Artist.get(*clause)
-            result.status = 1
             result.save()
 
         return result
@@ -102,6 +105,13 @@ class Album(peewee.Model):
 
     class Meta:
         database = db
+
+    def set_active(self) -> None:
+        self.status = 1
+        self.save()
+
+        if self.artist is not None:
+            self.artist.set_active()
 
     @staticmethod
     def upsert(
@@ -119,7 +129,6 @@ class Album(peewee.Model):
             result = Album.get(*clause)
             if year is not None:
                 result.year = min(result.year, year)
-            result.status = 1
             result.save()
 
         return result
@@ -131,6 +140,10 @@ class Genre(peewee.Model):
 
     class Meta:
         database = db
+
+    def set_active(self) -> None:
+        self.status = 1
+        self.save()
 
     @staticmethod
     def upsert(name: str | None) -> "Genre|None":
@@ -147,7 +160,6 @@ class Genre(peewee.Model):
             )
         else:
             result = Genre.get(*clause)
-            result.status = 1
             result.save()
 
         return result
@@ -165,6 +177,19 @@ class Song(peewee.Model):
 
     class Meta:
         database = db
+
+    def set_active(self) -> None:
+        self.status = 1
+        self.save()
+
+        if self.artist is not None:
+            self.artist.set_active()
+
+        if self.album is not None:
+            self.album.set_active()
+
+        if self.genre is not None:
+            self.genre.set_active()
 
     @staticmethod
     def upsert(
@@ -197,7 +222,6 @@ class Song(peewee.Model):
             result.genre = genre
             result.album = album
             result.artist = artist
-            result.status = 1
             result.file_mtime = file_mtime
             result.save()
 
@@ -208,27 +232,8 @@ class Song(peewee.Model):
         try:
             s = Song.get(Song.file_path == file_path)
 
-            # if we find a song, we put status to 1
-            # because we will not call upsert later
-            s.status = 1
-            s.save()
-
-            if s.artist is not None:
-                s.artist.status = 1
-                s.artist.save()
-
-            if s.album is not None:
-                s.album.status = 1
-                s.album.save()
-
-                if s.album.artist is not None:
-                    s.album.artist.status = 1
-                    s.album.artist.save()
-
-            if s.genre is not None:
-                s.genre.status = 1
-                s.genre.save()
-
+            # if we find a song, we set it (and its liks) active
+            s.set_active()
         except peewee.DoesNotExist:
             return -1
 
