@@ -28,7 +28,7 @@ In development
   - [ ] different years in album songs -> keep lowest one
 - Improve file scanning performance.
   - [x] Get file tags only if not in database or if file modified since last scan
-  - [ ] Check performances of other mp3 tag libraries
+  - [x] Check performances of other mp3 tag libraries
 
 ## Scan performance
 
