@@ -8,10 +8,11 @@ In development
 
 ## ToDo
 
-- Add logging to a file
-  - [ ] List of directories scanned
-  - [ ] Number of files scanned
-  - [ ] Timeit result
+- Add logging ~~to a file~~
+  - [x] List of directories scanned
+  - [x] Number of files scanned
+  - [x] Timeit result
+  - [ ] Replace print with proper logging
 - Create Models
   - [x] Song
   - [x] Album

@@ -15,17 +15,6 @@ DATABASE_FILE = "library.db"
 db: peewee.SqliteDatabase = peewee.SqliteDatabase(DATABASE_FILE)
 
 
-def timeit(func):
-    def wrapper(*arg):
-        t = time.time()
-        res = func(*arg)
-        t = round(time.time() - t, 5)
-        print(f"{func.__name__} : {t}s")
-        return res
-
-    return wrapper
-
-
 def get_str(data: EasyID3, key: str, value_if_none: str | None = None) -> str | None:
     value = data.get(key)
 
@@ -265,12 +254,16 @@ class Song(peewee.Model):
         return s.file_mtime
 
 
-@timeit
 def scan_dir(path: str):
     print(f"Scanning {path}")
+
+    start_time = time.time()
+    nb_file = 0
+
     for root, dirs, files in os.walk(path):
         for file in files:
             if pathlib.Path(file).suffix == ".mp3":
+                nb_file += 1
                 song_file = os.path.normpath(os.path.join(root, file))
                 file_stats = os.stat(song_file)
                 file_mtime = int(file_stats.st_mtime)
@@ -318,6 +311,9 @@ def scan_dir(path: str):
                         file_size,
                     )
 
+    total_time = round(time.time() - start_time, 2)
+    print(f"Successfully scanned {nb_file} files in {total_time} s")
+
 
 def main():
     models = [Artist, Album, Genre, Song]
@@ -332,10 +328,6 @@ def main():
     # Set all data satatus to 0
     for model in models:
         model.update(status=0).execute()
-
-    for pragma in ["journal_mode", "synchronous"]:
-        for r in db.execute_sql(f"PRAGMA {pragma};"):
-            print(f"{pragma} - {r[0]}")
 
     # Insert/update data
     for dir in DIR_LIST:
