@@ -168,9 +168,12 @@ class Genre(peewee.Model):
 
 class Song(peewee.Model):
     track = peewee.IntegerField(null=True)
+    track_total = peewee.IntegerField(null=True)
     name = peewee.CharField(null=True)
     genre = peewee.ForeignKeyField(Genre, backref="songs", null=True)
     album = peewee.ForeignKeyField(Album, backref="songs", null=True)
+    disk = peewee.IntegerField(null=True)
+    disk_total = peewee.IntegerField(null=True)
     artist = peewee.ForeignKeyField(Artist, backref="songs", null=True)
     year = peewee.IntegerField(null=True)
     duration = peewee.IntegerField()
@@ -198,9 +201,12 @@ class Song(peewee.Model):
     @staticmethod
     def upsert(
         track: int | None,
+        track_total: int | None,
         name: str | None,
         genre: Genre | None,
         album: Album | None,
+        disk: int | None,
+        disk_total: int | None,
         artist: Artist | None,
         year: int | None,
         duration: int,
@@ -214,9 +220,12 @@ class Song(peewee.Model):
         if count == 0:
             result = Song.create(
                 track=track,
+                track_total=track_total,
                 name=name,
                 genre=genre,
                 album=album,
+                disk=disk,
+                disk_total=disk_total,
                 artist=artist,
                 year=year,
                 duration=duration,
@@ -228,9 +237,12 @@ class Song(peewee.Model):
         else:
             result = Song.get(*clause)
             result.track = track
+            result.track_total = track
             result.name = name
             result.genre = genre
             result.album = album
+            result.disk = disk
+            result.disk_total = disk_total
             result.year = year
             result.duration = duration
             result.artist = artist
@@ -292,9 +304,12 @@ def scan_dir(path: str):
 
                     Song.upsert(
                         _track,
+                        _track_total,
                         _title,
                         genre,
                         album,
+                        _disk,
+                        _disk_total,
                         songartist,
                         _date,
                         _duration,

@@ -24,9 +24,9 @@ In development
   - [x] Song -> duration
   - [x] Song -> filesize
   - [x] Song -> year
-  - [ ] Song -> track_total
-  - [ ] Song -> disk
-  - [ ] Song -> disk_total
+  - [x] Song -> track_total
+  - [x] Song -> disk
+  - [x] Song -> disk_total
 - Solve album duplicates
   - [ ] ~~album name case difference -> ignore case~~
   - [x] different years in album songs -> keep lowest one
