@@ -21,9 +21,12 @@ In development
 - Add fields
   - [x] Song -> Artist
   - [x] Album -> Artist
-  - [ ] Song -> duration
-  - [ ] Song -> filesize
-  - [ ] Song -> year
+  - [x] Song -> duration
+  - [x] Song -> filesize
+  - [x] Song -> year
+  - [ ] Song -> track_total
+  - [ ] Song -> disk
+  - [ ] Song -> disk_total
 - Solve album duplicates
   - [ ] ~~album name case difference -> ignore case~~
   - [x] different years in album songs -> keep lowest one

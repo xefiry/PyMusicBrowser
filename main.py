@@ -6,6 +6,7 @@ from datetime import datetime
 import peewee
 from mutagen.easyid3 import EasyID3
 from mutagen.id3._util import ID3NoHeaderError
+from mutagen.mp3 import MP3, HeaderNotFoundError
 
 # DIR_LIST = ["D:/Music/Compilations/", "D:/Music/Röyksopp/", "D:/Music/Black Sabbath/", "D:/Music/musicForProgramming/"]
 DIR_LIST = ["D:/Music/"]
@@ -171,9 +172,12 @@ class Song(peewee.Model):
     genre = peewee.ForeignKeyField(Genre, backref="songs", null=True)
     album = peewee.ForeignKeyField(Album, backref="songs", null=True)
     artist = peewee.ForeignKeyField(Artist, backref="songs", null=True)
+    year = peewee.IntegerField(null=True)
+    duration = peewee.IntegerField()
     status = peewee.IntegerField()
     file_path = peewee.CharField(unique=True, index=True)
     file_mtime = peewee.IntegerField()
+    file_size = peewee.IntegerField()
 
     class Meta:
         database = db
@@ -198,8 +202,11 @@ class Song(peewee.Model):
         genre: Genre | None,
         album: Album | None,
         artist: Artist | None,
+        year: int | None,
+        duration: int,
         file_path: str,
         file_mtime: int,
+        file_size: int,
     ) -> "Song":
         clause = (Song.file_path == file_path,)
         count = Song.select().where(*clause).count()
@@ -211,9 +218,12 @@ class Song(peewee.Model):
                 genre=genre,
                 album=album,
                 artist=artist,
+                year=year,
+                duration=duration,
                 status=1,
                 file_path=file_path,
                 file_mtime=file_mtime,
+                file_size=file_size,
             )
         else:
             result = Song.get(*clause)
@@ -221,8 +231,11 @@ class Song(peewee.Model):
             result.name = name
             result.genre = genre
             result.album = album
+            result.year = year
+            result.duration = duration
             result.artist = artist
             result.file_mtime = file_mtime
+            result.file_size = file_size
             result.save()
 
         return result
@@ -247,7 +260,9 @@ def scan_dir(path: str):
         for file in files:
             if pathlib.Path(file).suffix == ".mp3":
                 song_file = os.path.normpath(os.path.join(root, file))
-                file_mtime = int(os.stat(song_file).st_mtime)
+                file_stats = os.stat(song_file)
+                file_mtime = int(file_stats.st_mtime)
+                file_size = file_stats.st_size
                 stored_mtime = Song.get_file_mtime(song_file)
 
                 if file_mtime != stored_mtime:
@@ -255,6 +270,11 @@ def scan_dir(path: str):
                         tag = EasyID3(song_file)
                     except ID3NoHeaderError:
                         tag = EasyID3()
+
+                    try:
+                        _duration = MP3(song_file).info.length
+                    except HeaderNotFoundError:
+                        _duration = 0
 
                     _album = get_str(tag, "album")
                     _albumartist = get_str(tag, "albumartist")
@@ -276,8 +296,11 @@ def scan_dir(path: str):
                         genre,
                         album,
                         songartist,
+                        _date,
+                        _duration,
                         song_file,
                         file_mtime,
+                        file_size,
                     )
 
 
