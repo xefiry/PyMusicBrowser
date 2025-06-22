@@ -66,8 +66,37 @@ def get_year(data: EasyID3, key: str) -> int | None:
         return None
 
 
+class Artist(peewee.Model):
+    name = peewee.CharField(unique=True)
+    status = peewee.IntegerField()
+
+    class Meta:
+        database = db
+
+    @staticmethod
+    def upsert(name: str | None) -> "Artist|None":
+        if name is None:
+            return None
+
+        clause = (Artist.name == name,)
+        count = Artist.select().where(*clause).count()
+
+        if count == 0:
+            result = Artist.create(
+                name=name,
+                status=1,
+            )
+        else:
+            result = Artist.get(*clause)
+            result.status = 1
+            result.save()
+
+        return result
+
+
 class Album(peewee.Model):
     name = peewee.CharField(null=True)
+    artist = peewee.ForeignKeyField(Artist, backref="albums", null=True)
     year = peewee.IntegerField(null=True)
     status = peewee.IntegerField()
 
@@ -75,17 +104,21 @@ class Album(peewee.Model):
         database = db
 
     @staticmethod
-    def upsert(name: str | None, year: int | None) -> "Album|None":
+    def upsert(
+        name: str | None, artist: Artist | None, year: int | None
+    ) -> "Album|None":
         if name is None:
             return None
 
-        clause = (Album.name == name, Album.year == year)
+        clause = (Album.name == name, Album.artist == artist)
         count = Album.select().where(*clause).count()
 
         if count == 0:
-            result = Album.create(name=name, year=year, status=1)
+            result = Album.create(name=name, artist=artist, year=year, status=1)
         else:
             result = Album.get(*clause)
+            if year is not None:
+                result.year = min(result.year, year)
             result.status = 1
             result.save()
 
@@ -125,7 +158,7 @@ class Song(peewee.Model):
     name = peewee.CharField(null=True)
     genre = peewee.ForeignKeyField(Genre, backref="songs", null=True)
     album = peewee.ForeignKeyField(Album, backref="songs", null=True)
-    artist = peewee.CharField(null=True)
+    artist = peewee.ForeignKeyField(Artist, backref="songs", null=True)
     status = peewee.IntegerField()
     file_path = peewee.CharField(unique=True, index=True)
     file_mtime = peewee.IntegerField()
@@ -139,7 +172,7 @@ class Song(peewee.Model):
         name: str | None,
         genre: Genre | None,
         album: Album | None,
-        artist: str | None,
+        artist: Artist | None,
         file_path: str,
         file_mtime: int,
     ) -> "Song":
@@ -180,9 +213,17 @@ class Song(peewee.Model):
             s.status = 1
             s.save()
 
+            if s.artist is not None:
+                s.artist.status = 1
+                s.artist.save()
+
             if s.album is not None:
                 s.album.status = 1
                 s.album.save()
+
+                if s.album.artist is not None:
+                    s.album.artist.status = 1
+                    s.album.artist.save()
 
             if s.genre is not None:
                 s.genre.status = 1
@@ -210,26 +251,33 @@ def scan_dir(path: str):
                     except ID3NoHeaderError:
                         tag = EasyID3()
 
-                    _track, _track_total = get_numbers(tag, "tracknumber")
+                    _album = get_str(tag, "album")
                     _albumartist = get_str(tag, "albumartist")
+                    _artist = get_str(tag, "artist")
+                    _date = get_year(tag, "date")
                     _disk, _disk_total = get_numbers(tag, "discnumber")
+                    _genre = get_str(tag, "genre")
+                    _title = get_str(tag, "title", "<unknown>")
+                    _track, _track_total = get_numbers(tag, "tracknumber")
 
-                    genre = Genre.upsert(get_str(tag, "genre"))
-                    album = Album.upsert(get_str(tag, "album"), get_year(tag, "date"))
+                    albumartist = Artist.upsert(_albumartist)
+                    songartist = Artist.upsert(_artist)
+                    genre = Genre.upsert(_genre)
+                    album = Album.upsert(_album, albumartist, _date)
 
                     Song.upsert(
                         _track,
-                        get_str(tag, "title", "<unknown>"),
+                        _title,
                         genre,
                         album,
-                        get_str(tag, "artist"),
+                        songartist,
                         song_file,
                         file_mtime,
                     )
 
 
 def main():
-    models = [Album, Genre, Song]
+    models = [Artist, Album, Genre, Song]
 
     db.connect()
     # db.drop_tables(models)  # ToDo: remove this line (here only for tests)
