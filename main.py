@@ -174,8 +174,20 @@ class Song(peewee.Model):
     def get_file_mtime(file_path: str) -> int:
         try:
             s = Song.get(Song.file_path == file_path)
+
+            # if we find a song, we put status to 1
+            # because we will not call upsert later
             s.status = 1
             s.save()
+
+            if s.album is not None:
+                s.album.status = 1
+                s.album.save()
+
+            if s.genre is not None:
+                s.genre.status = 1
+                s.genre.save()
+
         except peewee.DoesNotExist:
             return -1
 
