@@ -41,56 +41,60 @@ def _scan_dir(path: str) -> None:
     start_time = time.time()
     nb_file = 0
 
-    for root, dirs, files in os.walk(path):
+    for root, _, files in os.walk(path):
         for file in files:
             if pathlib.Path(file).suffix == ".mp3":
                 nb_file += 1
-                song_file = os.path.normpath(os.path.join(root, file))
-                file_stats = os.stat(song_file)
-                file_mtime = int(file_stats.st_mtime)
-                file_size = file_stats.st_size
-                stored_mtime = Song.get_file_mtime(song_file)
-
-                if file_mtime != stored_mtime:
-                    try:
-                        tag = EasyID3(song_file)
-                    except ID3NoHeaderError:
-                        tag = EasyID3()
-
-                    try:
-                        _duration = MP3(song_file).info.length
-                    except HeaderNotFoundError:
-                        _duration = 0
-
-                    _album = utils.get_str(tag, "album")
-                    _albumartist = utils.get_str(tag, "albumartist")
-                    _artist = utils.get_str(tag, "artist")
-                    _date = utils.get_year(tag, "date")
-                    _disk, _disk_total = utils.get_numbers(tag, "discnumber")
-                    _genre = utils.get_str(tag, "genre")
-                    _title = utils.get_str(tag, "title", "<unknown>")
-                    _track, _track_total = utils.get_numbers(tag, "tracknumber")
-
-                    albumartist = Artist.upsert(_albumartist)
-                    songartist = Artist.upsert(_artist)
-                    genre = Genre.upsert(_genre)
-                    album = Album.upsert(_album, albumartist, _date)
-
-                    Song.upsert(
-                        _track,
-                        _track_total,
-                        _title,
-                        genre,
-                        album,
-                        _disk,
-                        _disk_total,
-                        songartist,
-                        _date,
-                        _duration,
-                        song_file,
-                        file_mtime,
-                        file_size,
-                    )
+                file_path = os.path.normpath(os.path.join(root, file))
+                _scan_file(file_path)
 
     total_time = round(time.time() - start_time, 2)
     print(f"Successfully scanned {nb_file} files in {total_time} s")
+
+
+def _scan_file(file_path: str):
+    file_stats = os.stat(file_path)
+    file_mtime = int(file_stats.st_mtime)
+    file_size = file_stats.st_size
+    stored_mtime = Song.get_file_mtime(file_path)
+
+    if file_mtime != stored_mtime:
+        try:
+            tag = EasyID3(file_path)
+        except ID3NoHeaderError:
+            tag = EasyID3()
+
+        try:
+            _duration = MP3(file_path).info.length
+        except HeaderNotFoundError:
+            _duration = 0
+
+        _album = utils.get_str(tag, "album")
+        _albumartist = utils.get_str(tag, "albumartist")
+        _artist = utils.get_str(tag, "artist")
+        _date = utils.get_year(tag, "date")
+        _disk, _disk_total = utils.get_numbers(tag, "discnumber")
+        _genre = utils.get_str(tag, "genre")
+        _title = utils.get_str(tag, "title", "<unknown>")
+        _track, _track_total = utils.get_numbers(tag, "tracknumber")
+
+        albumartist = Artist.upsert(_albumartist)
+        songartist = Artist.upsert(_artist)
+        genre = Genre.upsert(_genre)
+        album = Album.upsert(_album, albumartist, _date)
+
+        Song.upsert(
+            _track,
+            _track_total,
+            _title,
+            genre,
+            album,
+            _disk,
+            _disk_total,
+            songartist,
+            _date,
+            _duration,
+            file_path,
+            file_mtime,
+            file_size,
+        )
