@@ -1,11 +1,14 @@
 import os
 import pathlib
 import time
+from datetime import datetime
 
 import peewee
-from tinytag import TinyTag
+from mutagen.easyid3 import EasyID3
+from mutagen.id3._util import ID3NoHeaderError
 
-DIR_LIST = ["D:/Music/Compilations/", "D:/Music/Röyksopp/"]
+# DIR_LIST = ["D:/Music/Compilations/", "D:/Music/Röyksopp/", "D:/Music/Black Sabbath/", "D:/Music/musicForProgramming/"]
+DIR_LIST = ["D:/Music/"]
 DATABASE_FILE = "library.db"
 
 db: peewee.SqliteDatabase = peewee.SqliteDatabase(DATABASE_FILE)
@@ -22,16 +25,60 @@ def timeit(func):
     return wrapper
 
 
+def get_str(data: EasyID3, key: str, value_if_none: str | None = None) -> str | None:
+    value = data.get(key)
+
+    if value is None:
+        return value_if_none
+    else:
+        return value[0]
+
+
+def get_numbers(data: EasyID3, key: str) -> tuple[int | None, int | None]:
+    value = data.get(key)
+
+    if value is None:
+        return (None, None)
+
+    split = value[0].split("/")
+
+    if len(split) == 1:
+        return (split[0], None)
+    else:
+        return (split[0], split[1])
+
+
+def get_year(data: EasyID3, key: str) -> int | None:
+    value = data.get(key)
+
+    if value is None:
+        return None
+
+    value = value[0]
+
+    if value.isnumeric():
+        return int(value)
+
+    try:
+        date = datetime.strptime(value, "%Y-%m-%d")
+        return date.year
+    except ValueError:
+        return None
+
+
 class Album(peewee.Model):
     name = peewee.CharField(null=True)
-    year = peewee.CharField(null=True)
+    year = peewee.IntegerField(null=True)
     status = peewee.IntegerField()
 
     class Meta:
         database = db
 
     @staticmethod
-    def upsert(name: str | None, year: str | None) -> "Album":
+    def upsert(name: str | None, year: int | None) -> "Album|None":
+        if name is None:
+            return None
+
         clause = (Album.name == name, Album.year == year)
         count = Album.select().where(*clause).count()
 
@@ -146,16 +193,24 @@ def scan_dir(path: str):
                 stored_mtime = Song.get_file_mtime(song_file)
 
                 if file_mtime != stored_mtime:
-                    tag = TinyTag.get(song_file)
-                    genre = Genre.upsert(tag.genre)
-                    album = Album.upsert(tag.album, tag.year)
+                    try:
+                        tag = EasyID3(song_file)
+                    except ID3NoHeaderError:
+                        tag = EasyID3()
+
+                    _track, _track_total = get_numbers(tag, "tracknumber")
+                    _albumartist = get_str(tag, "albumartist")
+                    _disk, _disk_total = get_numbers(tag, "discnumber")
+
+                    genre = Genre.upsert(get_str(tag, "genre"))
+                    album = Album.upsert(get_str(tag, "album"), get_year(tag, "date"))
 
                     Song.upsert(
-                        tag.track,
-                        tag.title,
+                        _track,
+                        get_str(tag, "title", "<unknown>"),
                         genre,
                         album,
-                        tag.artist,
+                        get_str(tag, "artist"),
                         song_file,
                         file_mtime,
                     )

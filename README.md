@@ -37,6 +37,5 @@ In development
   - album : 555
   - genre : 46
 - Scan time
-  - initial : 12 min 49 sec
-  - update : 10 min 47 sec
-- Database file size : 1.36MB
+  - initial : ~~12 min 49 sec~~ 11.5 s
+  - update : ~~10 min 47 sec~~ 2 s
