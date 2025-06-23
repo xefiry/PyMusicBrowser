@@ -1,7 +1,7 @@
 [project]
 name = "pymusicbrowser"
 version = "0.1.0"
-description = "Python Music Browser - A music browser/player."
+description = "Python Music Browser - A music browser/player"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

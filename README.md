@@ -1,46 +1,18 @@
 # Python Music Browser
 
-A music browser/player.
+A music browser/player
 
 ## Status
 
 In development
 
+- Database : done
+- UI : todo
+- Player : todo
+
 ## ToDo
 
-- Add logging ~~to a file~~
-  - [x] List of directories scanned
-  - [x] Number of files scanned
-  - [x] Timeit result
+- Logging
   - [ ] Replace print with proper logging
-- Create Models
-  - [x] Song
-  - [x] Album
-  - [x] Genre
-  - [x] Artist
-  - [ ] Configuration
-- Add fields
-  - [x] Song -> Artist
-  - [x] Album -> Artist
-  - [x] Song -> duration
-  - [x] Song -> filesize
-  - [x] Song -> year
-  - [x] Song -> track_total
-  - [x] Song -> disk
-  - [x] Song -> disk_total
-- Solve album duplicates
-  - [ ] ~~album name case difference -> ignore case~~
-  - [x] different years in album songs -> keep lowest one
-- Improve file scanning performance.
-  - [x] Get file tags only if not in database or if file modified since last scan
-  - [x] Check performances of other mp3 tag libraries
-
-## Scan performance
-
-- Items scanned (on a HDD)
-  - song : 6636
-  - album : 555
-  - genre : 46
-- Scan time
-  - initial : ~~12 min 49 sec~~ 11.5 s
-  - update : ~~10 min 47 sec~~ 2 s
+- Database
+  - [ ] Create Configuration model to store settings
