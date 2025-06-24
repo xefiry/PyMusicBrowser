@@ -29,3 +29,6 @@ class Artist(BaseModel):
             result.save()
 
         return result
+
+    def __str__(self) -> str:
+        return f"[{self.get_id()}] {self.name}"

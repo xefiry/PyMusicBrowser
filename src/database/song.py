@@ -100,3 +100,6 @@ class Song(BaseModel):
             return -1
 
         return s.file_mtime
+
+    def __str__(self) -> str:
+        return f"[{self.get_id()}] {self.track} - {self.name} - {self.artist}"
