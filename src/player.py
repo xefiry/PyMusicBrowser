@@ -7,8 +7,10 @@ from peewee import fn
 
 from .database import Song
 
-EVENT_QUIT = 0
-EVENT_SONG_END = 1
+
+class Event(enum.IntEnum):
+    QUIT = 0
+    SONG_END = 1
 
 
 class State(enum.Enum):
@@ -29,7 +31,7 @@ class Player:
 
         self.state = State.STOP
 
-        pygame.mixer.music.set_endevent(EVENT_SONG_END)
+        pygame.mixer.music.set_endevent(Event.SONG_END)
 
     def get_state(self) -> State:
         return self.state
@@ -70,10 +72,10 @@ class Player:
             # pygame.mixer.music.get_pos()  # ToDo: use this to update seek bar
 
             for event in pygame.event.get():
-                if event.type == EVENT_QUIT:
+                if event.type == Event.QUIT:
                     is_running = False
 
-                elif event.type == EVENT_SONG_END and self.state != State.STOP:
+                elif event.type == Event.SONG_END and self.state != State.STOP:
                     self.next()
 
             time.sleep(0.25)
