@@ -1,5 +1,3 @@
-import random
-
 from peewee import fn
 
 from ..database.song import Song
