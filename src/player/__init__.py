@@ -5,7 +5,7 @@ import time
 import pygame
 from peewee import fn
 
-from .database import Song
+from ..database import Song
 
 
 class Event(enum.IntEnum):
