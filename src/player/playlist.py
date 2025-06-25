@@ -8,10 +8,12 @@ INCREMENT = 5
 class Playlist:
     def __init__(self) -> None:
         self.song_list: list[Song] = []
+        # if current_song == 1, no current song is selected
         self.current_song: int = -1
         self.populate(INCREMENT)
 
     def populate(self, nb_elem: int) -> None:
+        # if no current song, we set it to the start of the list
         if self.current_song == -1:
             self.current_song = 0
 
@@ -32,18 +34,19 @@ class Playlist:
         print()
 
     def get_current(self) -> Song | None:
+        # if there is no current song selected and there are songs in the list
+        # we set the first song as current
         if self.current_song == -1 and len(self.song_list) > 0:
             self.current_song = 0
 
-        if self.current_song >= 0 and self.current_song < len(self.song_list):
-            return self.song_list[self.current_song]
-        else:
-            return None
+        return self.song_list[self.current_song]
 
     def previous(self) -> Song | None:
+        # If we are in the list, we go backward
         if self.current_song >= 0:
             self.current_song -= 1
 
+        # if we are still in the list after that, we return the song
         if self.current_song >= 0:
             return self.song_list[self.current_song]
         else:
