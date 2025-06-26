@@ -83,8 +83,10 @@ class Player:
         # set callback to None to avoid calling it when it has been "removed"
         self.time_callback = None
         self.stop()
-        pygame.event.post(pygame.event.Event(0))
+        pygame.event.post(pygame.event.Event(Event.QUIT))
         self.thread.join()
+        pygame.mixer.quit()
+        pygame.quit()
 
     def event_handler(self) -> None:
         is_running = True
