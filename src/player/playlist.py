@@ -12,8 +12,6 @@ class Playlist:
         self.current_song: int = -1
         self.populate(INCREMENT)
 
-        self.print()
-
     def populate(self, nb_elem: int) -> None:
         # if no current song, we set it to the start of the list
         if self.current_song == -1:
@@ -29,8 +27,6 @@ class Playlist:
     def print(self) -> None:
         min_idx = max(self.current_song - INCREMENT, 0)
         max_idx = min(self.current_song + INCREMENT + 1, len(self.song_list))
-
-        print(f"min = {min_idx}, max = {max_idx}\n")
 
         if min_idx > 0:
             print("...")
