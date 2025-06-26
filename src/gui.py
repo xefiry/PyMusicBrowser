@@ -13,6 +13,12 @@ class GUI(tk.Tk):
         self.b_play_pause = ttk.Button(self, text="Play", command=self.do_play_pause)
         self.b_play_pause.pack(pady=5)
 
+        self.b_previous = ttk.Button(self, text="Previous", command=self.do_previous)
+        self.b_previous.pack(pady=5)
+
+        self.b_next = ttk.Button(self, text="Next", command=self.do_next)
+        self.b_next.pack(pady=5)
+
         self.b_stop = ttk.Button(self, text="Stop", command=self.do_stop)
         self.b_stop.pack(pady=5)
 
@@ -26,6 +32,14 @@ class GUI(tk.Tk):
 
     def do_play_pause(self) -> None:
         self.player.play_pause()
+        self.update_ui()
+
+    def do_previous(self) -> None:
+        self.player.previous()
+        self.update_ui()
+
+    def do_next(self) -> None:
+        self.player.next()
         self.update_ui()
 
     def do_stop(self) -> None:

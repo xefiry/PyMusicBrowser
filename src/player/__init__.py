@@ -3,9 +3,8 @@ import threading
 import time
 
 import pygame
-from peewee import fn
 
-from ..database import Song
+from .playlist import Playlist
 
 
 class Event(enum.IntEnum):
@@ -22,7 +21,8 @@ class State(enum.Enum):
 class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
-        self.song = Song.select().get()
+        self.playlist = Playlist()
+        self.song = self.playlist.get_current()
         self.is_playing: bool = False
 
         pygame.init()
@@ -39,7 +39,8 @@ class Player:
     def play_pause(self) -> None:
         if self.state == State.STOP:
             self.state = State.PLAY
-            pygame.mixer.music.load(self.song.file_path)
+            self.song = self.playlist.get_current()
+            pygame.mixer.music.load(str(self.song.file_path))
             pygame.mixer.music.play()
 
         elif self.state == State.PLAY:
@@ -50,9 +51,17 @@ class Player:
             self.state = State.PLAY
             pygame.mixer.music.unpause()
 
+    def previous(self) -> None:
+        self.stop()
+        self.song = self.playlist.previous()
+        if self.song is not None:
+            pygame.mixer.music.load(str(self.song.file_path))
+            pygame.mixer.music.play()
+
     def next(self) -> None:
-        self.song = Song.select().order_by(fn.Random()).get()
-        pygame.mixer.music.load(self.song.file_path)
+        self.stop()
+        self.song = self.playlist.next()
+        pygame.mixer.music.load(str(self.song.file_path))
         pygame.mixer.music.play()
 
     def stop(self) -> None:

@@ -33,7 +33,7 @@ class Playlist:
             print(f"{indent} {i} - {j}")
         print()
 
-    def get_current(self) -> Song | None:
+    def get_current(self) -> Song:
         # if there is no current song selected and there are songs in the list
         # we set the first song as current
         if self.current_song == -1 and len(self.song_list) > 0:

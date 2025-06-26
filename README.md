@@ -19,10 +19,12 @@ In development
   - [ ] Create Configuration model to store settings
   - [ ] Create a separate thread for scanning
 - Player
-  - [ ] Add playlist for songs to play
-  - [ ] Improve next() method
-  - [ ] Create previous() method
+  - [x] Add playlist for songs to play
+  - [x] Improve next() method
+  - [x] Create previous() method
 - UI
   - [ ] Show song playing curently
   - [ ] Show playlist
-  - [ ] Add Previous/Next buttons
+  - [ ] Add song progress bar
+  - [ ] Add volume selector
+  - [x] Add Previous/Next buttons
