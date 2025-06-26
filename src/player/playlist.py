@@ -27,12 +27,23 @@ class Playlist:
         return f"{self.current_song} - {self.song_list}"
 
     def print(self) -> None:
-        for i, j in enumerate(self.song_list):
-            if i == self.current_song:
+        min_idx = max(self.current_song - INCREMENT, 0)
+        max_idx = min(self.current_song + INCREMENT + 1, len(self.song_list))
+
+        print(f"min = {min_idx}, max = {max_idx}\n")
+
+        if min_idx > 0:
+            print("...")
+
+        for i, j in enumerate(self.song_list[min_idx:max_idx]):
+            if self.current_song == i + min_idx:
                 indent = ">"
             else:
                 indent = " "
-            print(f"{indent} {i:3} - {j}")
+            print(f"{indent} {i + min_idx:3} - {j}")
+
+        if max_idx < len(self.song_list):
+            print("...")
         print()
 
     def get_current(self) -> Song:
