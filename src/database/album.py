@@ -38,4 +38,4 @@ class Album(BaseModel):
         return result
 
     def __str__(self) -> str:
-        return f"[{self.get_id()}] {self.name} ({self.year}) {self.artist}"
+        return f"{self.name} ({self.year}) {self.artist}"

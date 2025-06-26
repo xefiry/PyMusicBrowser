@@ -31,4 +31,4 @@ class Artist(BaseModel):
         return result
 
     def __str__(self) -> str:
-        return f"[{self.get_id()}] {self.name}"
+        return f"{self.name}"
