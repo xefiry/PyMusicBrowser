@@ -57,3 +57,5 @@ class GUI(tk.Tk):
             self.b_play_pause.config(text="Play")
         elif state == State.PLAY:
             self.b_play_pause.config(text="Pause")
+
+        self.player.playlist.print()
