@@ -12,6 +12,8 @@ class Playlist:
         self.current_song: int = -1
         self.populate(INCREMENT)
 
+        self.print()
+
     def populate(self, nb_elem: int) -> None:
         # if no current song, we set it to the start of the list
         if self.current_song == -1:
@@ -30,7 +32,7 @@ class Playlist:
                 indent = ">"
             else:
                 indent = " "
-            print(f"{indent} {i} - {j}")
+            print(f"{indent} {i:3} - {j}")
         print()
 
     def get_current(self) -> Song:
@@ -48,6 +50,7 @@ class Playlist:
 
         # if we are still in the list after that, we return the song
         if self.current_song >= 0:
+            self.print()
             return self.song_list[self.current_song]
         else:
             return None
@@ -59,5 +62,7 @@ class Playlist:
         # we add one>
         if len(self.song_list) - self.current_song < INCREMENT:
             self.populate(1)
+
+        self.print()
 
         return self.song_list[self.current_song]
