@@ -7,7 +7,7 @@ class GUI(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
 
-        self.title("PyMusicPlayer")
+        self.title("PyMusicBrowser")
         self.geometry("200x220")
 
         self.b_play_pause = ttk.Button(self, text="Play", command=self.do_play_pause)
