@@ -23,8 +23,16 @@ In development
   - [x] Improve next() method
   - [x] Create previous() method
 - UI
-  - [ ] Show song playing curently
+  - [ ] Show song playing curently : album art, song/album/artist name,  curent/total time
   - [ ] Show playlist
-  - [ ] Add song progress bar
+  - [x] Add song progress bar
+    - [ ] Make it navigable to seek in the song
   - [ ] Add volume selector
+    - [ ] Save volume on exit and restore it on start
   - [x] Add Previous/Next buttons
+  - [ ] Add scan button + dialog to ask for directory to scan
+  - [ ] Add multimedia key management
+  - [ ] Add volume control
+- Playlist
+  - [ ] Save playlist on exit and restore it on start
+  - [ ] Calling previous replays the same song if time position is > N seconds (to define)
