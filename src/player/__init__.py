@@ -52,22 +52,30 @@ class Player:
             pygame.mixer.music.unpause()
 
     def previous(self) -> None:
-        self.stop()
+        self.state = State.PLAY
+
+        pygame.mixer.music.unload()
         self.song = self.playlist.previous()
-        if self.song is not None:
+
+        if self.song is None:
+            self.stop()
+        else:
             pygame.mixer.music.load(str(self.song.file_path))
             pygame.mixer.music.play()
 
     def next(self) -> None:
-        self.stop()
+        self.state = State.PLAY
+
+        pygame.mixer.music.unload()
         self.song = self.playlist.next()
         pygame.mixer.music.load(str(self.song.file_path))
         pygame.mixer.music.play()
 
     def stop(self) -> None:
-        self.state = State.STOP
-        pygame.mixer.music.stop()
-        pygame.mixer.music.unload()
+        if self.state != State.STOP:
+            self.state = State.STOP
+            pygame.mixer.music.stop()
+            pygame.mixer.music.unload()
 
     def quit(self) -> None:
         self.stop()
