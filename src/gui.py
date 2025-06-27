@@ -3,6 +3,9 @@ from tkinter import ttk
 from .player import Player, State
 
 
+UPDATE_DELAY = 100  # 0.1 s
+
+
 class GUI(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
@@ -34,7 +37,9 @@ class GUI(tk.Tk):
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
 
-        self.player = Player(self.update_time_scale)
+        self.player = Player()
+
+        self.after(UPDATE_DELAY, self.update_time_scale)
 
     def do_play_pause(self) -> None:
         self.player.play_pause()
@@ -56,9 +61,13 @@ class GUI(tk.Tk):
         self.player.quit()
         self.quit()
 
-    def update_time_scale(self, cur_time: float, max_time: float) -> None:
-        self.time_var.set(cur_time)
-        self.time_scale["to"] = max_time
+    def update_time_scale(self) -> None:
+        t1, t2 = self.player.get_current_time()
+
+        self.time_var.set(t1)
+        self.time_scale["to"] = t2
+
+        self.after(UPDATE_DELAY, self.update_time_scale)
 
     def update_ui(self) -> None:
         state = self.player.state

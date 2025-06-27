@@ -1,7 +1,6 @@
 import enum
 import threading
 import time
-from collections.abc import Callable
 
 import pygame
 
@@ -9,7 +8,6 @@ from .playlist import Playlist
 
 
 class Event(enum.IntEnum):
-    QUIT = 0
     SONG_END = 1
 
 
@@ -20,10 +18,7 @@ class State(enum.Enum):
 
 
 class Player:
-    def __init__(self, time_callback: Callable) -> None:
-        # function used to send back to UI time changes for the current song
-        self.time_callback: Callable = time_callback
-
+    def __init__(self) -> None:
         pygame.mixer.init()
         self.playlist = Playlist()
         self.song = self.playlist.get_current()
@@ -82,7 +77,6 @@ class Player:
     def quit(self) -> None:
         self.stop()
         self.tread_run = False
-        # pygame.event.post(pygame.event.Event(Event.QUIT))
         self.thread.join()
         pygame.mixer.quit()
         pygame.quit()
@@ -95,16 +89,12 @@ class Player:
         cur_time = max(pygame.mixer.music.get_pos() / 1000, 0)
 
         # get current song time in seconds
-        total_time = float(self.song.duration)
+        total_time = float(self.song.duration)  # type: ignore
 
         return (cur_time, total_time)
 
     def event_handler(self) -> None:
         while self.tread_run:
-            if self.tread_run:
-                t1, t2 = self.get_current_time()
-                self.time_callback(t1, t2)
-
             for event in pygame.event.get():
                 if event.type == Event.SONG_END and self.state != State.STOP:
                     self.next()
