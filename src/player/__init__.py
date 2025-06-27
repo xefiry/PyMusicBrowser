@@ -1,6 +1,5 @@
 import enum
 import threading
-import time
 
 import pygame
 
