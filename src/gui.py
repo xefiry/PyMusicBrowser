@@ -10,8 +10,10 @@ class GUI(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
 
+        self.player = Player()
+
         self.title("PyMusicBrowser")
-        self.geometry("200x220")
+        self.geometry("200x230")
 
         self.b_play_pause = ttk.Button(self, text="Play", command=self.do_play_pause)
         self.b_play_pause.pack(pady=5)
@@ -34,10 +36,15 @@ class GUI(tk.Tk):
         # self.time_scale.bind("<ButtonPress-1>",lambda evt: print("scale Press")
         # self.time_scale.bind("<ButtonRelease-1>",lambda evt: print("scale Release")
 
+        self.volume_var = tk.DoubleVar()
+        self.volume_var.set(self.player.get_volume())
+        self.volume_scale = ttk.Scale(
+            self, from_=0, to=100, variable=self.volume_var, command=self.change_volume
+        )
+        self.volume_scale.pack()
+
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
-
-        self.player = Player()
 
         self.after(UPDATE_DELAY, self.update_time_scale)
 
@@ -60,6 +67,9 @@ class GUI(tk.Tk):
     def do_quit(self) -> None:
         self.player.quit()
         self.quit()
+
+    def change_volume(self, volume: str) -> None:
+        self.player.set_volume(float(volume))
 
     def update_time_scale(self) -> None:
         t1, t2 = self.player.get_current_time()

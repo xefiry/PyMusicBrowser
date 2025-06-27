@@ -92,6 +92,12 @@ class Player:
 
         return (cur_time, total_time)
 
+    def get_volume(self) -> float:
+        return pygame.mixer.music.get_volume() * 100
+
+    def set_volume(self, volume: float) -> None:
+        pygame.mixer.music.set_volume(volume / 100)
+
     def event_handler(self) -> None:
         while self.tread_run:
             for event in pygame.event.get():
