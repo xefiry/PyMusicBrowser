@@ -87,19 +87,23 @@ class Player:
         pygame.mixer.quit()
         pygame.quit()
 
+    def get_current_time(self) -> tuple[float, float]:
+        if self.song is None:
+            return (0, 0)
+
+        # get current play position in seconds, 0 if negative
+        cur_time = max(pygame.mixer.music.get_pos() / 1000, 0)
+
+        # get current song time in seconds
+        total_time = float(self.song.duration)
+
+        return (cur_time, total_time)
+
     def event_handler(self) -> None:
         while self.tread_run:
-            # get current play position in seconds, 0 if negative
-            cur_time = max(pygame.mixer.music.get_pos() / 1000, 0)
-
-            # get current song time in seconds, 0 no current song
-            if self.song is None:
-                total_time = 0
-            else:
-                total_time = self.song.duration
-
             if self.tread_run:
-                self.time_callback(cur_time, total_time)
+                t1, t2 = self.get_current_time()
+                self.time_callback(t1, t2)
 
             for event in pygame.event.get():
                 if event.type == Event.SONG_END and self.state != State.STOP:
