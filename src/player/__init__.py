@@ -1,12 +1,11 @@
 import enum
 import threading
 import time
+from collections.abc import Callable
 
 import pygame
 
 from .playlist import Playlist
-
-from collections.abc import Callable
 
 
 class Event(enum.IntEnum):
@@ -23,7 +22,7 @@ class State(enum.Enum):
 class Player:
     def __init__(self, time_callback: Callable) -> None:
         # function used to send back to UI time changes for the current song
-        self.time_callback: Callable | None = time_callback
+        self.time_callback: Callable = time_callback
 
         pygame.mixer.init()
         self.playlist = Playlist()
@@ -31,6 +30,7 @@ class Player:
         self.is_playing: bool = False
 
         pygame.init()
+        self.tread_run: bool = True
         self.thread = threading.Thread(target=self.event_handler)
         self.thread.start()
 
@@ -80,35 +80,29 @@ class Player:
             pygame.mixer.music.unload()
 
     def quit(self) -> None:
-        # set callback to None to avoid calling it when it has been "removed"
-        self.time_callback = None
         self.stop()
-        pygame.event.post(pygame.event.Event(Event.QUIT))
+        self.tread_run = False
+        # pygame.event.post(pygame.event.Event(Event.QUIT))
         self.thread.join()
         pygame.mixer.quit()
         pygame.quit()
 
     def event_handler(self) -> None:
-        is_running = True
+        while self.tread_run:
+            # get current play position in seconds, 0 if negative
+            cur_time = max(pygame.mixer.music.get_pos() / 1000, 0)
 
-        while is_running:
-            if self.time_callback is not None:
-                # get current play position in seconds, 0 if negative
-                cur_time = max(pygame.mixer.music.get_pos() / 1000, 0)
+            # get current song time in seconds, 0 no current song
+            if self.song is None:
+                total_time = 0
+            else:
+                total_time = self.song.duration
 
-                # get current song time in seconds, 0 no current song
-                if self.song is None:
-                    total_time = 0
-                else:
-                    total_time = self.song.duration
-
+            if self.tread_run:
                 self.time_callback(cur_time, total_time)
 
             for event in pygame.event.get():
-                if event.type == Event.QUIT:
-                    is_running = False
-
-                elif event.type == Event.SONG_END and self.state != State.STOP:
+                if event.type == Event.SONG_END and self.state != State.STOP:
                     self.next()
 
             time.sleep(0.1)
