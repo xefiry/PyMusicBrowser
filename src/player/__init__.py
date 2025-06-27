@@ -99,4 +99,4 @@ class Player:
                 if event.type == Event.SONG_END and self.state != State.STOP:
                     self.next()
 
-            time.sleep(0.1)
+            pygame.time.wait(100)
