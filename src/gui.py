@@ -27,9 +27,6 @@ class GUI(tk.Tk):
         self.b_stop = ttk.Button(self, text="Stop", command=self.do_stop)
         self.b_stop.pack(pady=5)
 
-        self.b_quit = ttk.Button(self, text="Quit", command=self.do_quit)
-        self.b_quit.pack(pady=5)
-
         self.time_var = tk.DoubleVar()
         self.time_scale = ttk.Scale(self, from_=0, variable=self.time_var)
         self.time_scale.pack()
