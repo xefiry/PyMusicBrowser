@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
-from .player import Player, State
 
+from .player import Player, State
 
 UPDATE_DELAY = 100  # 0.1 s
 
@@ -22,26 +22,36 @@ class GUI(tk.Tk):
         self.player = Player()
 
         self.title("PyMusicBrowser")
-        self.geometry("200x230")
+        self.geometry("200x100")
 
         _style = ttk.Style()
         _style.theme_use("xpnative")
 
+        self.button_frame = tk.Frame(self)
+        self.button_frame.pack(pady=5)
+
         self.b_play_pause = ttk.Button(
-            self, text=BUTTON_TEXT["play"], command=self.do_play_pause
+            self.button_frame,
+            text=BUTTON_TEXT["play"],
+            command=self.do_play_pause,
+            width=5,
         )
-        self.b_play_pause.pack(pady=5)
+        self.b_play_pause.grid(row=0, column=0)
 
-        self.b_previous = ttk.Button(
-            self, text=BUTTON_TEXT["prev"], command=self.do_previous
-        )
-        self.b_previous.pack(pady=5)
+        ttk.Button(
+            self.button_frame,
+            text=BUTTON_TEXT["prev"],
+            command=self.do_previous,
+            width=5,
+        ).grid(row=0, column=1)
 
-        self.b_next = ttk.Button(self, text=BUTTON_TEXT["next"], command=self.do_next)
-        self.b_next.pack(pady=5)
+        ttk.Button(
+            self.button_frame, text=BUTTON_TEXT["next"], command=self.do_next, width=5
+        ).grid(row=0, column=2)
 
-        self.b_stop = ttk.Button(self, text=BUTTON_TEXT["stop"], command=self.do_stop)
-        self.b_stop.pack(pady=5)
+        ttk.Button(
+            self.button_frame, text=BUTTON_TEXT["stop"], command=self.do_stop, width=5
+        ).grid(row=0, column=3)
 
         self.time_var = tk.DoubleVar()
         self.time_scale = ttk.Scale(self, from_=0, variable=self.time_var)
