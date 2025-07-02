@@ -81,6 +81,9 @@ class Player:
         pygame.quit()
 
     def get_current_time(self) -> tuple[float, float]:
+        """Get song current/total time of the current playing song.
+        If no song is playng, return 0/0"""
+
         if self.song is None:
             return (0, 0)
 
@@ -99,8 +102,12 @@ class Player:
         pygame.mixer.music.set_volume(volume / 100)
 
     def event_handler(self) -> None:
+        """Function to manage pygame events.
+        It does next when the current song ends."""
+
         while self.tread_run:
             for event in pygame.event.get():
+                # if song ends and it was not because we used stop button
                 if event.type == Event.SONG_END and self.state != State.STOP:
                     self.next()
 

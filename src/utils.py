@@ -1,3 +1,5 @@
+"""Various functions to parse data from songs metadata"""
+
 from datetime import datetime
 
 from mutagen.easyid3 import EasyID3

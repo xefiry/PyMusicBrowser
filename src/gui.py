@@ -67,6 +67,8 @@ class GUI(tk.Tk):
         self.player.set_volume(float(volume))
 
     def update_time_scale(self) -> None:
+        """Get song current/total time from the player and use it to update the timescale of the UI"""
+
         t1, t2 = self.player.get_current_time()
 
         self.time_var.set(t1)
@@ -77,6 +79,8 @@ class GUI(tk.Tk):
             self.after(UPDATE_DELAY, self.update_time_scale)
 
     def update_ui(self) -> None:
+        """Update UI text of buttons using player state"""
+
         state = self.player.state
 
         if state == State.STOP or state == State.PAUSE:
