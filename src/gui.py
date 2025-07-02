@@ -5,6 +5,15 @@ from .player import Player, State
 
 UPDATE_DELAY = 100  # 0.1 s
 
+# More at https://en.wikipedia.org/wiki/Media_control_symbols#Symbols
+BUTTON_TEXT = {
+    "play": "⏵",
+    "pause": "⏸",
+    "prev": "⏮",
+    "next": "⏭",
+    "stop": "⏹",
+}
+
 
 class GUI(tk.Tk):
     def __init__(self) -> None:
@@ -15,16 +24,20 @@ class GUI(tk.Tk):
         self.title("PyMusicBrowser")
         self.geometry("200x230")
 
-        self.b_play_pause = ttk.Button(self, text="Play", command=self.do_play_pause)
+        self.b_play_pause = ttk.Button(
+            self, text=BUTTON_TEXT["play"], command=self.do_play_pause
+        )
         self.b_play_pause.pack(pady=5)
 
-        self.b_previous = ttk.Button(self, text="Previous", command=self.do_previous)
+        self.b_previous = ttk.Button(
+            self, text=BUTTON_TEXT["prev"], command=self.do_previous
+        )
         self.b_previous.pack(pady=5)
 
-        self.b_next = ttk.Button(self, text="Next", command=self.do_next)
+        self.b_next = ttk.Button(self, text=BUTTON_TEXT["next"], command=self.do_next)
         self.b_next.pack(pady=5)
 
-        self.b_stop = ttk.Button(self, text="Stop", command=self.do_stop)
+        self.b_stop = ttk.Button(self, text=BUTTON_TEXT["stop"], command=self.do_stop)
         self.b_stop.pack(pady=5)
 
         self.time_var = tk.DoubleVar()
@@ -84,7 +97,7 @@ class GUI(tk.Tk):
         state = self.player.state
 
         if state == State.STOP or state == State.PAUSE:
-            self.b_play_pause.config(text="Play")
+            self.b_play_pause.config(text=BUTTON_TEXT["play"])
         elif state == State.PLAY:
-            self.b_play_pause.config(text="Pause")
+            self.b_play_pause.config(text=BUTTON_TEXT["pause"])
             self.update_time_scale()
