@@ -24,6 +24,9 @@ class GUI(tk.Tk):
         self.title("PyMusicBrowser")
         self.geometry("200x230")
 
+        _style = ttk.Style()
+        _style.theme_use("xpnative")
+
         self.b_play_pause = ttk.Button(
             self, text=BUTTON_TEXT["play"], command=self.do_play_pause
         )
