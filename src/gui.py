@@ -46,8 +46,6 @@ class GUI(tk.Tk):
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
 
-        self.after(UPDATE_DELAY, self.update_time_scale)
-
     def do_play_pause(self) -> None:
         self.player.play_pause()
         self.update_ui()
@@ -77,7 +75,9 @@ class GUI(tk.Tk):
         self.time_var.set(t1)
         self.time_scale["to"] = t2
 
-        self.after(UPDATE_DELAY, self.update_time_scale)
+        # If we are playing, recall this function after a delay
+        if self.player.state == State.PLAY:
+            self.after(UPDATE_DELAY, self.update_time_scale)
 
     def update_ui(self) -> None:
         state = self.player.state
@@ -86,3 +86,4 @@ class GUI(tk.Tk):
             self.b_play_pause.config(text="Play")
         elif state == State.PLAY:
             self.b_play_pause.config(text="Pause")
+            self.update_time_scale()
