@@ -15,6 +15,7 @@ In development
 - General
   - [ ] Add logging
   - [ ] Add comments
+  - [ ] Create a thread to scan music at start
 - Database
   - [ ] Create Configuration model to store settings
   - [ ] Create a separate thread for scanning
@@ -28,10 +29,17 @@ In development
   - [x] Add song progress bar
     - [ ] Make it navigable to seek in the song
   - [x] Add volume slider
+    - [ ] Display volume %
+    - [ ] Increase/Decrease volume with mouse wheel
     - [ ] Save volume on exit and restore it on start
   - [x] Add Previous/Next buttons
   - [ ] Add scan button + dialog to ask for directory to scan
   - [ ] Add multimedia key management
+  - [ ] Button to add current song album next in queue and play it
+  - [ ] Manage multimedia keys (Using [keyboard](https://pypi.org/project/keyboard/) ?)
 - Playlist
   - [ ] Save playlist on exit and restore it on start
   - [ ] Calling previous replays the same song if time position is > N seconds (to define)
+- Bugs
+  - [ ] Fix behaviour when there are no songs in the database
+  - [ ] Fix song progress bar : when pressing Stop while paused, cursor should go back to 0
