@@ -23,6 +23,7 @@ class GUI(tk.Tk):
 
         self.title("PyMusicBrowser")
         self.geometry("200x100")
+        self.resizable(False, False)
 
         _style = ttk.Style()
         _style.theme_use("xpnative")
