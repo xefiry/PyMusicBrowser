@@ -26,7 +26,7 @@ class GUI(tk.Tk):
         self.player = Player()
 
         self.title("PyMusicBrowser")
-        self.geometry("300x400")
+        self.geometry("300x380")
         self.resizable(False, False)
 
         _style = ttk.Style()
@@ -35,8 +35,14 @@ class GUI(tk.Tk):
         self.cover = tk.Canvas(self, width=COVER_SIZE[0], height=COVER_SIZE[1])
         self.cover.pack()
 
+        self.time_var = tk.DoubleVar()
+        self.time_scale = ttk.Scale(self, from_=0, variable=self.time_var, length=280)
+        self.time_scale.pack(pady=5)
+        # self.time_scale.bind("<ButtonPress-1>",lambda evt: print("scale Press")
+        # self.time_scale.bind("<ButtonRelease-1>",lambda evt: print("scale Release")
+
         self.button_frame = tk.Frame(self)
-        self.button_frame.pack(pady=5)
+        self.button_frame.pack()
 
         self.b_play_pause = ttk.Button(
             self.button_frame,
@@ -61,18 +67,17 @@ class GUI(tk.Tk):
             self.button_frame, text=BUTTON_TEXT["stop"], command=self.do_stop, width=5
         ).grid(row=0, column=3)
 
-        self.time_var = tk.DoubleVar()
-        self.time_scale = ttk.Scale(self, from_=0, variable=self.time_var)
-        self.time_scale.pack()
-        # self.time_scale.bind("<ButtonPress-1>",lambda evt: print("scale Press")
-        # self.time_scale.bind("<ButtonRelease-1>",lambda evt: print("scale Release")
-
         self.volume_var = tk.DoubleVar()
         self.volume_var.set(self.player.get_volume())
         self.volume_scale = ttk.Scale(
-            self, from_=0, to=100, variable=self.volume_var, command=self.change_volume
+            self.button_frame,
+            from_=0,
+            to=100,
+            variable=self.volume_var,
+            command=self.change_volume,
+            length=80,
         )
-        self.volume_scale.pack()
+        self.volume_scale.grid(row=0, column=4, padx=10)
 
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
