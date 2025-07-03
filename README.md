@@ -42,4 +42,4 @@ In development
   - [ ] Calling previous replays the same song if time position is > N seconds (to define)
 - Bugs
   - [ ] Fix behaviour when there are no songs in the database
-  - [ ] Fix song progress bar : when pressing Stop while paused, cursor should go back to 0
+  - [x] Fix song progress bar : when pressing Stop while paused, cursor should go back to 0

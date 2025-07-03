@@ -78,7 +78,8 @@ class GUI(tk.Tk):
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
 
         self._cur_song_path = ""
-        self.update_cover()
+
+        self.update_ui()
 
     def do_play_pause(self) -> None:
         self.player.play_pause()
@@ -103,6 +104,14 @@ class GUI(tk.Tk):
     def change_volume(self, volume: str) -> None:
         self.player.set_volume(float(volume))
 
+    def update_ui(self) -> None:
+        self.update_time_scale()
+        self.update_buttons()
+        self.update_cover()
+
+        if self.player.state == State.PLAY:
+            self.after(UPDATE_DELAY, self.update_ui)
+
     def update_time_scale(self) -> None:
         """Get song current/total time from the player and use it to update the timescale of the UI"""
 
@@ -111,12 +120,8 @@ class GUI(tk.Tk):
         self.time_var.set(t1)
         self.time_scale["to"] = t2
 
-        # If we are playing, recall this function after a delay
-        if self.player.state == State.PLAY:
-            self.after(UPDATE_DELAY, self.update_time_scale)
-
-    def update_ui(self) -> None:
-        """Update UI text of buttons using player state"""
+    def update_buttons(self) -> None:
+        """Update text of buttons using player state"""
 
         state = self.player.state
 
@@ -124,7 +129,6 @@ class GUI(tk.Tk):
             self.b_play_pause.config(text=BUTTON_TEXT["play"])
         elif state == State.PLAY:
             self.b_play_pause.config(text=BUTTON_TEXT["pause"])
-            self.update_time_scale()
 
     def update_cover(self) -> None:
         song = self.player.playlist.get_current()
