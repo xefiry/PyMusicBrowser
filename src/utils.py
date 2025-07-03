@@ -1,8 +1,10 @@
 """Various functions to parse data from songs metadata"""
 
 from datetime import datetime
+from io import BytesIO
 
 from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3
 
 
 def get_str(data: EasyID3, key: str, value_if_none: str | None = None) -> str | None:
@@ -44,3 +46,12 @@ def get_year(data: EasyID3, key: str) -> int | None:
         return date.year
     except ValueError:
         return None
+
+
+def get_cover(file_path: str) -> BytesIO | None:
+    tag = ID3(file_path)
+    pic = tag.get("APIC:")
+    if pic is not None:
+        pic = BytesIO(pic.data)
+
+    return pic

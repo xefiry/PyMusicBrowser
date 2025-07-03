@@ -1,9 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 
+from PIL import Image, ImageTk
+
+from . import utils
 from .player import Player, State
 
 UPDATE_DELAY = 100  # 0.1 s
+COVER_SIZE = (300, 300)
 
 # More at https://en.wikipedia.org/wiki/Media_control_symbols#Symbols
 BUTTON_TEXT = {
@@ -22,11 +26,14 @@ class GUI(tk.Tk):
         self.player = Player()
 
         self.title("PyMusicBrowser")
-        self.geometry("200x100")
+        self.geometry("300x400")
         self.resizable(False, False)
 
         _style = ttk.Style()
         _style.theme_use("xpnative")
+
+        self.cover = tk.Canvas(self, width=COVER_SIZE[0], height=COVER_SIZE[1])
+        self.cover.pack()
 
         self.button_frame = tk.Frame(self)
         self.button_frame.pack(pady=5)
@@ -69,6 +76,9 @@ class GUI(tk.Tk):
 
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
+
+        self._cur_song_path = ""
+        self.update_cover()
 
     def do_play_pause(self) -> None:
         self.player.play_pause()
@@ -115,3 +125,25 @@ class GUI(tk.Tk):
         elif state == State.PLAY:
             self.b_play_pause.config(text=BUTTON_TEXT["pause"])
             self.update_time_scale()
+
+    def update_cover(self) -> None:
+        song = self.player.playlist.get_current()
+
+        # If the song file has not changed since last update, do nothing
+        if song.file_path == self._cur_song_path:
+            return
+
+        pic = utils.get_cover(str(song.file_path))
+
+        if pic is None:
+            self.cover_img = Image.new(mode="RGB", size=COVER_SIZE, color="#999090")
+        else:
+            self.cover_img = Image.open(pic)
+            self.cover_img = self.cover_img.resize(COVER_SIZE)
+
+        self.cover_img = ImageTk.PhotoImage(self.cover_img)
+
+        self.cover.create_image(0, 0, anchor="nw", image=self.cover_img)
+
+        # update current song
+        self._cur_song_path = song.file_path

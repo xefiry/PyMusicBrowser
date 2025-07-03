@@ -7,5 +7,6 @@ requires-python = ">=3.11"
 dependencies = [
     "mutagen>=1.47.0",
     "peewee>=3.18.1",
+    "pillow>=11.3.0",
     "pygame>=2.6.1",
 ]
