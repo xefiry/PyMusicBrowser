@@ -5,6 +5,7 @@ import time
 from mutagen.easyid3 import EasyID3
 from mutagen.id3._util import ID3NoHeaderError
 from mutagen.mp3 import MP3, HeaderNotFoundError
+from peewee import fn
 
 from .. import utils
 from .album import Album
@@ -98,3 +99,17 @@ def _scan_file(file_path: str):
             file_mtime,
             file_size,
         )
+
+
+def print_stats() -> None:
+    duration = Song.select(fn.SUM(Song.duration)).scalar()
+    duration_days = round(duration / 60 / 60 / 24, 2)
+    size = Song.select(fn.SUM(Song.file_size)).scalar()
+    size_gb = round(size / (1024**3), 2)
+
+    print("Songs :", Song.select().count())
+    print("Albums :", Album.select().count())
+    print("Artists :", Artist.select().count())
+    print("Genres :", Genre.select().count())
+    print(f"duration : {duration} - {duration_days} Days")
+    print(f"size : {size} - {size_gb} GB")
