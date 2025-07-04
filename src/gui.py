@@ -44,11 +44,22 @@ class GUI(tk.Tk):
         self.song_artist = ttk.Label(self, text="<artist>")
         self.song_artist.pack()
 
+        self.time_frame = tk.Frame(self)
+        self.time_frame.pack(pady=5)
+
+        self.time_cur = ttk.Label(self.time_frame, text="0:00:00")
+        self.time_cur.grid(row=0, column=0, padx=5)
+
         self.time_var = tk.DoubleVar()
-        self.time_scale = ttk.Scale(self, from_=0, variable=self.time_var, length=280)
-        self.time_scale.pack(pady=5)
+        self.time_scale = ttk.Scale(
+            self.time_frame, from_=0, variable=self.time_var, length=200
+        )
+        self.time_scale.grid(row=0, column=1)
         # self.time_scale.bind("<ButtonPress-1>",lambda evt: print("scale Press")
         # self.time_scale.bind("<ButtonRelease-1>",lambda evt: print("scale Release")
+
+        self.time_tot = ttk.Label(self.time_frame, text="0:00:00")
+        self.time_tot.grid(row=0, column=2, padx=5)
 
         self.button_frame = tk.Frame(self)
         self.button_frame.pack()
@@ -133,6 +144,9 @@ class GUI(tk.Tk):
 
         self.time_var.set(t1)
         self.time_scale["to"] = t2
+
+        self.time_cur.config(text=utils.s_to_t(t1))
+        self.time_tot.config(text=utils.s_to_t(t2))
 
     def update_buttons(self) -> None:
         """Update text of buttons using player state"""
