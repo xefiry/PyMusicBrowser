@@ -29,7 +29,8 @@ class Player:
         self.thread.start()
 
         self.state = State.STOP
-        self.cur_pos = 0
+        self.cur_pos: int = 0
+        self.volume: int = 100
 
         pygame.mixer.music.set_endevent(Event.SONG_END)
 
@@ -89,7 +90,7 @@ class Player:
         # to avoid a sound crack caused by fast play/pause, set volume to 0
         if self.state == State.PAUSE:
             self.set_volume(0)
-        
+
         # seek the time (it has to play)
         pygame.mixer.music.play()
         pygame.mixer.music.set_pos(time)
@@ -123,10 +124,11 @@ class Player:
 
         return (cur_time, total_time)
 
-    def get_volume(self) -> float:
-        return pygame.mixer.music.get_volume() * 100
+    def get_volume(self) -> int:
+        return self.volume
 
-    def set_volume(self, volume: float) -> None:
+    def set_volume(self, volume: int) -> None:
+        self.volume = volume
         pygame.mixer.music.set_volume(volume / 100)
 
     def event_handler(self) -> None:

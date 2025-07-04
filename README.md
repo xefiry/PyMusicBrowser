@@ -30,7 +30,7 @@ In development
     - [x] Make it navigable to seek in the song
   - [x] Add volume slider
     - [x] Display volume %
-    - [ ] Increase/Decrease volume with mouse wheel
+    - [x] Increase/Decrease volume with mouse wheel
     - [ ] Save volume on exit and restore it on start
   - [x] Add Previous/Next buttons
   - [ ] Add scan button + dialog to ask/confirm for directories to scan

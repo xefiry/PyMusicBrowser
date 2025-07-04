@@ -9,6 +9,7 @@ from .player import Player, State
 
 UPDATE_DELAY = 100  # 0.1 s
 COVER_SIZE = (300, 300)
+VOLUME_STEP = 5
 
 # More at https://en.wikipedia.org/wiki/Media_control_symbols#Symbols
 BUTTON_TEXT = {
@@ -98,17 +99,17 @@ class GUI(tk.Tk):
             from_=0,
             to=100,
             variable=self.volume_var,
-            command=self.change_volume,
+            command=self.do_change_volume,
             length=80,
         )
         self.volume_scale.grid(row=0, column=4, padx=5)
 
-        self.volume_scale.bind("<MouseWheel>", self.do_change_volume)
+        self.volume_scale.bind("<MouseWheel>", self.do_scroll_volume)
 
         self.volume_lvl = ttk.Label(self.button_frame, text="xx%", width=5)
         self.volume_lvl.grid(row=0, column=5)
 
-        self.change_volume(str(self.player.get_volume()))
+        self.do_change_volume("100")
 
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
@@ -137,12 +138,6 @@ class GUI(tk.Tk):
         self.player.quit()
         self.quit()
 
-    def do_change_volume(self, event: tk.Event) -> None:
-        if event.delta > 0:
-            print("ToDo: increase volume")
-        else:
-            print("ToDo: decrease volume")
-
     def do_press_timescale(self, event: tk.Event) -> None:
         if self.time_scale["state"] == "enabled":
             self.time_scale_pressed = True
@@ -152,12 +147,28 @@ class GUI(tk.Tk):
             self.time_scale_pressed = False
             self.player.seek(math.ceil(self.time_var.get()))
 
-    def change_volume(self, volume: str) -> None:
+    def do_change_volume(self, volume: str) -> None:
         vol = math.ceil(float(volume))
 
         self.volume_var.set(vol)
         self.player.set_volume(vol)
         self.volume_lvl.config(text=f"{math.ceil(vol):3}%")
+
+    def do_scroll_volume(self, event: tk.Event) -> None:
+        vol = self.player.get_volume()
+
+        if event.delta > 0:
+            while (vol := vol + 1) % VOLUME_STEP != 0:
+                pass
+        else:
+            while (vol := vol - 1) % VOLUME_STEP != 0:
+                pass
+
+        # the volume must be between 0 and 100
+        vol = min(vol, 100)
+        vol = max(vol, 0)
+
+        self.do_change_volume(str(vol))
 
     def update_ui(self) -> None:
         self.update_time_scale()
