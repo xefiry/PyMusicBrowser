@@ -7,8 +7,8 @@ A music browser/player
 In development
 
 - Database : working
-- GUI : draft
-- Player : work in progress
+- GUI : work in progress
+- Player : working
 
 ## ToDo
 
