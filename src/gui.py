@@ -134,13 +134,11 @@ class GUI(tk.Tk):
 
             database.scan(music_dir)
 
-        print("-----")
         self.player = Player()
 
         # Try to get volume from settings
         _volume = Setting.get_value("volume")
         # if it does not exist, set it to 100
-        print(_volume)
         if _volume == "":
             _volume = "100"
         self.do_change_volume(_volume)
