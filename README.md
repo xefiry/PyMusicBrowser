@@ -18,7 +18,6 @@ In development
   - [ ] Create a thread to scan music at start
 - Database
   - [x] Create Configuration model to store settings
-  - [ ] Create a separate thread for scanning
 - Player
   - [x] Add playlist for songs to play
   - [x] Improve next() method
@@ -36,7 +35,6 @@ In development
   - [x] Add Previous/Next buttons
   - [ ] Add scan button + dialog to ask/confirm for directories to scan
     - [ ] Store directories to scan in database
-  - [ ] Add multimedia key management
   - [ ] Button to add current song album next in queue and play it
   - [ ] Manage multimedia keys (Using [keyboard](https://pypi.org/project/keyboard/) ?)
 - Playlist

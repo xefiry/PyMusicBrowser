@@ -12,25 +12,23 @@ from .album import Album
 from .artist import Artist
 from .base_model import init_db
 from .genre import Genre
-from .song import Song
 from .setting import Setting
+from .song import Song
 
-DIR_LIST = ["D:/Music/"]
-DATABASE_MODELS = [Artist, Album, Genre, Song, Setting]
+DATABASE_MODELS = [Artist, Album, Genre, Song]
 
 
 def init() -> None:
-    init_db(DATABASE_MODELS)
+    init_db(DATABASE_MODELS + [Setting])
 
 
-def scan() -> None:
+def scan(music_dir: str) -> None:
     # Set all data satatus to 0
     for model in DATABASE_MODELS:
         model.update(status=0).execute()
 
     # Insert/update data
-    for dir in DIR_LIST:
-        _scan_dir(dir)
+    _scan_dir(music_dir)
 
     # Delete data with status to 0
     for model in DATABASE_MODELS:

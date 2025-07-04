@@ -1,10 +1,12 @@
 import math
 import tkinter as tk
+from tkinter import filedialog as dlg
+from tkinter import messagebox as msg
 from tkinter import ttk
 
 from PIL import Image, ImageTk
 
-from . import utils
+from . import database, utils
 from .database.setting import Setting
 from .player import Player, State
 
@@ -113,8 +115,24 @@ class GUI(tk.Tk):
 
         self._cur_song_path = ""
 
-        # ToDo: get music directory and scan for music here
+        music_dir = Setting.get_value("music_dir")
+        if music_dir == "":
+            music_dir = dlg.askdirectory(title="Select a directory to scan for songs")
+            if music_dir == "":
+                msg.showerror("No music directory", "No directory to scan for music")
+                exit(0)
 
+            Setting.upsert("music_dir", music_dir)
+
+            msg.showinfo(
+                "Music scanning",
+                f"'{music_dir}' will be scanned for music.\n"
+                "The window may appear stuck, please let it scan to the end.",
+            )
+
+            database.scan(music_dir)
+
+        print("-----")
         self.player = Player()
 
         # Try to get volume from settings
