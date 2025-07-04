@@ -5,6 +5,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 
 from . import utils
+from .database.setting import Setting
 from .player import Player, State
 
 UPDATE_DELAY = 100  # 0.1 s
@@ -24,8 +25,6 @@ BUTTON_TEXT = {
 class GUI(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
-
-        self.player = Player()
 
         self.title("PyMusicBrowser")
         self.geometry("300x440")
@@ -49,7 +48,7 @@ class GUI(tk.Tk):
         self.time_frame = tk.Frame(self)
         self.time_frame.pack(pady=5)
 
-        self.time_cur = ttk.Label(self.time_frame, text="0:00:00")
+        self.time_cur = ttk.Label(self.time_frame, text="0:00")
         self.time_cur.grid(row=0, column=0, padx=5)
 
         self.time_var = tk.DoubleVar()
@@ -64,7 +63,7 @@ class GUI(tk.Tk):
         self.time_scale.bind("<ButtonPress-1>", self.do_press_timescale)
         self.time_scale.bind("<ButtonRelease-1>", self.do_release_timescale)
 
-        self.time_tot = ttk.Label(self.time_frame, text="0:00:00")
+        self.time_tot = ttk.Label(self.time_frame, text="0:00")
         self.time_tot.grid(row=0, column=2, padx=5)
 
         self.button_frame = tk.Frame(self)
@@ -109,12 +108,22 @@ class GUI(tk.Tk):
         self.volume_lvl = ttk.Label(self.button_frame, text="xx%", width=5)
         self.volume_lvl.grid(row=0, column=5)
 
-        self.do_change_volume("100")
-
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
 
         self._cur_song_path = ""
+
+        # ToDo: get music directory and scan for music here
+
+        self.player = Player()
+
+        # Try to get volume from settings
+        _volume = Setting.get_value("volume")
+        # if it does not exist, set it to 100
+        print(_volume)
+        if _volume == "":
+            _volume = "100"
+        self.do_change_volume(_volume)
 
         self.update_ui()
 
@@ -152,7 +161,9 @@ class GUI(tk.Tk):
 
         self.volume_var.set(vol)
         self.player.set_volume(vol)
-        self.volume_lvl.config(text=f"{math.ceil(vol):3}%")
+        self.volume_lvl.config(text=f"{vol:3}%")
+
+        Setting.upsert("volume", str(vol))
 
     def do_scroll_volume(self, event: tk.Event) -> None:
         vol = self.player.get_volume()

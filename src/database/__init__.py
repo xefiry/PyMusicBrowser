@@ -13,9 +13,10 @@ from .artist import Artist
 from .base_model import init_db
 from .genre import Genre
 from .song import Song
+from .setting import Setting
 
 DIR_LIST = ["D:/Music/"]
-DATABASE_MODELS = [Artist, Album, Genre, Song]
+DATABASE_MODELS = [Artist, Album, Genre, Song, Setting]
 
 
 def init() -> None:

@@ -17,12 +17,13 @@ In development
   - [ ] Add comments
   - [ ] Create a thread to scan music at start
 - Database
-  - [ ] Create Configuration model to store settings
+  - [x] Create Configuration model to store settings
   - [ ] Create a separate thread for scanning
 - Player
   - [x] Add playlist for songs to play
   - [x] Improve next() method
   - [x] Create previous() method
+  - [ ] Handle missing files
 - UI
   - [x] Show song playing curently : album art, song/album/artist name, curent/total time
   - [ ] Show playlist
@@ -31,7 +32,7 @@ In development
   - [x] Add volume slider
     - [x] Display volume %
     - [x] Increase/Decrease volume with mouse wheel
-    - [ ] Save volume on exit and restore it on start
+    - [x] Save volume on exit and restore it on start
   - [x] Add Previous/Next buttons
   - [ ] Add scan button + dialog to ask/confirm for directories to scan
     - [ ] Store directories to scan in database
