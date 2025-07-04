@@ -115,6 +115,7 @@ class GUI(tk.Tk):
 
         self._cur_song_path = ""
 
+        # ToDo: put in function ?
         music_dir = Setting.get_value("music_dir")
         if music_dir == "":
             music_dir = dlg.askdirectory(title="Select a directory to scan for songs")
@@ -124,6 +125,7 @@ class GUI(tk.Tk):
 
             Setting.upsert("music_dir", music_dir)
 
+            # ToDo: add possibility to cancel
             msg.showinfo(
                 "Music scanning",
                 f"'{music_dir}' will be scanned for music.\n"
