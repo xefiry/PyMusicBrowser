@@ -76,8 +76,29 @@ class Player:
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
 
-    def seek(self, time: float) -> None:
+    def seek(self, time: int) -> None:
+        if self.song is None:
+            return
+
+        v = self.get_volume()
+
+        # reload song (rewind does not work properly)
+        pygame.mixer.music.unload()
+        pygame.mixer.music.load(str(self.song.file_path))
+
+        # to avoid a sound crack caused by fast play/pause, set volume to 0
+        if self.state == State.PAUSE:
+            self.set_volume(0)
+        
+        # seek the time (it has to play)
+        pygame.mixer.music.play()
         pygame.mixer.music.set_pos(time)
+
+        # if the state was pause, put it back (with the volume)
+        if self.state == State.PAUSE:
+            pygame.mixer.music.pause()
+            self.set_volume(v)
+
         self.cur_pos = time
 
     def quit(self) -> None:

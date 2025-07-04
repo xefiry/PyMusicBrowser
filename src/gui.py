@@ -57,11 +57,11 @@ class GUI(tk.Tk):
             from_=0,
             variable=self.time_var,
             length=200,
-            command=self.change_time,
         )
         self.time_scale.grid(row=0, column=1)
-        # self.time_scale.bind("<ButtonPress-1>",lambda evt: print("scale Press")
-        # self.time_scale.bind("<ButtonRelease-1>",lambda evt: print("scale Release")
+        self.time_scale_pressed = False
+        self.time_scale.bind("<ButtonPress-1>", self.do_press_timescale)
+        self.time_scale.bind("<ButtonRelease-1>", self.do_release_timescale)
 
         self.time_tot = ttk.Label(self.time_frame, text="0:00:00")
         self.time_tot.grid(row=0, column=2, padx=5)
@@ -143,9 +143,14 @@ class GUI(tk.Tk):
         else:
             print("ToDo: decrease volume")
 
-    def change_time(self, time: str) -> None:
-        if self.player.state != State.STOP:
-            self.player.seek(float(time))
+    def do_press_timescale(self, event: tk.Event) -> None:
+        if self.time_scale["state"] == "enabled":
+            self.time_scale_pressed = True
+
+    def do_release_timescale(self, event: tk.Event) -> None:
+        if self.time_scale["state"] == "enabled":
+            self.time_scale_pressed = False
+            self.player.seek(math.ceil(self.time_var.get()))
 
     def change_volume(self, volume: str) -> None:
         vol = math.ceil(float(volume))
@@ -159,16 +164,30 @@ class GUI(tk.Tk):
         self.update_buttons()
         self.update_song_infos()
 
-        if self.player.state == State.PLAY:
+        if self.player.state != State.STOP:
             self.after(UPDATE_DELAY, self.update_ui)
 
     def update_time_scale(self) -> None:
         """Get song current/total time from the player and use it to update the timescale of the UI"""
 
-        t1, t2 = self.player.get_current_time()
+        # if the player is stopped, disable time scale and set it to 0/0
+        if self.player.state == State.STOP:
+            self.time_scale["state"] = "disabled"
+            t1, t2 = 0, 0
+            # to put the cursor on the left
+            self.time_var.set(0)
+            self.time_scale["to"] = 1
+        else:
+            self.time_scale["state"] = "enabled"
+            t1, t2 = self.player.get_current_time()
 
-        self.time_var.set(t1)
-        self.time_scale["to"] = t2
+            # if the time scale is pressed, we will display the time of the scale
+            # instead of the current time of the song
+            if self.time_scale_pressed:
+                t1 = self.time_var.get()
+
+            self.time_var.set(t1)
+            self.time_scale["to"] = t2
 
         self.time_cur.config(text=utils.s_to_t(t1))
         self.time_tot.config(text=utils.s_to_t(t2))
