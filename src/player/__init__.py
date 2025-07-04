@@ -29,6 +29,7 @@ class Player:
         self.thread.start()
 
         self.state = State.STOP
+        self.cur_pos = 0
 
         pygame.mixer.music.set_endevent(Event.SONG_END)
 
@@ -37,6 +38,7 @@ class Player:
             self.state = State.PLAY
             self.song = self.playlist.get_current()
             pygame.mixer.music.load(str(self.song.file_path))
+            self.cur_pos = 0
             pygame.mixer.music.play()
 
         elif self.state == State.PLAY:
@@ -57,14 +59,15 @@ class Player:
             self.stop()
         else:
             pygame.mixer.music.load(str(self.song.file_path))
+            self.cur_pos = 0
             pygame.mixer.music.play()
 
     def next(self) -> None:
         self.state = State.PLAY
 
-        pygame.mixer.music.unload()
         self.song = self.playlist.next()
         pygame.mixer.music.load(str(self.song.file_path))
+        self.cur_pos = 0
         pygame.mixer.music.play()
 
     def stop(self) -> None:
@@ -72,6 +75,10 @@ class Player:
             self.state = State.STOP
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
+
+    def seek(self, time: float) -> None:
+        pygame.mixer.music.set_pos(time)
+        self.cur_pos = time
 
     def quit(self) -> None:
         self.stop()
@@ -88,10 +95,12 @@ class Player:
             return (0, 0)
 
         # get current play position in seconds, 0 if negative
-        cur_time = max(pygame.mixer.music.get_pos() / 1000, 0)
+        cur_time = max(pygame.mixer.music.get_pos() / 1000, 0) + self.cur_pos
 
         # get current song time in seconds
         total_time = float(self.song.duration)  # type: ignore
+
+        print((cur_time, total_time))
 
         return (cur_time, total_time)
 

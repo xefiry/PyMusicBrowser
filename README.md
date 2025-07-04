@@ -27,7 +27,7 @@ In development
   - [x] Show song playing curently : album art, song/album/artist name, curent/total time
   - [ ] Show playlist
   - [x] Add song progress bar
-    - [ ] Make it navigable to seek in the song
+    - [x] Make it navigable to seek in the song
   - [x] Add volume slider
     - [x] Display volume %
     - [ ] Increase/Decrease volume with mouse wheel

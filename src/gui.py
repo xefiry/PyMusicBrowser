@@ -53,7 +53,11 @@ class GUI(tk.Tk):
 
         self.time_var = tk.DoubleVar()
         self.time_scale = ttk.Scale(
-            self.time_frame, from_=0, variable=self.time_var, length=200
+            self.time_frame,
+            from_=0,
+            variable=self.time_var,
+            length=200,
+            command=self.change_time,
         )
         self.time_scale.grid(row=0, column=1)
         # self.time_scale.bind("<ButtonPress-1>",lambda evt: print("scale Press")
@@ -138,6 +142,9 @@ class GUI(tk.Tk):
             print("ToDo: increase volume")
         else:
             print("ToDo: decrease volume")
+
+    def change_time(self, time: str) -> None:
+        self.player.seek(float(time))
 
     def change_volume(self, volume: str) -> None:
         vol = math.ceil(float(volume))
