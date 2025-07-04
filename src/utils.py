@@ -69,9 +69,7 @@ def s_to_t(seconds: float) -> str:
 
     if h > 0:
         result = f"{h}:{m:02}:{s:02}"
-    elif m > 0:
-        result = f"{m}:{s:02}"
     else:
-        result = str(s)
+        result = f"{m}:{s:02}"
 
     return result
