@@ -24,7 +24,7 @@ In development
   - [x] Improve next() method
   - [x] Create previous() method
 - UI
-  - [ ] Show song playing curently : album art, song/album/artist name,  curent/total time
+  - [x] Show song playing curently : album art, song/album/artist name, curent/total time
   - [ ] Show playlist
   - [x] Add song progress bar
     - [ ] Make it navigable to seek in the song
