@@ -100,8 +100,6 @@ class Player:
         # get current song time in seconds
         total_time = float(self.song.duration)  # type: ignore
 
-        print((cur_time, total_time))
-
         return (cur_time, total_time)
 
     def get_volume(self) -> float:

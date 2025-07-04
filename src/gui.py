@@ -144,7 +144,8 @@ class GUI(tk.Tk):
             print("ToDo: decrease volume")
 
     def change_time(self, time: str) -> None:
-        self.player.seek(float(time))
+        if self.player.state != State.STOP:
+            self.player.seek(float(time))
 
     def change_volume(self, volume: str) -> None:
         vol = math.ceil(float(volume))
