@@ -34,13 +34,19 @@ class Player:
 
         pygame.mixer.music.set_endevent(Event.SONG_END)
 
+    def load_music(self) -> None:
+        """Load a music file and play it"""
+
+        if self.song is not None:
+            pygame.mixer.music.load(str(self.song.file_path))
+            self.cur_pos = 0
+            pygame.mixer.music.play()
+
     def play_pause(self) -> None:
         if self.state == State.STOP:
             self.state = State.PLAY
             self.song = self.playlist.get_current()
-            pygame.mixer.music.load(str(self.song.file_path))
-            self.cur_pos = 0
-            pygame.mixer.music.play()
+            self.load_music()
 
         elif self.state == State.PLAY:
             self.state = State.PAUSE
@@ -59,17 +65,13 @@ class Player:
         if self.song is None:
             self.stop()
         else:
-            pygame.mixer.music.load(str(self.song.file_path))
-            self.cur_pos = 0
-            pygame.mixer.music.play()
+            self.load_music()
 
     def next(self) -> None:
         self.state = State.PLAY
 
         self.song = self.playlist.next()
-        pygame.mixer.music.load(str(self.song.file_path))
-        self.cur_pos = 0
-        pygame.mixer.music.play()
+        self.load_music()
 
     def stop(self) -> None:
         if self.state != State.STOP:
@@ -85,14 +87,12 @@ class Player:
 
         # reload song (rewind does not work properly)
         pygame.mixer.music.unload()
-        pygame.mixer.music.load(str(self.song.file_path))
 
         # to avoid a sound crack caused by fast play/pause, set volume to 0
         if self.state == State.PAUSE:
             self.set_volume(0)
 
-        # seek the time (it has to play)
-        pygame.mixer.music.play()
+        self.load_music()
         pygame.mixer.music.set_pos(time)
 
         # if the state was pause, put it back (with the volume)
