@@ -26,7 +26,7 @@ class GUI(tk.Tk):
         self.player = Player()
 
         self.title("PyMusicBrowser")
-        self.geometry("300x380")
+        self.geometry("300x440")
         self.resizable(False, False)
 
         _style = ttk.Style()
@@ -34,6 +34,15 @@ class GUI(tk.Tk):
 
         self.cover = tk.Canvas(self, width=COVER_SIZE[0], height=COVER_SIZE[1])
         self.cover.pack()
+
+        self.song_title = ttk.Label(self, text="<title>")
+        self.song_title.pack()
+
+        self.song_album = ttk.Label(self, text="<album>")
+        self.song_album.pack()
+
+        self.song_artist = ttk.Label(self, text="<artist>")
+        self.song_artist.pack()
 
         self.time_var = tk.DoubleVar()
         self.time_scale = ttk.Scale(self, from_=0, variable=self.time_var, length=280)
@@ -112,7 +121,7 @@ class GUI(tk.Tk):
     def update_ui(self) -> None:
         self.update_time_scale()
         self.update_buttons()
-        self.update_cover()
+        self.update_song_infos()
 
         if self.player.state == State.PLAY:
             self.after(UPDATE_DELAY, self.update_ui)
@@ -135,7 +144,7 @@ class GUI(tk.Tk):
         elif state == State.PLAY:
             self.b_play_pause.config(text=BUTTON_TEXT["pause"])
 
-    def update_cover(self) -> None:
+    def update_song_infos(self) -> None:
         song = self.player.playlist.get_current()
 
         # If the song file has not changed since last update, do nothing
@@ -153,6 +162,10 @@ class GUI(tk.Tk):
         self.cover_img = ImageTk.PhotoImage(self.cover_img)
 
         self.cover.create_image(0, 0, anchor="nw", image=self.cover_img)
+
+        self.song_title.config(text=f"{song.track} - {song.name}")
+        self.song_album.config(text=str(song.album.name))
+        self.song_artist.config(text=str(song.artist.name))
 
         # update current song
         self._cur_song_path = song.file_path
