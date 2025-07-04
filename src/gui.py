@@ -88,9 +88,7 @@ class GUI(tk.Tk):
             self.button_frame, text=BUTTON_TEXT["stop"], command=self.do_stop, width=5
         ).grid(row=0, column=3)
 
-        _vol = self.player.get_volume()
         self.volume_var = tk.DoubleVar()
-        self.volume_var.set(_vol)
         self.volume_scale = ttk.Scale(
             self.button_frame,
             from_=0,
@@ -101,10 +99,10 @@ class GUI(tk.Tk):
         )
         self.volume_scale.grid(row=0, column=4, padx=5)
 
-        self.volume_lvl = ttk.Label(
-            self.button_frame, text=f"{math.ceil(_vol):3}%", width=5
-        )
+        self.volume_lvl = ttk.Label(self.button_frame, text="xx%", width=5)
         self.volume_lvl.grid(row=0, column=5)
+
+        self.change_volume(str(self.player.get_volume()))
 
         self.b_play_pause.focus()
         self.protocol("WM_DELETE_WINDOW", self.do_quit)
@@ -134,8 +132,9 @@ class GUI(tk.Tk):
         self.quit()
 
     def change_volume(self, volume: str) -> None:
-        vol = float(volume)
+        vol = math.ceil(float(volume))
 
+        self.volume_var.set(vol)
         self.player.set_volume(vol)
         self.volume_lvl.config(text=f"{math.ceil(vol):3}%")
 
