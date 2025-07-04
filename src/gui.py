@@ -99,6 +99,8 @@ class GUI(tk.Tk):
         )
         self.volume_scale.grid(row=0, column=4, padx=5)
 
+        self.volume_scale.bind("<MouseWheel>", self.do_change_volume)
+
         self.volume_lvl = ttk.Label(self.button_frame, text="xx%", width=5)
         self.volume_lvl.grid(row=0, column=5)
 
@@ -130,6 +132,12 @@ class GUI(tk.Tk):
     def do_quit(self) -> None:
         self.player.quit()
         self.quit()
+
+    def do_change_volume(self, event: tk.Event) -> None:
+        if event.delta > 0:
+            print("ToDo: increase volume")
+        else:
+            print("ToDo: decrease volume")
 
     def change_volume(self, volume: str) -> None:
         vol = math.ceil(float(volume))
