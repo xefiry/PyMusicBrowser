@@ -22,6 +22,11 @@ class Playlist:
             song = Song.select().order_by(fn.Random()).get()
             self.song_list.append(song)
 
+        # If we don't have at least INCREMENT songs from the curent one we add some
+        while len(self.song_list) - self.current_song < INCREMENT:
+            song = Song.select().order_by(fn.Random()).get()
+            self.song_list.append(song)
+
     def __str__(self) -> str:
         return f"{self.current_song} - {self.song_list}"
 
@@ -65,12 +70,14 @@ class Playlist:
 
     def next(self) -> Song:
         self.current_song += 1
+        self.populate(0)
+        self.print()
 
-        # If we don't have at least INCREMENT songs from the curent one
-        # we add one>
-        if len(self.song_list) - self.current_song < INCREMENT:
-            self.populate(1)
+        return self.song_list[self.current_song]
 
+    def select(self, song_nb: int) -> Song:
+        self.current_song = song_nb
+        self.populate(0)
         self.print()
 
         return self.song_list[self.current_song]

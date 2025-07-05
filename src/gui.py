@@ -226,10 +226,10 @@ class GUI(tk.Tk):
 
     def do_activate_list(self, event: tk.Event) -> None:
         widget = event.widget
-        selection = widget.curselection()[0]
+        selection = widget.curselection()[0]  # type: ignore
 
-        # ToDO: change playing song on activation
-        print("selected", selection)
+        self.player.select_song(selection)
+        self.update_ui()
 
     def update_ui(self) -> None:
         self.update_time_scale()
@@ -310,5 +310,4 @@ class GUI(tk.Tk):
 
         self.songs_var.set(songs)
 
-        # ToDo: modify to avoid current song to be at top or bottom of the list if possible
         self.songs_list.see(cur)

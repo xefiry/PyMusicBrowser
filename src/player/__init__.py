@@ -73,6 +73,13 @@ class Player:
         self.song = self.playlist.next()
         self.load_music()
 
+    def select_song(self, song_nb: int) -> None:
+        self.song = self.playlist.select(song_nb)
+        self.load_music()
+
+        self.state = State.PLAY
+        pygame.mixer.music.play()
+
     def stop(self) -> None:
         if self.state != State.STOP:
             self.state = State.STOP
