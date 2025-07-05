@@ -131,6 +131,15 @@ class Player:
         self.volume = volume
         pygame.mixer.music.set_volume(volume / 100)
 
+    def get_song_list(self) -> tuple[list[str], int]:
+        """Get the current song list.
+        It returns the list of songs and the index of the current playing one"""
+
+        return (
+            [str(song) for song in self.playlist.song_list],
+            self.playlist.current_song,
+        )
+
     def event_handler(self) -> None:
         """Function to manage pygame events.
         It does next when the current song ends."""

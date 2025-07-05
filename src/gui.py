@@ -28,26 +28,38 @@ class GUI(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
 
+        # UI Configuration
+
         self.title("PyMusicBrowser")
-        self.geometry("300x440")
         self.resizable(False, False)
+        self.protocol("WM_DELETE_WINDOW", self.do_quit)
 
         _style = ttk.Style()
         _style.theme_use("xpnative")
 
-        self.cover = tk.Canvas(self, width=COVER_SIZE[0], height=COVER_SIZE[1])
+        # UI Main
+
+        main_left = ttk.Frame(self)
+        main_right = ttk.Frame(self)
+
+        main_left.grid(column=0, row=0)
+        main_right.grid(column=2, row=0)
+
+        # UI Left
+
+        self.cover = tk.Canvas(main_left, width=COVER_SIZE[0], height=COVER_SIZE[1])
         self.cover.pack()
 
-        self.song_title = ttk.Label(self, text="<title>")
+        self.song_title = ttk.Label(main_left, text="<title>")
         self.song_title.pack()
 
-        self.song_album = ttk.Label(self, text="<album>")
+        self.song_album = ttk.Label(main_left, text="<album>")
         self.song_album.pack()
 
-        self.song_artist = ttk.Label(self, text="<artist>")
+        self.song_artist = ttk.Label(main_left, text="<artist>")
         self.song_artist.pack()
 
-        self.time_frame = tk.Frame(self)
+        self.time_frame = tk.Frame(main_left)
         self.time_frame.pack(pady=5)
 
         self.time_cur = ttk.Label(self.time_frame, text="0:00")
@@ -68,8 +80,8 @@ class GUI(tk.Tk):
         self.time_tot = ttk.Label(self.time_frame, text="0:00")
         self.time_tot.grid(row=0, column=2, padx=5)
 
-        self.button_frame = tk.Frame(self)
-        self.button_frame.pack()
+        self.button_frame = tk.Frame(main_left)
+        self.button_frame.pack(pady=5)
 
         self.b_play_pause = ttk.Button(
             self.button_frame,
@@ -110,8 +122,21 @@ class GUI(tk.Tk):
         self.volume_lvl = ttk.Label(self.button_frame, text="xx%", width=5)
         self.volume_lvl.grid(row=0, column=5)
 
-        self.b_play_pause.focus()
-        self.protocol("WM_DELETE_WINDOW", self.do_quit)
+        # UI Right
+
+        self.songs_scroll = ttk.Scrollbar(main_right)
+        self.songs_scroll.pack(fill=tk.BOTH, side=tk.RIGHT)
+
+        self.songs_var = tk.Variable()
+        self.songs_list = tk.Listbox(
+            main_right, listvariable=self.songs_var, width=50, height=26
+        )
+        self.songs_list.pack(expand=True, fill=tk.BOTH, side=tk.LEFT)
+        self.songs_list.config(yscrollcommand=self.songs_scroll.set)
+        self.songs_list.bind("<Return>", self.do_activate_list)
+        self.songs_list.bind("<Double-Button-1>", self.do_activate_list)
+
+        # UI variables & misc
 
         self._cur_song_path = ""
 
@@ -199,6 +224,13 @@ class GUI(tk.Tk):
 
         self.do_change_volume(str(vol))
 
+    def do_activate_list(self, event: tk.Event) -> None:
+        widget = event.widget
+        selection = widget.curselection()[0]
+
+        # ToDO: change playing song on activation
+        print("selected", selection)
+
     def update_ui(self) -> None:
         self.update_time_scale()
         self.update_buttons()
@@ -267,3 +299,16 @@ class GUI(tk.Tk):
 
         # update current song
         self._cur_song_path = song.file_path
+
+        # update song list
+        self.update_song_list()
+
+    def update_song_list(self) -> None:
+        songs, cur = self.player.get_song_list()
+
+        songs[cur] = BUTTON_TEXT["play"] + songs[cur]
+
+        self.songs_var.set(songs)
+
+        # ToDo: modify to avoid current song to be at top or bottom of the list if possible
+        self.songs_list.see(cur)
