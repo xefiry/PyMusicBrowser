@@ -39,6 +39,10 @@ class Playlist:
 
     def load(self) -> None:
         playlist = Setting.get_value("playlist")
+
+        if playlist == "":
+            return
+
         cur, songs = playlist.split("|")
 
         self.current_song = int(cur)
