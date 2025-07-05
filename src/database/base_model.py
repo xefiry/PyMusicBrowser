@@ -11,7 +11,7 @@ class BaseModel(peewee.Model):
         database = db
 
 
-def init_db(models) -> None:
+def init(models) -> None:
     db.connect()
     db.create_tables(models)
     db.execute_sql("PRAGMA journal_mode = off;")

@@ -10,7 +10,7 @@ from peewee import fn
 from .. import utils
 from .album import Album
 from .artist import Artist
-from .base_model import init_db
+from . import base_model as db
 from .genre import Genre
 from .setting import Setting
 from .song import Song
@@ -19,7 +19,7 @@ DATABASE_MODELS = [Artist, Album, Genre, Song]
 
 
 def init() -> None:
-    init_db(DATABASE_MODELS + [Setting])
+    db.init(DATABASE_MODELS + [Setting])
 
 
 def scan(music_dir: str) -> None:
@@ -33,6 +33,8 @@ def scan(music_dir: str) -> None:
     # Delete data with status to 0
     for model in DATABASE_MODELS:
         model.delete().where(model.status == 0).execute()
+
+    db.vacuum()
 
 
 def _scan_dir(path: str) -> None:
