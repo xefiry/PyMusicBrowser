@@ -50,24 +50,6 @@ class Playlist:
         for song_id in songs.split(","):
             self.song_list.append(Song.get_by_id(song_id))
 
-    def print(self) -> None:
-        min_idx = max(self.current_song - INCREMENT, 0)
-        max_idx = min(self.current_song + INCREMENT + 1, len(self.song_list))
-
-        if min_idx > 0:
-            print("...")
-
-        for i, j in enumerate(self.song_list[min_idx:max_idx]):
-            if self.current_song == i + min_idx:
-                indent = ">"
-            else:
-                indent = " "
-            print(f"{indent} {i + min_idx:3} - {j}")
-
-        if max_idx < len(self.song_list):
-            print("...")
-        print()
-
     def get_current(self) -> Song:
         # if there is no current song selected and there are songs in the list
         # we set the first song as current

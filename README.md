@@ -34,7 +34,7 @@ In development
     - [x] Save volume on exit and restore it on start
   - [x] Add Previous/Next buttons
   - [ ] Add scan button + dialog to ask/confirm for directories to scan
-    - [ ] Store directories to scan in database
+    - [x] Store directories to scan in database
   - [ ] Button to add current song album next in queue and play it
   - [ ] Manage multimedia keys (Using [keyboard](https://pypi.org/project/keyboard/) ?)
 - Playlist
