@@ -135,6 +135,7 @@ class GUI(tk.Tk):
         self.songs_list.config(yscrollcommand=self.songs_scroll.set)
         self.songs_list.bind("<Return>", self.do_activate_list)
         self.songs_list.bind("<Double-Button-1>", self.do_activate_list)
+        self.songs_list.bind("<Delete>", self.do_delete_list)
 
         # UI variables & misc
 
@@ -231,10 +232,18 @@ class GUI(tk.Tk):
         self.player.select_song(selection)
         self.update_ui()
 
+    def do_delete_list(self, event: tk.Event) -> None:
+        widget = event.widget
+        selection = widget.curselection()[0]  # type: ignore
+
+        self.player.remove_song(selection)
+        self.update_ui()
+
     def update_ui(self) -> None:
         self.update_time_scale()
         self.update_buttons()
         self.update_song_infos()
+        self.update_song_list()
 
         if self.player.state != State.STOP:
             self.after(UPDATE_DELAY, self.update_ui)
@@ -299,9 +308,6 @@ class GUI(tk.Tk):
 
         # update current song
         self._cur_song_path = song.file_path
-
-        # update song list
-        self.update_song_list()
 
     def update_song_list(self) -> None:
         songs, cur = self.player.get_song_list()

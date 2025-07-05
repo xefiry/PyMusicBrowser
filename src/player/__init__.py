@@ -37,15 +37,17 @@ class Player:
     def load_music(self) -> None:
         """Load a music file and play it"""
 
+        self.song = self.playlist.get_current()
+
         if self.song is not None:
             pygame.mixer.music.load(str(self.song.file_path))
             self.cur_pos = 0
-            pygame.mixer.music.play()
+            if self.state == State.PLAY:
+                pygame.mixer.music.play()
 
     def play_pause(self) -> None:
         if self.state == State.STOP:
             self.state = State.PLAY
-            self.song = self.playlist.get_current()
             self.load_music()
 
         elif self.state == State.PLAY:
@@ -79,6 +81,10 @@ class Player:
 
         self.state = State.PLAY
         pygame.mixer.music.play()
+
+    def remove_song(self, song_nb: int) -> None:
+        if self.playlist.remove(song_nb):
+            self.load_music()
 
     def stop(self) -> None:
         if self.state != State.STOP:

@@ -77,3 +77,17 @@ class Playlist:
         self.populate(0)
 
         return self.song_list[self.current_song]
+
+    def remove(self, song_nb: int) -> bool:
+        """returns true if the removed song was the current one"""
+        s = self.song_list[song_nb]
+        self.song_list.remove(s)
+
+        self.populate(0)
+
+        if song_nb < self.current_song:
+            self.current_song -= 1
+        elif song_nb == self.current_song:
+            return True
+
+        return False
