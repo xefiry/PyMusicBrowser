@@ -55,28 +55,22 @@ class Playlist:
 
         return self.song_list[self.current_song]
 
-    def previous(self) -> Song | None:
+    def previous(self) -> bool:
+        """Returns true if we could go back, false if not (at start of playlist)"""
         # If we are in the list, we go backward
         if self.current_song >= 0:
             self.current_song -= 1
 
-        # if we are still in the list after that, we return the song
-        if self.current_song >= 0:
-            return self.song_list[self.current_song]
-        else:
-            return None
+        # if we are still in the list after that, we return true
+        return self.current_song >= 0
 
-    def next(self) -> Song:
+    def next(self) -> None:
         self.current_song += 1
         self.populate(0)
 
-        return self.song_list[self.current_song]
-
-    def select(self, song_nb: int) -> Song:
+    def select(self, song_nb: int) -> None:
         self.current_song = song_nb
         self.populate(0)
-
-        return self.song_list[self.current_song]
 
     def remove(self, song_nb: int) -> bool:
         """returns true if the removed song was the current one"""

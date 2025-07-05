@@ -20,7 +20,6 @@ class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
         self.playlist = Playlist()
-        self.song = self.playlist.get_current()
         self.is_playing: bool = False
 
         pygame.init()
@@ -37,10 +36,10 @@ class Player:
     def load_music(self) -> None:
         """Load a music file and play it"""
 
-        self.song = self.playlist.get_current()
+        song = self.playlist.get_current()
 
-        if self.song is not None:
-            pygame.mixer.music.load(str(self.song.file_path))
+        if song is not None:
+            pygame.mixer.music.load(str(song.file_path))
             self.cur_pos = 0
             if self.state == State.PLAY:
                 pygame.mixer.music.play()
@@ -62,21 +61,19 @@ class Player:
         self.state = State.PLAY
 
         pygame.mixer.music.unload()
-        self.song = self.playlist.previous()
 
-        if self.song is None:
-            self.stop()
-        else:
+        if self.playlist.previous():
             self.load_music()
+        else:
+            self.stop()
 
     def next(self) -> None:
         self.state = State.PLAY
-
-        self.song = self.playlist.next()
+        self.playlist.next()
         self.load_music()
 
     def select_song(self, song_nb: int) -> None:
-        self.song = self.playlist.select(song_nb)
+        self.playlist.select(song_nb)
         self.load_music()
 
         self.state = State.PLAY
@@ -93,7 +90,7 @@ class Player:
             pygame.mixer.music.unload()
 
     def seek(self, time: int) -> None:
-        if self.song is None:
+        if self.playlist.get_current() is None:
             return
 
         v = self.get_volume()
@@ -126,14 +123,16 @@ class Player:
         """Get song current/total time of the current playing song.
         If no song is playng, return 0/0"""
 
-        if self.song is None:
+        song = self.playlist.get_current()
+
+        if song is None:
             return (0, 0)
 
         # get current play position in seconds, 0 if negative
         cur_time = max(pygame.mixer.music.get_pos() / 1000, 0) + self.cur_pos
 
         # get current song time in seconds
-        total_time = float(self.song.duration)  # type: ignore
+        total_time = float(song.duration)  # type: ignore
 
         return (cur_time, total_time)
 
