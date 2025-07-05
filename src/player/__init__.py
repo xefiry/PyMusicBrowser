@@ -113,6 +113,7 @@ class Player:
         self.cur_pos = time
 
     def quit(self) -> None:
+        self.playlist.save()
         self.stop()
         self.tread_run = False
         self.thread.join()

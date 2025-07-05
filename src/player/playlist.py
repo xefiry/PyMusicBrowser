@@ -1,6 +1,7 @@
 from peewee import fn
 
 from ..database.song import Song
+from ..database.setting import Setting
 
 INCREMENT = 5
 
@@ -10,7 +11,8 @@ class Playlist:
         self.song_list: list[Song] = []
         # if current_song == 1, no current song is selected
         self.current_song: int = -1
-        self.populate(INCREMENT)
+        self.load()
+        self.populate(0)
 
     def populate(self, nb_elem: int) -> None:
         # if no current song, we set it to the start of the list
@@ -28,6 +30,21 @@ class Playlist:
 
     def __str__(self) -> str:
         return f"{self.current_song} - {self.song_list}"
+
+    def save(self) -> None:
+        cur = self.current_song
+        songs = ",".join([str(song.get_id()) for song in self.song_list])
+
+        Setting.upsert("playlist", f"{cur}|{songs}")
+
+    def load(self) -> None:
+        playlist = Setting.get_value("playlist")
+        cur, songs = playlist.split("|")
+
+        self.current_song = int(cur)
+
+        for song_id in songs.split(","):
+            self.song_list.append(Song.get_by_id(song_id))
 
     def print(self) -> None:
         min_idx = max(self.current_song - INCREMENT, 0)

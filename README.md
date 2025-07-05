@@ -38,7 +38,7 @@ In development
   - [ ] Button to add current song album next in queue and play it
   - [ ] Manage multimedia keys (Using [keyboard](https://pypi.org/project/keyboard/) ?)
 - Playlist
-  - [ ] Save playlist on exit and restore it on start
+  - [x] Save playlist on exit and restore it on start
   - [ ] Calling previous replays the same song if time position is > N seconds (to define)
 - Bugs
   - [ ] Fix behaviour when there are no songs in the database
