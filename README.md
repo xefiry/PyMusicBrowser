@@ -25,7 +25,7 @@ In development
   - [ ] Handle missing files
 - UI
   - [x] Show song playing curently : album art, song/album/artist name, curent/total time
-  - [ ] Show playlist
+  - [x] Show playlist
   - [x] Add song progress bar
     - [x] Make it navigable to seek in the song
   - [x] Add volume slider
