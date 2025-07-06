@@ -10,6 +10,17 @@ In development
 - GUI : work in progress
 - Player : working
 
+## How to run
+
+### With uv
+
+- Run `uv run python -m src`
+
+### Without uv
+
+- Install dependencies listed in pyproject.toml
+- Run `python -m src`
+
 ## ToDo
 
 - General
