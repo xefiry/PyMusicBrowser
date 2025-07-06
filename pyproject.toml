@@ -9,4 +9,10 @@ dependencies = [
     "peewee>=3.18.1",
     "pillow>=11.3.0",
     "pygame>=2.6.1",
+    "pyside6>=6.9.1",
+]
+
+[dependency-groups]
+dev = [
+    "pyside6-utils>=1.2.2",
 ]

@@ -1,12 +1,11 @@
-import os
+from . import database
 
-os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+# from gui.old import GUI
+from . import gui
 
 if __name__ == "__main__":
-    from . import database
-    from .gui import GUI
-
     database.init()
 
-    gui = GUI()
-    gui.mainloop()
+    gui.start()
+    # gui = GUI()
+    # gui.mainloop()

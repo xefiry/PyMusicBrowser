@@ -16,6 +16,17 @@
             "problemMatcher": [
                 "$python"
             ]
+        },
+        {
+            "label": "Run PySide6 designer",
+            "type": "shell",
+            "command": "uv",
+            "args": [
+                "run",
+                "pyside6-designer"
+            ],
+            "isBackground": true,
+            "problemMatcher": []
         }
     ]
 }
