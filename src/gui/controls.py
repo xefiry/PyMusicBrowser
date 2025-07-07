@@ -7,10 +7,10 @@ BUTTON_ICON = {
     "prev": QIcon.fromTheme(QIcon.ThemeIcon.MediaSkipBackward),
     "next": QIcon.fromTheme(QIcon.ThemeIcon.MediaSkipForward),
     "stop": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStop),
-    "volMuted": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeMuted),
-    "volLow": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeLow),
-    "volMedium": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeMedium),
     "volHigh": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeHigh),
+    "volMedium": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeMedium),
+    "volLow": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeLow),
+    "volMuted": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeMuted),
 }
 
 
@@ -42,26 +42,50 @@ class ControlsWidget(QtWidgets.QWidget):
             b.setFlat(True)
             layout.addWidget(b)
 
-        _orientation = QtCore.Qt.Orientation.Horizontal
-
         self.volume_button = QtWidgets.QPushButton()
         self.volume_button.setIcon(BUTTON_ICON["volHigh"])
         self.volume_button.setFixedSize(25, 25)
         self.volume_button.setFlat(True)
         layout.addWidget(self.volume_button)
 
-        self.volume_slider = QtWidgets.QSlider(_orientation)
-        self.volume_slider.setMinimum(0)
-        self.volume_slider.setMaximum(100)
-        self.volume_slider.setValue(100)
+        self.volume_slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
+        self.volume_slider.setRange(0, 100)
         self.volume_slider.setFixedWidth(100)
+        self.volume_slider.setTickInterval(25)
+        self.volume_slider.setTickPosition(QtWidgets.QSlider.TickPosition.TicksAbove)
         layout.addWidget(self.volume_slider)
 
-        self.volume_label = QtWidgets.QLabel("100%")
+        self.volume_label = QtWidgets.QLabel("100 %")
+        self.volume_label.setFixedWidth(40)
         layout.addWidget(self.volume_label)
 
-        self.time_slider = QtWidgets.QSlider(_orientation)
+        self.time_slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
         layout.addWidget(self.time_slider)
 
         self.time_label = QtWidgets.QLabel("0:00 / 0:00")
         layout.addWidget(self.time_label)
+
+        self.volume_slider.valueChanged.connect(self.volume_changed)
+        self.set_volume(100)
+
+    def volume_changed(self) -> None:
+        volume = self.get_volume()
+        self.set_volume(volume)
+
+    def get_volume(self) -> int:
+        return self.volume_slider.value()
+
+    def set_volume(self, volume: int) -> None:
+        self.volume_slider.setValue(volume)
+        self.volume_label.setText(f"{volume} %")
+
+        if volume > 66:
+            strength = "volHigh"
+        elif volume > 33:
+            strength = "volMedium"
+        elif volume > 0:
+            strength = "volLow"
+        else:
+            strength = "volMuted"
+
+        self.volume_button.setIcon(BUTTON_ICON[strength])
