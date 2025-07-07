@@ -66,7 +66,18 @@ class ControlsWidget(QtWidgets.QWidget):
         layout.addWidget(self.time_label)
 
         self.volume_slider.valueChanged.connect(self.volume_changed)
+        self.volume_button.clicked.connect(self.volume_muted)
+
+        self.previous_volume = 0
         self.set_volume(100)
+
+    def volume_muted(self) -> None:
+        volume = self.get_volume()
+        if volume != 0:
+            self.previous_volume = volume
+            self.set_volume(0)
+        else:
+            self.set_volume(self.previous_volume)
 
     def volume_changed(self) -> None:
         volume = self.get_volume()
@@ -89,3 +100,11 @@ class ControlsWidget(QtWidgets.QWidget):
             strength = "volMuted"
 
         self.volume_button.setIcon(BUTTON_ICON[strength])
+
+
+# for dev purposes
+if __name__ == "__main__":
+    app = QtWidgets.QApplication()
+    widget = ControlsWidget()
+    widget.show()
+    app.exec()
