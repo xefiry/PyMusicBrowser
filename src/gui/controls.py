@@ -52,6 +52,7 @@ class ControlsWidget(QtWidgets.QWidget):
         self.volume_slider.setRange(0, 100)
         self.volume_slider.setFixedWidth(100)
         self.volume_slider.setTickInterval(25)
+        self.volume_slider.setPageStep(2)
         self.volume_slider.setTickPosition(QtWidgets.QSlider.TickPosition.TicksAbove)
         layout.addWidget(self.volume_slider)
 
