@@ -1,6 +1,6 @@
 import sys
 
-from controls import ControlsWidget
+from .controls import ControlsWidget
 from PySide6 import QtWidgets
 
 
@@ -22,6 +22,3 @@ class MainWindow(QtWidgets.QMainWindow):
         self.controls = ControlsWidget(self)
 
         self.setCentralWidget(self.controls)
-
-
-start()
