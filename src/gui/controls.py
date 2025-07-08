@@ -66,6 +66,14 @@ class ControlsWidget(QtWidgets.QWidget):
         self.time_label = QtWidgets.QLabel("0:00 / 0:00")
         layout.addWidget(self.time_label)
 
+    def set_play_button(self, is_playing: bool) -> None:
+        if is_playing:
+            icon = "pause"
+        else:
+            icon = "play"
+
+        self.play_button.setIcon(BUTTON_ICON[icon])
+
     def get_volume(self) -> int:
         return self.volume_slider.value()
 
@@ -85,14 +93,6 @@ class ControlsWidget(QtWidgets.QWidget):
             strength = "volMuted"
 
         self.volume_button.setIcon(BUTTON_ICON[strength])
-
-    def set_play_button(self, is_playing: bool) -> None:
-        if is_playing:
-            icon = "pause"
-        else:
-            icon = "play"
-
-        self.play_button.setIcon(BUTTON_ICON[icon])
 
 
 # for dev purposes
