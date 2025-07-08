@@ -40,6 +40,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.controls.stop_button.pressed.connect(self.do_stop)
         self.controls.volume_slider.valueChanged.connect(self.do_change_volume)
         self.controls.volume_button.pressed.connect(self.do_mute_volume)
+        self.controls.time_slider.valueChanged.connect(self.do_change_time)
 
         # Status member variables
         self.previous_volume = int(Setting.get_value("volume", "100"))
@@ -75,6 +76,10 @@ class MainWindow(QtWidgets.QMainWindow):
         volume = self.controls.get_volume()
         self.set_volume(volume)
 
+    def do_change_time(self) -> None:
+        time = self.controls.get_time()
+        self.player.seek(time)
+
     def do_mute_volume(self) -> None:
         volume = self.player.get_volume()
         if volume != 0:
@@ -84,6 +89,5 @@ class MainWindow(QtWidgets.QMainWindow):
             self.set_volume(self.previous_volume)
 
     def update_ui(self) -> None:
-        state: State = self.player.state
-
-        self.controls.set_play_button(state == State.PLAY)
+        self.controls.set_play_button(self.player.state == State.PLAY)
+        self.controls.set_time(self.player.get_current_time())

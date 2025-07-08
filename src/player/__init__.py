@@ -120,7 +120,7 @@ class Player:
         pygame.mixer.quit()
         pygame.quit()
 
-    def get_current_time(self) -> tuple[float, float]:
+    def get_current_time(self) -> tuple[int, int]:
         """Get song current/total time of the current playing song.
         If no song is playng, return 0/0"""
 
@@ -130,10 +130,10 @@ class Player:
             return (0, 0)
 
         # get current play position in seconds, 0 if negative
-        cur_time = max(pygame.mixer.music.get_pos() / 1000, 0) + self.cur_pos
+        cur_time = max(pygame.mixer.music.get_pos() // 1000, 0) + self.cur_pos
 
         # get current song time in seconds
-        total_time = float(song.duration)  # type: ignore
+        total_time = int(song.duration)  # type: ignore
 
         return (cur_time, total_time)
 
