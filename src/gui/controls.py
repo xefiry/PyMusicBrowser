@@ -70,7 +70,9 @@ class ControlsWidget(QtWidgets.QWidget):
         return self.volume_slider.value()
 
     def set_volume(self, volume: int) -> None:
+        self.volume_slider.blockSignals(True)
         self.volume_slider.setValue(volume)
+        self.volume_slider.blockSignals(False)
         self.volume_label.setText(f"{volume} %")
 
         if volume > 66:
