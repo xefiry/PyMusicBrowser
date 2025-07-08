@@ -7,7 +7,7 @@ from mutagen.id3._util import ID3NoHeaderError
 from mutagen.mp3 import MP3, HeaderNotFoundError
 from peewee import fn
 
-from .. import utils
+from . import utils
 from .album import Album
 from .artist import Artist
 from . import base_model as db
