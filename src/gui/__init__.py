@@ -89,5 +89,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.set_volume(self.previous_volume)
 
     def update_ui(self) -> None:
-        self.controls.set_play_button(self.player.state == State.PLAY)
+        state = self.player.state
+
+        self.controls.set_play_button(state == State.PLAY)
+
+        if state == State.STOP:
+            self.controls.time_slider.setEnabled(False)
+        else:
+            self.controls.time_slider.setEnabled(True)
+
         self.controls.set_time(self.player.get_current_time())

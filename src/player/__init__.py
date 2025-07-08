@@ -41,7 +41,7 @@ class Player:
         if song is not None:
             pygame.mixer.music.load(str(song.file_path))
             self.cur_pos = 0
-            if self.state == State.PLAY:
+            if self.state != State.STOP:
                 pygame.mixer.music.play()
 
     def play_pause(self) -> None:
@@ -73,11 +73,9 @@ class Player:
         self.load_music()
 
     def select_song(self, song_nb: int) -> None:
+        self.state = State.PLAY
         self.playlist.select(song_nb)
         self.load_music()
-
-        self.state = State.PLAY
-        pygame.mixer.music.play()
 
     def remove_song(self, song_nb: int) -> None:
         if self.playlist.remove(song_nb):
@@ -90,7 +88,7 @@ class Player:
             pygame.mixer.music.unload()
 
     def seek(self, time: int) -> None:
-        if self.playlist.get_current() is None:
+        if self.playlist.get_current() is None or self.state == State.STOP:
             return
 
         v = self.get_volume()
@@ -126,7 +124,7 @@ class Player:
 
         song = self.playlist.get_current()
 
-        if song is None:
+        if song is None or self.state == State.STOP:
             return (0, 0)
 
         # get current play position in seconds, 0 if negative
