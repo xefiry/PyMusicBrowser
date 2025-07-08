@@ -1,10 +1,12 @@
 import sys
 
-from PySide6 import QtWidgets, QtCore
+from PySide6 import QtCore, QtWidgets
 
 from ..database.setting import Setting
 from ..player import Player, State
 from .controls import ControlsWidget
+
+UPDATE_DELAY = 100  # 0.1 s
 
 
 def start() -> None:
@@ -45,7 +47,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_ui)
-        self.timer.start(100)
+        self.timer.start(UPDATE_DELAY)
 
         self.update_ui()
 
