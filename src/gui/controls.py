@@ -1,6 +1,8 @@
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import QIcon
 
+from ..database.setting import Setting
+
 BUTTON_ICON = {
     "play": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStart),
     "pause": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackPause),
@@ -70,7 +72,10 @@ class ControlsWidget(QtWidgets.QWidget):
         self.volume_button.clicked.connect(self.volume_muted)
 
         self.previous_volume = 0
-        self.set_volume(100)
+
+        volume = Setting.get_value("volume", "100")
+
+        self.set_volume(int(volume))
 
     def volume_muted(self) -> None:
         volume = self.get_volume()
@@ -101,6 +106,9 @@ class ControlsWidget(QtWidgets.QWidget):
             strength = "volMuted"
 
         self.volume_button.setIcon(BUTTON_ICON[strength])
+
+        # update setting into database
+        Setting.upsert("volume", str(volume))
 
 
 # for dev purposes

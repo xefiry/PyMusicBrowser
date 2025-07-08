@@ -22,17 +22,19 @@ class Setting(BaseModel):
         return result
 
     @staticmethod
-    def get_value(name: str) -> str:
+    def get_value(name: str, default_value: str = "") -> str:
+        """Get setting with it's name. If not found or None, returns default value."""
+
         try:
             s = Setting.get(Setting.name == name)
 
             if s.value is not None:
                 return s.value
             else:
-                return ""
+                return default_value
 
         except peewee.DoesNotExist:
-            return ""
+            return default_value
 
     def __str__(self) -> str:
         return f"{self.name} = {self.value}"
