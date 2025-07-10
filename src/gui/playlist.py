@@ -38,8 +38,9 @@ class PlaylistWidget(QtWidgets.QWidget):
 
         # if playlist has changed or if we force the update
         if self.playlist_status != playlist_status or force:
-            print("updating playlist")
+            self.song_list.blockSignals(True)
             self.set_list(song_list)
+            self.song_list.blockSignals(False)
             self.playlist_status = playlist_status
 
             self.song_list.setCurrentRow(self.current_item)
