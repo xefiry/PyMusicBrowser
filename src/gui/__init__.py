@@ -34,30 +34,21 @@ class MainWindow(QtWidgets.QMainWindow):
         main_layout = QtWidgets.QVBoxLayout()
         main_widget.setLayout(main_layout)
 
-        self.playlist = PlaylistWidget(self)
+        self.playlist = PlaylistWidget(self, self.player)
         main_layout.addWidget(self.playlist)
 
         self.controls = ControlsWidget(self, self.player)
         main_layout.addWidget(self.controls)
 
-        # Controls connection
-
-        self.current_song = -1
+        # Periodic update of the UI
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_ui)
         self.timer.start(UPDATE_DELAY)
 
-        self.update_ui()
-
     def update_ui(self) -> None:
+        self.playlist.update_ui()
         self.controls.update_ui()
-
-        song_list = self.player.get_song_list()
-        if self.current_song != song_list[1]:
-            print("updating playlist")
-            self.playlist.set_list(song_list)
-            self.current_song = song_list[1]
 
     def __del__(self):
         self.player.quit()
