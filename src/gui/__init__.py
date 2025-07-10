@@ -5,6 +5,7 @@ from PySide6 import QtCore, QtWidgets
 from ..database.setting import Setting
 from ..player import Player, State
 from .controls import ControlsWidget
+from .playlist import PlaylistWidget
 
 UPDATE_DELAY = 100  # 0.1 s
 
@@ -28,9 +29,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # UI building
 
-        self.controls = ControlsWidget(self)
+        main_widget = QtWidgets.QWidget()
+        self.setCentralWidget(main_widget)
 
-        self.setCentralWidget(self.controls)
+        main_layout = QtWidgets.QVBoxLayout()
+        main_widget.setLayout(main_layout)
+
+        self.playlist = PlaylistWidget(self)
+        main_layout.addWidget(self.playlist)
+
+        self.controls = ControlsWidget(self)
+        main_layout.addWidget(self.controls)
 
         # Controls connection
 
@@ -45,6 +54,8 @@ class MainWindow(QtWidgets.QMainWindow):
         # Status member variables
         self.previous_volume = int(Setting.get_value("volume", "100"))
         self.set_volume(self.previous_volume)
+
+        self.current_song = -1
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_ui)
@@ -99,3 +110,9 @@ class MainWindow(QtWidgets.QMainWindow):
             self.controls.time_slider.setEnabled(True)
 
         self.controls.set_time(self.player.get_current_time())
+
+        song_list = self.player.get_song_list()
+        if self.current_song != song_list[1]:
+            print("updating playlist")
+            self.playlist.set_list(song_list)
+            self.current_song = song_list[1]
