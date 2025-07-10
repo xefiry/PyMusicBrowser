@@ -3,7 +3,7 @@ from PySide6.QtGui import QKeyEvent, QKeySequence
 
 
 class PlaylistWidget(QtWidgets.QWidget):
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(self, parent: QtWidgets.QWidget) -> None:
         super().__init__(parent=parent)
 
         self.setFixedWidth(300)
@@ -17,6 +17,9 @@ class PlaylistWidget(QtWidgets.QWidget):
         layout.addWidget(self.song_list)
 
         self.song_list.itemActivated.connect(self.itemActivated)
+
+    def update_ui(self) -> None:
+        pass
 
     def keyPressEvent(self, event):
         if isinstance(event, QKeyEvent) and event == QKeySequence.StandardKey.Delete:
@@ -37,13 +40,3 @@ class PlaylistWidget(QtWidgets.QWidget):
         for song in songs:
             item = QtWidgets.QListWidgetItem(self.song_list)
             item.setText(song)
-
-
-# for dev purposes
-if __name__ == "__main__":
-    app = QtWidgets.QApplication()
-    widget = PlaylistWidget()
-    tmp = [f"element {i}" for i in range(30)]
-    widget.set_list((tmp, 10))
-    widget.show()
-    app.exec()

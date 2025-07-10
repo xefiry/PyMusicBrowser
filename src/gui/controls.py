@@ -15,7 +15,7 @@ BUTTON_ICON = {
 
 
 class ControlsWidget(QtWidgets.QWidget):
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(self, parent: QtWidgets.QWidget) -> None:
         super().__init__(parent=parent)
 
         self.setMinimumWidth(600)
@@ -65,6 +65,9 @@ class ControlsWidget(QtWidgets.QWidget):
 
         self.time_label = QtWidgets.QLabel("0:00 / 0:00")
         layout.addWidget(self.time_label)
+
+    def update_ui(self) -> None:
+        pass
 
     def set_play_button(self, is_playing: bool) -> None:
         if is_playing:
@@ -121,11 +124,3 @@ def s_to_t(seconds: float) -> str:
         result = f"{m}:{s:02}"
 
     return result
-
-
-# for dev purposes
-if __name__ == "__main__":
-    app = QtWidgets.QApplication()
-    widget = ControlsWidget()
-    widget.show()
-    app.exec()
