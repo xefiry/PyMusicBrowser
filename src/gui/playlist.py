@@ -65,6 +65,8 @@ class PlaylistWidget(QtWidgets.QWidget):
 
         self.player.remove_song(index)
 
+        self.update_ui(True)
+
     def set_list(self, song_list: tuple[list[str], int]) -> None:
         songs, index = song_list
 
