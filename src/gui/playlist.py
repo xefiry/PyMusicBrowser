@@ -23,11 +23,13 @@ class PlaylistWidget(QtWidgets.QWidget):
 
         # Connect UI
 
+        self.song_list.currentItemChanged.connect(self.do_select_item)
         self.song_list.itemActivated.connect(self.do_play_song)
 
         # Status member variables
 
         self.playlist_status = (-1, -1)
+        self.current_item = 0
 
     def update_ui(self, force: bool = False) -> None:
         song_list = self.player.get_song_list()
@@ -40,14 +42,27 @@ class PlaylistWidget(QtWidgets.QWidget):
             self.set_list(song_list)
             self.playlist_status = playlist_status
 
+            self.song_list.setCurrentRow(self.current_item)
+
     def keyPressEvent(self, event):
         if isinstance(event, QKeyEvent) and event == QKeySequence.StandardKey.Delete:
-            index = self.song_list.selectedIndexes()
-            print(event, index)
+            self.do_remove_song()
+
+    def do_select_item(self, item) -> None:
+        index = self.song_list.indexFromItem(item).row()
+        self.current_item = index
 
     def do_play_song(self, item) -> None:
         index = self.song_list.indexFromItem(item).row()
         self.player.select_song(index)
+
+    def do_remove_song(self) -> None:
+        indexes = self.song_list.selectedIndexes()
+        if len(indexes) == 0:
+            return
+        index = indexes[0].row()
+
+        self.player.remove_song(index)
 
     def set_list(self, song_list: tuple[list[str], int]) -> None:
         songs, index = song_list
