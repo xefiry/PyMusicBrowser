@@ -1,6 +1,9 @@
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import QIcon
 
+from ..database.setting import Setting
+from ..player import Player, State
+
 BUTTON_ICON = {
     "play": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStart),
     "pause": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackPause),
@@ -15,11 +18,14 @@ BUTTON_ICON = {
 
 
 class ControlsWidget(QtWidgets.QWidget):
-    def __init__(self, parent: QtWidgets.QWidget) -> None:
+    def __init__(self, parent: QtWidgets.QWidget, player: Player) -> None:
         super().__init__(parent=parent)
+        self.player = player
 
         self.setMinimumWidth(600)
         self.setFixedHeight(60)
+
+        # Build UI
 
         layout = QtWidgets.QHBoxLayout(self)
 
@@ -66,21 +72,63 @@ class ControlsWidget(QtWidgets.QWidget):
         self.time_label = QtWidgets.QLabel("0:00 / 0:00")
         layout.addWidget(self.time_label)
 
+        # Connect UI
+
+        self.play_button.pressed.connect(self.do_play_pause)
+        self.prev_button.pressed.connect(self.do_previous)
+        self.next_button.pressed.connect(self.do_next)
+        self.stop_button.pressed.connect(self.do_stop)
+        self.volume_slider.valueChanged.connect(self.do_change_volume)
+        self.volume_button.pressed.connect(self.do_mute_volume)
+        self.time_slider.valueChanged.connect(self.do_change_time)
+
+        # Status member variables
+
+        self.previous_volume = int(Setting.get_value("volume", "100"))
+        self.set_volume(self.previous_volume)
+
     def update_ui(self) -> None:
-        pass
+        state = self.player.state
 
-    def set_play_button(self, is_playing: bool) -> None:
-        if is_playing:
-            icon = "pause"
+        new_icon = "pause" if state == State.PLAY else "play"
+        self.play_button.setIcon(BUTTON_ICON[new_icon])
+
+        self.time_slider.setEnabled(state != State.STOP)
+
+        self.set_time(self.player.get_current_time())
+
+    def do_play_pause(self) -> None:
+        self.player.play_pause()
+
+    def do_previous(self) -> None:
+        self.player.previous()
+
+    def do_next(self) -> None:
+        self.player.next()
+
+    def do_stop(self) -> None:
+        self.player.stop()
+
+    def do_change_volume(self) -> None:
+        volume = self.volume_slider.value()
+        self.set_volume(volume)
+
+    def do_mute_volume(self) -> None:
+        volume = self.player.get_volume()
+        if volume != 0:
+            self.previous_volume = volume
+            self.set_volume(0)
         else:
-            icon = "play"
+            self.set_volume(self.previous_volume)
 
-        self.play_button.setIcon(BUTTON_ICON[icon])
-
-    def get_volume(self) -> int:
-        return self.volume_slider.value()
+    def do_change_time(self) -> None:
+        time = self.time_slider.value()
+        self.player.seek(time)
 
     def set_volume(self, volume: int) -> None:
+        self.player.set_volume(volume)
+        Setting.upsert("volume", str(volume))
+
         self.volume_slider.blockSignals(True)
         self.volume_slider.setValue(volume)
         self.volume_slider.blockSignals(False)
@@ -96,9 +144,6 @@ class ControlsWidget(QtWidgets.QWidget):
             strength = "volMuted"
 
         self.volume_button.setIcon(BUTTON_ICON[strength])
-
-    def get_time(self) -> int:
-        return self.time_slider.value()
 
     def set_time(self, time: tuple[int, int]) -> None:
         self.time_slider.blockSignals(True)
