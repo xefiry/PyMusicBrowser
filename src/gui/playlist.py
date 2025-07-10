@@ -23,7 +23,7 @@ class PlaylistWidget(QtWidgets.QWidget):
 
         # Connect UI
 
-        self.song_list.itemActivated.connect(self.itemActivated)
+        self.song_list.itemActivated.connect(self.do_play_song)
 
         # Status member variables
 
@@ -45,10 +45,9 @@ class PlaylistWidget(QtWidgets.QWidget):
             index = self.song_list.selectedIndexes()
             print(event, index)
 
-    def itemActivated(self, item) -> None:
+    def do_play_song(self, item) -> None:
         index = self.song_list.indexFromItem(item).row()
-
-        print(f"itemActivated : {index} - {item.text()}")
+        self.player.select_song(index)
 
     def set_list(self, song_list: tuple[list[str], int]) -> None:
         songs, index = song_list
