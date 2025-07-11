@@ -18,7 +18,8 @@ class PlaylistWidget(QtWidgets.QWidget):
         # Build UI
 
         layout = QtWidgets.QVBoxLayout(self)
-
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
         self.setLayout(layout)
 
         self.song_list = QtWidgets.QListWidget()
