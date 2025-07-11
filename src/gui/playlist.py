@@ -1,5 +1,4 @@
 from PySide6 import QtGui, QtWidgets
-from PySide6.QtGui import QKeyEvent, QKeySequence
 
 from ..database.song import Song
 from ..player import Player
@@ -25,7 +24,6 @@ class PlaylistWidget(QtWidgets.QWidget):
         self.song_list = QtWidgets.QListWidget()
         layout.addWidget(self.song_list)
 
-        # ToDo: enable drag&drop and handle playlist update
         _mode = QtWidgets.QAbstractItemView.DragDropMode.InternalMove
         self.song_list.setDragDropMode(_mode)
 
@@ -69,7 +67,7 @@ class PlaylistWidget(QtWidgets.QWidget):
         QtWidgets.QListWidget.keyPressEvent(self.song_list, event)
 
         # If the key pressed is not Delete, do nothihng
-        if event != QKeySequence.StandardKey.Delete:
+        if event != QtGui.QKeySequence.StandardKey.Delete:
             return
 
         indexes = self.song_list.selectedIndexes()
