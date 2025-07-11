@@ -34,6 +34,7 @@ class PlaylistWidget(QtWidgets.QWidget):
         self.song_list.currentItemChanged.connect(self.do_select_item)
         self.song_list.itemActivated.connect(self.do_play_song)
         self.song_list.dropEvent = self.do_drop
+        self.song_list.keyPressEvent = self.do_remove_song
 
         # Status member variables
 
@@ -55,10 +56,6 @@ class PlaylistWidget(QtWidgets.QWidget):
 
             self.song_list.setCurrentRow(self.selected_item_index)
 
-    def keyPressEvent(self, event: QtGui.QKeyEvent):
-        if isinstance(event, QKeyEvent) and event == QKeySequence.StandardKey.Delete:
-            self.do_remove_song()
-
     def do_select_item(self, item: QtWidgets.QListWidgetItem) -> None:
         index = self.song_list.indexFromItem(item).row()
         self.selected_item_index = index
@@ -67,7 +64,14 @@ class PlaylistWidget(QtWidgets.QWidget):
         index = self.song_list.indexFromItem(item).row()
         self.player.select_song(index)
 
-    def do_remove_song(self) -> None:
+    def do_remove_song(self, event: QtGui.QKeyEvent) -> None:
+        # call default event handler
+        QtWidgets.QListWidget.keyPressEvent(self.song_list, event)
+
+        # If the key pressed is not Delete, do nothihng
+        if event != QKeySequence.StandardKey.Delete:
+            return
+
         indexes = self.song_list.selectedIndexes()
         if len(indexes) == 0:
             return
