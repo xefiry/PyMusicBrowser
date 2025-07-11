@@ -1,4 +1,4 @@
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtGui, QtWidgets
 from PySide6.QtGui import QKeyEvent, QKeySequence
 
 from ..player import Player
@@ -24,8 +24,6 @@ class PlaylistWidget(QtWidgets.QWidget):
         # ToDo: enable drag&drop and handle playlist update
         _mode = QtWidgets.QAbstractItemView.DragDropMode.InternalMove
         self.song_list.setDragDropMode(_mode)
-        self.song_list.setAcceptDrops(True)
-        self.song_list.setDefaultDropAction(QtCore.Qt.DropAction.MoveAction)
 
         # Connect UI
 
