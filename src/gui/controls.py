@@ -28,8 +28,6 @@ class ControlsWidget(QtWidgets.QWidget):
         # Build UI
 
         layout = QtWidgets.QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
         self.setLayout(layout)
 
         self.prev_button = QtWidgets.QPushButton("prev")
