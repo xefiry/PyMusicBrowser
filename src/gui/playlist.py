@@ -1,6 +1,7 @@
 from PySide6 import QtGui, QtWidgets
 from PySide6.QtGui import QKeyEvent, QKeySequence
 
+from ..database.song import Song
 from ..player import Player
 
 
@@ -54,12 +55,13 @@ class PlaylistWidget(QtWidgets.QWidget):
         if isinstance(event, QKeyEvent) and event == QKeySequence.StandardKey.Delete:
             self.do_remove_song()
 
-    def dropEvent(self, event):
-        print("dropEvent")
-        print(type(event))
-        print(event)
-
     def do_select_item(self, item: QtWidgets.QListWidgetItem) -> None:
+        print("do_select_item", item.data(999))
+        print(item.data(0))
+        print(item.data(1))
+        print(item.data(2))
+        print(item.data(3))
+        print(item.data(4))
         index = self.song_list.indexFromItem(item).row()
         self.current_item = index
 
@@ -85,12 +87,12 @@ class PlaylistWidget(QtWidgets.QWidget):
         print(type(event))
         print(event)
 
-    def set_list(self, song_list: tuple[list[str], int]) -> None:
+    def set_list(self, song_list: tuple[list[Song], int]) -> None:
         songs, index = song_list
 
-        songs[index] = "> " + songs[index]
-
         self.song_list.clear()
-        for song in songs:
+        for nb, song in enumerate(songs):
+            prefix = "> " if nb == index else " "
             item = QtWidgets.QListWidgetItem(self.song_list)
-            item.setText(song)
+            item.setData(999, song.get_id())
+            item.setText(f"{prefix}{song.get_id()} - {song}")
