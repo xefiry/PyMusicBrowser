@@ -37,8 +37,9 @@ class Playlist:
 
         Setting.upsert("playlist", f"{cur}|{songs}")
 
-    def load(self) -> None:
-        playlist = Setting.get_value("playlist")
+    def load(self, playlist: str = "") -> None:
+        if playlist == "":
+            playlist = Setting.get_value("playlist")
 
         if playlist == "":
             return
@@ -46,6 +47,8 @@ class Playlist:
         cur, songs = playlist.split("|")
 
         self.current_song = int(cur)
+
+        self.song_list.clear()
 
         for song_id in songs.split(","):
             self.song_list.append(Song.get_by_id(song_id))

@@ -4,6 +4,9 @@ from PySide6.QtGui import QKeyEvent, QKeySequence
 from ..database.song import Song
 from ..player import Player
 
+SONG_INDEX = -1
+SONG_ID = -2
+
 
 class PlaylistWidget(QtWidgets.QWidget):
     def __init__(self, parent: QtWidgets.QWidget, player: Player) -> None:
@@ -35,7 +38,8 @@ class PlaylistWidget(QtWidgets.QWidget):
         # Status member variables
 
         self.playlist_status = (-1, -1)
-        self.current_item = 0
+        self.selected_item_index = 0
+        self.current_song_index = 0
 
     def update_ui(self, force: bool = False) -> None:
         song_list = self.player.get_song_list()
@@ -49,21 +53,15 @@ class PlaylistWidget(QtWidgets.QWidget):
             self.song_list.blockSignals(False)
             self.playlist_status = playlist_status
 
-            self.song_list.setCurrentRow(self.current_item)
+            self.song_list.setCurrentRow(self.selected_item_index)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent):
         if isinstance(event, QKeyEvent) and event == QKeySequence.StandardKey.Delete:
             self.do_remove_song()
 
     def do_select_item(self, item: QtWidgets.QListWidgetItem) -> None:
-        print("do_select_item", item.data(999))
-        print(item.data(0))
-        print(item.data(1))
-        print(item.data(2))
-        print(item.data(3))
-        print(item.data(4))
         index = self.song_list.indexFromItem(item).row()
-        self.current_item = index
+        self.selected_item_index = index
 
     def do_play_song(self, item: QtWidgets.QListWidgetItem) -> None:
         index = self.song_list.indexFromItem(item).row()
@@ -83,16 +81,49 @@ class PlaylistWidget(QtWidgets.QWidget):
         # call default event handler
         QtWidgets.QListWidget.dropEvent(self.song_list, event)
 
-        print("ToDo")
-        print(type(event))
-        print(event)
+        song_id_list = []
+        new_song_index = -1
+        new_selected_index = -1
+
+        for i in range(self.song_list.count()):
+            # get the song from the list
+            song = self.song_list.item(i)
+
+            # get the song ID, and add it to the list
+            song_id = song.data(SONG_ID)
+            song_id_list.append(song_id)
+
+            # get the index from data
+            song_index = song.data(SONG_INDEX)
+
+            # if the song index in the data is the current one, we save it
+            if song_index == self.current_song_index:
+                new_song_index = i
+
+            # if the song index in the data is the selected song
+            # and it has not been already found, update it with the new one
+            if song_index == self.selected_item_index and new_selected_index == -1:
+                new_selected_index = i
+
+        # update the selected index
+        self.selected_item_index = new_selected_index
+
+        # create the list of songs ID
+        items = ",".join(map(str, song_id_list))
+
+        # Load the new playlist order
+        self.player.playlist.load(f"{new_song_index}|{items}")
+
+        # Force UI update
+        self.update_ui(True)
 
     def set_list(self, song_list: tuple[list[Song], int]) -> None:
-        songs, index = song_list
+        songs, self.current_song_index = song_list
 
         self.song_list.clear()
         for nb, song in enumerate(songs):
-            prefix = "> " if nb == index else " "
+            prefix = "⏵" if nb == self.current_song_index else " "
             item = QtWidgets.QListWidgetItem(self.song_list)
-            item.setData(999, song.get_id())
-            item.setText(f"{prefix}{song.get_id()} - {song}")
+            item.setData(SONG_INDEX, nb)
+            item.setData(SONG_ID, song.get_id())
+            item.setText(f"{prefix} {song}")
