@@ -1,4 +1,4 @@
-from PySide6 import QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtGui import QKeyEvent, QKeySequence
 
 from ..player import Player
@@ -22,17 +22,16 @@ class PlaylistWidget(QtWidgets.QWidget):
         layout.addWidget(self.song_list)
 
         # ToDo: enable drag&drop and handle playlist update
-        """
         _mode = QtWidgets.QAbstractItemView.DragDropMode.InternalMove
         self.song_list.setDragDropMode(_mode)
         self.song_list.setAcceptDrops(True)
         self.song_list.setDefaultDropAction(QtCore.Qt.DropAction.MoveAction)
-        """
 
         # Connect UI
 
         self.song_list.currentItemChanged.connect(self.do_select_item)
         self.song_list.itemActivated.connect(self.do_play_song)
+        self.song_list.dropEvent = self.do_drop
 
         # Status member variables
 
@@ -79,6 +78,14 @@ class PlaylistWidget(QtWidgets.QWidget):
         self.player.remove_song(index)
 
         self.update_ui(True)
+
+    def do_drop(self, event: QtGui.QDropEvent) -> None:
+        # call default event handler
+        QtWidgets.QListWidget.dropEvent(self.song_list, event)
+
+        print("ToDo")
+        print(type(event))
+        print(event)
 
     def set_list(self, song_list: tuple[list[str], int]) -> None:
         songs, index = song_list
