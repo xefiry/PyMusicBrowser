@@ -78,6 +78,9 @@ class Playlist:
         self.current_song = song_nb
         self.populate(0)
 
+    def add_next(self, song: Song) -> None:
+        self.song_list.insert(self.current_song + 1, song)
+
     def remove(self, song_nb: int) -> bool:
         """returns true if the removed song was the current one"""
         s = self.song_list[song_nb]

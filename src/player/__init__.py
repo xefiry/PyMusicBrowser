@@ -4,6 +4,7 @@ import threading
 import pygame
 
 from ..database.song import Song
+from ..database.album import Album
 from .playlist import Playlist
 
 
@@ -77,6 +78,24 @@ class Player:
         self.state = State.PLAY
         self.playlist.select(song_nb)
         self.load_music()
+
+    def add_song(self, song_id: int) -> None:
+        song = Song.select().where(Song.id == song_id).get()  # type: ignore
+        self.playlist.add_next(song)
+        self.next()
+
+    def add_album(self, album_id: int) -> None:
+        songs = (
+            Song.select()
+            .join(Album)
+            .where(Album.id == album_id)  # type: ignore
+            # order by desc because songs will be added next to the current one
+            .order_by(Song.track.desc(), Song.name.desc())
+        )
+
+        for song in songs:
+            self.playlist.add_next(song)
+        self.next()
 
     def remove_song(self, song_nb: int) -> None:
         if self.playlist.remove(song_nb):

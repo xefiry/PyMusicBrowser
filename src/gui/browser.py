@@ -1,6 +1,5 @@
 from PySide6 import QtWidgets
 
-from .. import database
 from ..database.album import Album
 from ..database.artist import Artist
 from ..database.song import Song
@@ -67,7 +66,7 @@ class BrowserWidget(QtWidgets.QWidget):
 
         # Connect UI
 
-        # ...
+        self.song_list.itemActivated.connect(self.do_play_song)
 
         # Status member variables
 
@@ -75,3 +74,11 @@ class BrowserWidget(QtWidgets.QWidget):
 
     def update_ui(self) -> None:
         pass
+
+    def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
+        if item.data(0, ITEM_TYPE) == "song":
+            song_id = item.data(0, ITEM_ID)
+            self.player.add_song(song_id)
+        elif item.data(0, ITEM_TYPE) == "album":
+            album_id = item.data(0, ITEM_ID)
+            self.player.add_album(album_id)
