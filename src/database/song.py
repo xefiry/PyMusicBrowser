@@ -25,7 +25,7 @@ class Song(BaseModel):
     def __str__(self) -> str:
         track = str(self.track) + " - " if self.track is not None else ""
 
-        return f"{track:3} - {self.name}\n    {self.artist}"
+        return f"{track:3}{self.name}\n    {self.artist}"
 
     def set_active(self) -> None:
         self.status = 1
