@@ -54,7 +54,7 @@ class BrowserWidget(QtWidgets.QWidget):
                 for song in (
                     Song.select()
                     .where(Song.album == album)
-                    .order_by(Song.track, Song.name)
+                    .order_by(Song.disk, Song.track, Song.name)
                 ):
                     song_item = QtWidgets.QTreeWidgetItem()
                     song_item.setText(0, f"{song.track} - {song.name}")
