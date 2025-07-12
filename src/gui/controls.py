@@ -1,4 +1,4 @@
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import QIcon
 
 from ..database.setting import Setting
@@ -80,17 +80,6 @@ class ControlsWidget(QtWidgets.QWidget):
         self.volume_slider.valueChanged.connect(self.do_change_volume)
         self.volume_button.pressed.connect(self.do_mute_volume)
         self.time_slider.valueChanged.connect(self.do_change_time)
-
-        # Keyboard shortcuts
-
-        for shortcut in [
-            (" ", self.do_play_pause),
-            ("<", self.do_previous),
-            (">", self.do_next),
-        ]:
-            new = QtGui.QShortcut(self)
-            new.setKey(shortcut[0])
-            new.activated.connect(shortcut[1])
 
         # Status member variables
 

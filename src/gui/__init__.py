@@ -1,6 +1,7 @@
 import sys
 
-from PySide6 import QtCore, QtWidgets
+from pynput import keyboard
+from PySide6 import QtCore, QtGui, QtWidgets
 
 from ..player import Player
 from .browser import BrowserWidget
@@ -82,6 +83,31 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.update_ui)
         self.timer.start(UPDATE_DELAY)
 
+        # Keyboard shortcuts
+
+        for shortcut in [
+            ("<", self.controls.do_previous),
+            (" ", self.controls.do_play_pause),
+            (">", self.controls.do_next),
+            ("ctrl + p", self.controls.do_previous),
+            ("ctrl + n", self.controls.do_next),
+            ("ctrl + s", self.controls.do_stop),
+        ]:
+            new = QtGui.QShortcut(self)
+            new.setKey(shortcut[0])
+            new.activated.connect(shortcut[1])
+
+        self.key_listener = keyboard.Listener(on_press=self.do_hadle_keypress)
+        self.key_listener.start()
+
+    def do_hadle_keypress(self, key):
+        if key == keyboard.Key.media_previous:
+            self.controls.do_previous()
+        elif key == keyboard.Key.media_play_pause:
+            self.controls.do_play_pause()
+        elif key == keyboard.Key.media_next:
+            self.controls.do_next()
+
     def update_ui(self) -> None:
         self.playlist.update_ui()
         self.song_info.update_ui()
@@ -91,3 +117,4 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __del__(self):
         self.player.quit()
+        self.key_listener.stop()
