@@ -26,10 +26,9 @@ class NavigationWidget(QtWidgets.QWidget):
         layout.addWidget(self.clear_button)
 
         self.item_list = QtWidgets.QTreeWidget()
-        layout.addWidget(self.item_list)
-
         self.item_list.setHeaderHidden(True)
         self.item_list.setColumnCount(1)
+        layout.addWidget(self.item_list)
 
         self.filter_bar = QtWidgets.QLineEdit()
         self.filter_bar.setReadOnly(True)
