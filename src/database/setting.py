@@ -7,17 +7,19 @@ class Setting(BaseModel):
     name = peewee.CharField(unique=True)
     value = peewee.CharField(null=True)
 
+    def __str__(self) -> str:
+        return f"{self.name} = {self.value}"
+
     @staticmethod
     def upsert(name: str, value: str | None) -> "Setting":
-        clause = (Setting.name == name,)
-        count = Setting.select().where(*clause).count()
+        setting = Setting.select().where(Setting.name == name)
 
-        if count == 0:
-            result = Setting.create(name=name, value=value)
-        else:
-            result = Setting.get(*clause)
+        if setting.exists():
+            result = setting.get()
             result.value = value
             result.save()
+        else:
+            result = Setting.create(name=name, value=value)
 
         return result
 
@@ -35,6 +37,3 @@ class Setting(BaseModel):
 
         except peewee.DoesNotExist:
             return default_value
-
-    def __str__(self) -> str:
-        return f"{self.name} = {self.value}"

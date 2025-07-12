@@ -10,6 +10,9 @@ class Album(BaseModel):
     year = peewee.IntegerField(null=True)
     status = peewee.IntegerField()
 
+    def __str__(self) -> str:
+        return f"{self.name} ({self.year}) {self.artist}"
+
     def set_active(self) -> None:
         self.status = 1
         self.save()
@@ -24,18 +27,14 @@ class Album(BaseModel):
         if name is None:
             return None
 
-        clause = (Album.name == name, Album.artist == artist)
-        count = Album.select().where(*clause).count()
+        album = Album.select().where(Album.name == name, Album.artist == artist)
 
-        if count == 0:
-            result = Album.create(name=name, artist=artist, year=year, status=1)
-        else:
-            result = Album.get(*clause)
+        if album.exists():
+            result = album.get()
             if year is not None:
                 result.year = min(result.year, year)
             result.save()
+        else:
+            result = Album.create(name=name, artist=artist, year=year, status=1)
 
         return result
-
-    def __str__(self) -> str:
-        return f"{self.name} ({self.year}) {self.artist}"

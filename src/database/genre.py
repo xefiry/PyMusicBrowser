@@ -7,6 +7,9 @@ class Genre(BaseModel):
     name = peewee.CharField(unique=True)
     status = peewee.IntegerField()
 
+    def __str__(self) -> str:
+        return f"{self.name}"
+
     def set_active(self) -> None:
         self.status = 1
         self.save()
@@ -16,19 +19,11 @@ class Genre(BaseModel):
         if name is None:
             return None
 
-        clause = (Genre.name == name,)
-        count = Genre.select().where(*clause).count()
+        genre = Genre.select().where(Genre.name == name)
 
-        if count == 0:
-            result = Genre.create(
-                name=name,
-                status=1,
-            )
+        if genre.exists():
+            result = genre.get()
         else:
-            result = Genre.get(*clause)
-            result.save()
+            result = Genre.create(name=name, status=1)
 
         return result
-
-    def __str__(self) -> str:
-        return f"{self.name}"

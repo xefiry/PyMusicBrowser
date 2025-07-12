@@ -22,6 +22,11 @@ class Song(BaseModel):
     file_mtime = peewee.IntegerField()
     file_size = peewee.IntegerField()
 
+    def __str__(self) -> str:
+        track = str(self.track) + " - " if self.track is not None else ""
+
+        return f"{track:3} - {self.name}\n    {self.artist}"
+
     def set_active(self) -> None:
         self.status = 1
         self.save()
@@ -51,10 +56,24 @@ class Song(BaseModel):
         file_mtime: int,
         file_size: int,
     ) -> "Song":
-        clause = (Song.file_path == file_path,)
-        count = Song.select().where(*clause).count()
+        song = Song.select().where(Song.file_path == file_path)
 
-        if count == 0:
+        if song.exists():
+            result = song.get()
+            result.track = track
+            result.track_total = track
+            result.name = name
+            result.genre = genre
+            result.album = album
+            result.disk = disk
+            result.disk_total = disk_total
+            result.year = year
+            result.duration = duration
+            result.artist = artist
+            result.file_mtime = file_mtime
+            result.file_size = file_size
+            result.save()
+        else:
             result = Song.create(
                 track=track,
                 track_total=track_total,
@@ -71,21 +90,6 @@ class Song(BaseModel):
                 file_mtime=file_mtime,
                 file_size=file_size,
             )
-        else:
-            result = Song.get(*clause)
-            result.track = track
-            result.track_total = track
-            result.name = name
-            result.genre = genre
-            result.album = album
-            result.disk = disk
-            result.disk_total = disk_total
-            result.year = year
-            result.duration = duration
-            result.artist = artist
-            result.file_mtime = file_mtime
-            result.file_size = file_size
-            result.save()
 
         return result
 
@@ -100,8 +104,3 @@ class Song(BaseModel):
             return -1
 
         return s.file_mtime
-
-    def __str__(self) -> str:
-        track = str(self.track) + " - " if self.track is not None else ""
-
-        return f"{track:3} - {self.name}\n    {self.artist}"
