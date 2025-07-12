@@ -9,7 +9,6 @@ class BrowserWidget(QtWidgets.QWidget):
         self.player = player
 
         self.setMinimumWidth(600)
-        self.setFixedHeight(60)
 
         # Build UI
 

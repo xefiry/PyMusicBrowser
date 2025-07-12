@@ -13,7 +13,7 @@ class PlaylistWidget(QtWidgets.QWidget):
         self.player = player
 
         self.setFixedWidth(300)
-        self.setMinimumHeight(500)
+        self.setMinimumHeight(300)
 
         # Build UI
 

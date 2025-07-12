@@ -5,6 +5,7 @@ from PySide6 import QtCore, QtWidgets
 from ..player import Player
 from .browser import BrowserWidget
 from .controls import ControlsWidget
+from .navigation import NavigationWidget
 from .playlist import PlaylistWidget
 from .song_info import SongInfoWidget
 
@@ -32,6 +33,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.playlist = PlaylistWidget(self, self.player)
         self.song_info = SongInfoWidget(self, self.player)
+        self.navigator = NavigationWidget(self, self.player)
         self.browser = BrowserWidget(self, self.player)
         self.controls = ControlsWidget(self, self.player)
 
@@ -48,7 +50,7 @@ class MainWindow(QtWidgets.QMainWindow):
         side_layout.addWidget(self.playlist)
         side_layout.addWidget(self.song_info)
 
-        # UI building => Top = Browser + Side
+        # UI building => Top = Navigator + Browser + Side
 
         top_widget = QtWidgets.QWidget()
 
@@ -57,6 +59,7 @@ class MainWindow(QtWidgets.QMainWindow):
         top_layout.setSpacing(0)
         top_widget.setLayout(top_layout)
 
+        top_layout.addWidget(self.navigator)
         top_layout.addWidget(self.browser)
         top_layout.addWidget(side_widget)
 
@@ -82,6 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_ui(self) -> None:
         self.playlist.update_ui()
         self.song_info.update_ui()
+        self.navigator.update_ui()
         self.browser.update_ui()
         self.controls.update_ui()
 
