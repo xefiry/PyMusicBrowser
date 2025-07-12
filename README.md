@@ -30,14 +30,16 @@ In development
 - Player
   - [ ] Handle missing files
 - UI
+  - [x] Manage multimedia keys (Using [pynput](https://github.com/moses-palmer/pynput))
   - [ ] Add scan button + dialog to ask/confirm for directories to scan
     - [x] Store directories to scan in database
   - [ ] Button to add current song album next in queue and play it
-  - [ ] Manage multimedia keys (Using [keyboard](https://pypi.org/project/keyboard/) ?)
   - [ ] Allow selection of multiple items in playlist and to reorder them
   - [ ] Add keyboard shortcuts
   - [ ] Add tray icon
   - [ ] Add mini player
+  - [ ] Handle multi CD albums
+  - [ ] Show notification on song change if window is not visible
 - Playlist
   - [x] Save playlist on exit and restore it on start
   - [ ] Calling previous replays the same song if time position is > N seconds (to define)
