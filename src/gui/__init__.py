@@ -3,6 +3,7 @@ import sys
 from PySide6 import QtCore, QtWidgets
 
 from ..player import Player
+from .browser import BrowserWidget
 from .controls import ControlsWidget
 from .playlist import PlaylistWidget
 from .song_info import SongInfoWidget
@@ -27,7 +28,39 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.player = Player()
 
-        # UI building
+        # UI content
+
+        self.playlist = PlaylistWidget(self, self.player)
+        self.song_info = SongInfoWidget(self, self.player)
+        self.browser = BrowserWidget(self, self.player)
+        self.controls = ControlsWidget(self, self.player)
+
+        # UI building => Side = Playlist + Song info
+
+        side_widget = QtWidgets.QWidget()
+        side_widget.setFixedWidth(300)
+
+        side_layout = QtWidgets.QVBoxLayout()
+        side_layout.setContentsMargins(0, 0, 0, 0)
+        side_layout.setSpacing(0)
+        side_widget.setLayout(side_layout)
+
+        side_layout.addWidget(self.playlist)
+        side_layout.addWidget(self.song_info)
+
+        # UI building => Top = Browser + Side
+
+        top_widget = QtWidgets.QWidget()
+
+        top_layout = QtWidgets.QHBoxLayout()
+        top_layout.setContentsMargins(0, 0, 0, 0)
+        top_layout.setSpacing(0)
+        top_widget.setLayout(top_layout)
+
+        top_layout.addWidget(self.browser)
+        top_layout.addWidget(side_widget)
+
+        # UI building => Main = Top + Controls
 
         main_widget = QtWidgets.QWidget()
         self.setCentralWidget(main_widget)
@@ -37,13 +70,7 @@ class MainWindow(QtWidgets.QMainWindow):
         main_layout.setSpacing(0)
         main_widget.setLayout(main_layout)
 
-        self.playlist = PlaylistWidget(self, self.player)
-        main_layout.addWidget(self.playlist)
-
-        self.song_info = SongInfoWidget(self, self.player)
-        main_layout.addWidget(self.song_info)
-
-        self.controls = ControlsWidget(self, self.player)
+        main_layout.addWidget(top_widget)
         main_layout.addWidget(self.controls)
 
         # Periodic update of the UI
@@ -55,6 +82,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_ui(self) -> None:
         self.playlist.update_ui()
         self.song_info.update_ui()
+        self.browser.update_ui()
         self.controls.update_ui()
 
     def __del__(self):
