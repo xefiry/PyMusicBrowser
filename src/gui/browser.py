@@ -1,6 +1,13 @@
 from PySide6 import QtWidgets
 
+from .. import database
+from ..database.album import Album
+from ..database.artist import Artist
+from ..database.song import Song
 from ..player import Player
+
+ITEM_TYPE = -1
+ITEM_ID = -2
 
 
 class BrowserWidget(QtWidgets.QWidget):
@@ -17,7 +24,46 @@ class BrowserWidget(QtWidgets.QWidget):
         layout.setSpacing(0)
         self.setLayout(layout)
 
-        layout.addWidget(QtWidgets.QTextEdit())
+        self.song_list = QtWidgets.QTreeWidget()
+        self.song_list.setHeaderHidden(True)
+        self.song_list.setColumnCount(1)
+        layout.addWidget(self.song_list)
+
+        for artist in (
+            Artist.select(Artist.id, Artist.name)  # type: ignore
+            .distinct()
+            .join(Album)
+            .order_by(Artist.name)
+        ):
+            artist_item = QtWidgets.QTreeWidgetItem()
+            artist_item.setText(0, str(artist.name))
+            artist_item.setData(0, ITEM_TYPE, "artist")
+            artist_item.setData(0, ITEM_ID, artist.get_id())
+            self.song_list.addTopLevelItem(artist_item)
+
+            for album in (
+                Album.select()
+                .where(Album.artist == artist)
+                .order_by(Album.year, Album.name)
+            ):
+                album_item = QtWidgets.QTreeWidgetItem()
+                album_item.setText(0, f"[{album.year}] {album.name}")
+                album_item.setData(0, ITEM_TYPE, "album")
+                album_item.setData(0, ITEM_ID, album.get_id())
+                artist_item.addChild(album_item)
+
+                for song in (
+                    Song.select()
+                    .where(Song.album == album)
+                    .order_by(Song.track, Song.name)
+                ):
+                    song_item = QtWidgets.QTreeWidgetItem()
+                    song_item.setText(0, f"{song.track} - {song.name}")
+                    song_item.setData(0, ITEM_TYPE, "song")
+                    song_item.setData(0, ITEM_ID, song.get_id())
+                    album_item.addChild(song_item)
+
+            artist_item.setExpanded(True)
 
         # Connect UI
 
