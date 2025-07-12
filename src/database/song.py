@@ -102,4 +102,6 @@ class Song(BaseModel):
         return s.file_mtime
 
     def __str__(self) -> str:
-        return f"{self.track:3} - {self.name}\n    {self.artist}"
+        track = str(self.track) + " - " if self.track is not None else ""
+
+        return f"{track:3} - {self.name}\n    {self.artist}"
