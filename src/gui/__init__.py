@@ -85,7 +85,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Keyboard shortcuts
 
-        for shortcut in [
+        for shortcut, action in [
             ("<", self.controls.do_previous),
             (" ", self.controls.do_play_pause),
             (">", self.controls.do_next),
@@ -93,9 +93,9 @@ class MainWindow(QtWidgets.QMainWindow):
             ("ctrl + n", self.controls.do_next),
             ("ctrl + s", self.controls.do_stop),
         ]:
-            new = QtGui.QShortcut(self)
-            new.setKey(shortcut[0])
-            new.activated.connect(shortcut[1])
+            tmp = QtGui.QShortcut(self)
+            tmp.setKey(shortcut)
+            tmp.activated.connect(action)
 
         self.key_listener = keyboard.Listener(on_press=self.do_hadle_keypress)
         self.key_listener.start()
