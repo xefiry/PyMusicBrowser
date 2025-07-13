@@ -102,8 +102,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.browser.update_ui()
         self.controls.update_ui()
 
-    def __del__(self):
-        # FixMe: see why this function is not called when keyboard listener (self.key_listener) is active
-        # put it in a separate thread ?
+    def closeEvent(self, event):
         self.player.quit()
         self.key_listener.stop()
+
+        QtWidgets.QWidget.closeEvent(self, event)
