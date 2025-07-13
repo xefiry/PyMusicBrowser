@@ -3,8 +3,8 @@ from PySide6 import QtGui, QtWidgets
 from ..database.song import Song
 from ..player import Player
 
-SONG_INDEX = -1
-SONG_ID = -2
+DATA = -1
+INDEX = -2
 
 
 class PlaylistWidget(QtWidgets.QWidget):
@@ -93,11 +93,11 @@ class PlaylistWidget(QtWidgets.QWidget):
             song = self.song_list.item(i)
 
             # get the song ID, and add it to the list
-            song_id = song.data(SONG_ID)
+            song_id = song.data(DATA).get_id()
             song_id_list.append(song_id)
 
             # get the index from data
-            song_index = song.data(SONG_INDEX)
+            song_index = song.data(INDEX)
 
             # if the song index in the data is the current one, we save it
             if song_index == self.current_song_index:
@@ -127,6 +127,6 @@ class PlaylistWidget(QtWidgets.QWidget):
         for nb, song in enumerate(songs):
             prefix = "⏵" if nb == self.current_song_index else " "
             item = QtWidgets.QListWidgetItem(self.song_list)
-            item.setData(SONG_INDEX, nb)
-            item.setData(SONG_ID, song.get_id())
+            item.setData(DATA, song)
+            item.setData(INDEX, nb)
             item.setText(f"{prefix} {song}")

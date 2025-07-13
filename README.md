@@ -40,6 +40,7 @@ In development
   - [ ] Add mini player
   - [ ] Handle multi CD albums
   - [ ] Show notification on song change if window is not visible
+  - [ ] Add mouse prev/next for prev/next song
 - Playlist
   - [x] Save playlist on exit and restore it on start
   - [ ] Calling previous replays the same song if time position is > N seconds (to define)

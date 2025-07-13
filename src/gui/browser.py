@@ -5,8 +5,7 @@ from ..database.artist import Artist
 from ..database.song import Song
 from ..player import Player
 
-ITEM_TYPE = -1
-ITEM_ID = -2
+DATA = -1
 
 
 class BrowserWidget(QtWidgets.QWidget):
@@ -36,8 +35,7 @@ class BrowserWidget(QtWidgets.QWidget):
         ):
             artist_item = QtWidgets.QTreeWidgetItem()
             artist_item.setText(0, str(artist.name))
-            artist_item.setData(0, ITEM_TYPE, "artist")
-            artist_item.setData(0, ITEM_ID, artist.get_id())
+            artist_item.setData(0, DATA, artist)
             self.song_list.addTopLevelItem(artist_item)
 
             for album in (
@@ -47,8 +45,7 @@ class BrowserWidget(QtWidgets.QWidget):
             ):
                 album_item = QtWidgets.QTreeWidgetItem()
                 album_item.setText(0, f"[{album.year}] {album.name}")
-                album_item.setData(0, ITEM_TYPE, "album")
-                album_item.setData(0, ITEM_ID, album.get_id())
+                album_item.setData(0, DATA, album)
                 artist_item.addChild(album_item)
 
                 for song in (
@@ -58,8 +55,7 @@ class BrowserWidget(QtWidgets.QWidget):
                 ):
                     song_item = QtWidgets.QTreeWidgetItem()
                     song_item.setText(0, f"{song.track} - {song.name}")
-                    song_item.setData(0, ITEM_TYPE, "song")
-                    song_item.setData(0, ITEM_ID, song.get_id())
+                    song_item.setData(0, DATA, song)
                     album_item.addChild(song_item)
 
             artist_item.setExpanded(True)
@@ -76,9 +72,9 @@ class BrowserWidget(QtWidgets.QWidget):
         pass
 
     def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
-        if item.data(0, ITEM_TYPE) == "song":
-            song_id = item.data(0, ITEM_ID)
-            self.player.add_song(song_id)
-        elif item.data(0, ITEM_TYPE) == "album":
-            album_id = item.data(0, ITEM_ID)
-            self.player.add_album(album_id)
+        data = item.data(0, DATA)
+
+        if type(data) is Song:
+            self.player.add_song(data.get_id())
+        elif type(data) is Album:
+            self.player.add_album(data.get_id())
