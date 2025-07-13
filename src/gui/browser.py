@@ -2,7 +2,6 @@ from PySide6 import QtWidgets
 
 from .. import database
 from ..database.album import Album
-from ..database.artist import Artist
 from ..database.song import Song
 from ..player import Player
 
@@ -18,10 +17,13 @@ class BrowserWidget(QtWidgets.QWidget):
 
         # Build UI
 
-        layout = QtWidgets.QHBoxLayout(self)
+        layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         self.setLayout(layout)
+
+        self.search_bar = QtWidgets.QLineEdit()
+        layout.addWidget(self.search_bar)
 
         self.song_list = QtWidgets.QTreeWidget()
         self.song_list.setHeaderHidden(True)
@@ -50,6 +52,7 @@ class BrowserWidget(QtWidgets.QWidget):
 
         # Connect UI
 
+        self.search_bar.textChanged.connect(self.do_search)
         self.song_list.itemActivated.connect(self.do_play_song)
 
         # Status member variables
@@ -59,8 +62,47 @@ class BrowserWidget(QtWidgets.QWidget):
     def update_ui(self) -> None:
         pass
 
+    def do_search(self, input: str) -> None:
+        hide_song: bool
+        hide_album: bool
+        hide_artist: bool
+
+        root = self.song_list.invisibleRootItem()
+
+        for i in range(root.childCount()):
+            artist = root.child(i)
+
+            hide_artist = True
+
+            for j in range(artist.childCount()):
+                album = artist.child(j)
+
+                hide_album = True
+
+                for k in range(album.childCount()):
+                    song = album.child(k)
+                    song_data: Song = song.data(0, DATA)
+
+                    hide_song = not song_data.match(input)
+                    song.setHidden(hide_song)
+
+                    # don't hide album if we show (not hidden) at least one song
+                    hide_album = hide_album and hide_song
+
+                album.setHidden(hide_album)
+
+                # expand album section if input is not empty and album is not hidden
+                album.setExpanded(input != "" and not hide_album)
+
+                # don't hide artist if we show (not hidden) at least one album
+                hide_artist = hide_artist and hide_album
+
+            artist.setHidden(hide_artist)
+
     def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
         data = item.data(0, DATA)
+
+        # ToDo: add possibility to add whole album artist songs
 
         if type(data) is Song:
             self.player.add_song(data.get_id())

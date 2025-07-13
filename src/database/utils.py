@@ -2,6 +2,7 @@
 
 from datetime import datetime
 from io import BytesIO
+from peewee import CharField, IntegerField
 
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3
@@ -55,3 +56,12 @@ def get_cover(file_path: str) -> BytesIO | None:
         pic = BytesIO(pic.data)
 
     return pic
+
+
+def match_str(db_field: CharField, input: str) -> bool:
+    # ToDo: ignore accentuated characters
+    return input.lower() in str(db_field).lower()
+
+
+def match_int(db_field: IntegerField, input: str) -> bool:
+    return input in str(db_field)

@@ -1,5 +1,6 @@
 import peewee
 
+from . import utils
 from .base_model import BaseModel
 
 
@@ -13,6 +14,9 @@ class Genre(BaseModel):
     def set_active(self) -> None:
         self.status = 1
         self.save()
+
+    def match(self, input: str) -> bool:
+        return input == "" or utils.match_str(self.name, input)
 
     @staticmethod
     def upsert(name: str | None) -> "Genre|None":

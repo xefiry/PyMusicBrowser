@@ -2,6 +2,7 @@ import peewee
 
 from .artist import Artist
 from .base_model import BaseModel
+from . import utils
 
 
 class Album(BaseModel):
@@ -19,6 +20,14 @@ class Album(BaseModel):
 
         if self.artist is not None:
             self.artist.set_active()
+
+    def match(self, input: str) -> bool:
+        return (
+            input == ""
+            or utils.match_str(self.name, input)
+            or utils.match_int(self.year, input)
+            or self.artist.match(input)
+        )
 
     @staticmethod
     def upsert(

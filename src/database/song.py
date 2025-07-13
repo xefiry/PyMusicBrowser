@@ -1,5 +1,6 @@
 import peewee
 
+from . import utils
 from .album import Album
 from .artist import Artist
 from .base_model import BaseModel
@@ -92,6 +93,16 @@ class Song(BaseModel):
             )
 
         return result
+
+    def match(self, input: str) -> bool:
+        return (
+            input == ""
+            or utils.match_str(self.name, input)
+            or utils.match_int(self.year, input)
+            or self.genre.match(input)
+            or self.album.match(input)
+            or self.artist.match(input)
+        )
 
     @staticmethod
     def get_file_mtime(file_path: str) -> int:
