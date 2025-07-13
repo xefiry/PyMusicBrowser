@@ -2,6 +2,7 @@ from PySide6 import QtWidgets
 from PySide6.QtGui import QIcon
 
 from ..player import Player
+from .. import database
 
 
 class NavigationWidget(QtWidgets.QWidget):
@@ -34,14 +35,19 @@ class NavigationWidget(QtWidgets.QWidget):
         self.filter_bar.setReadOnly(True)
         layout.addWidget(self.filter_bar)
 
-        for name in ["Album Artist", "Song Artist", "Genre", "Year"]:
+        for name, items in [
+            ("Album Artist", database.get_artists(has_album=True)),
+            ("Song Artist", database.get_artists(has_song=True)),
+            ("Genre", database.get_genre()),
+            ("Year", ["ToDo"]),
+        ]:
             x = QtWidgets.QTreeWidgetItem()
             x.setText(0, name)
             self.item_list.addTopLevelItem(x)
 
-            for j in range(10):
+            for j in items:
                 y = QtWidgets.QTreeWidgetItem()
-                y.setText(0, f"item {j:2}")
+                y.setText(0, f"{j}")
                 x.addChild(y)
 
         self.do_clear_filter()

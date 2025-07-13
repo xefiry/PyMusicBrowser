@@ -133,6 +133,10 @@ def get_songs(album: Album | None = None) -> ModelSelect:
     return result.order_by(Song.disk, Song.track, Song.name)
 
 
+def get_genre() -> ModelSelect:
+    return Genre.select().order_by(Genre.name)
+
+
 def print_stats() -> None:
     duration = Song.select(fn.SUM(Song.duration)).scalar()
     duration_days = timedelta(seconds=duration)
