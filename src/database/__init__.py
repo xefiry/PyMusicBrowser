@@ -6,7 +6,7 @@ from datetime import timedelta
 from mutagen.easyid3 import EasyID3
 from mutagen.id3._util import ID3NoHeaderError
 from mutagen.mp3 import MP3, HeaderNotFoundError
-from peewee import fn
+from peewee import ModelSelect, fn
 
 from . import base_model as db
 from . import utils
@@ -101,6 +101,37 @@ def _scan_file(file_path: str):
             file_mtime,
             file_size,
         )
+
+
+def get_artists(has_album: bool = False, has_song: bool = False) -> ModelSelect:
+    result = Artist.select().distinct()
+
+    if has_album:
+        print("join album")
+        result = result.join(Album)
+    elif has_song:
+        print("join song")
+        result = result.join(Song)
+
+    return result.order_by(Artist.name)
+
+
+def get_albums(artist: Artist | None = None) -> ModelSelect:
+    result = Album.select()
+
+    if artist is not None:
+        result = result.where(Album.artist == artist)
+
+    return result.order_by(Album.year, Album.name)
+
+
+def get_songs(album: Album | None = None) -> ModelSelect:
+    result = Song.select()
+
+    if album is not None:
+        result = result.where(Song.album == album)
+
+    return result.order_by(Song.disk, Song.track, Song.name)
 
 
 def print_stats() -> None:

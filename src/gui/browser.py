@@ -1,5 +1,6 @@
 from PySide6 import QtWidgets
 
+from .. import database
 from ..database.album import Album
 from ..database.artist import Artist
 from ..database.song import Song
@@ -27,32 +28,20 @@ class BrowserWidget(QtWidgets.QWidget):
         self.song_list.setColumnCount(1)
         layout.addWidget(self.song_list)
 
-        for artist in (
-            Artist.select(Artist.id, Artist.name)  # type: ignore
-            .distinct()
-            .join(Album)
-            .order_by(Artist.name)
-        ):
+        for artist in database.get_artists(has_album=True):
+            print(type(artist))
             artist_item = QtWidgets.QTreeWidgetItem()
             artist_item.setText(0, str(artist.name))
             artist_item.setData(0, DATA, artist)
             self.song_list.addTopLevelItem(artist_item)
 
-            for album in (
-                Album.select()
-                .where(Album.artist == artist)
-                .order_by(Album.year, Album.name)
-            ):
+            for album in database.get_albums(artist):
                 album_item = QtWidgets.QTreeWidgetItem()
                 album_item.setText(0, f"[{album.year}] {album.name}")
                 album_item.setData(0, DATA, album)
                 artist_item.addChild(album_item)
 
-                for song in (
-                    Song.select()
-                    .where(Song.album == album)
-                    .order_by(Song.disk, Song.track, Song.name)
-                ):
+                for song in database.get_songs(album):
                     song_item = QtWidgets.QTreeWidgetItem()
                     song_item.setText(0, f"{song.track} - {song.name}")
                     song_item.setData(0, DATA, song)
