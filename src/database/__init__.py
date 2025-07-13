@@ -23,13 +23,14 @@ def init() -> None:
     db.init(DATABASE_MODELS + [Setting])
 
 
-def scan(music_dir: str) -> None:
+def scan(music_dirs: list[str]) -> None:
     # Set all data satatus to 0
     for model in DATABASE_MODELS:
         model.update(status=0).execute()
 
     # Insert/update data
-    _scan_dir(music_dir)
+    for music_dir in music_dirs:
+        _scan_dir(music_dir)
 
     # Delete data with status to 0
     for model in DATABASE_MODELS:
