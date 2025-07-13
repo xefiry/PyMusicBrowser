@@ -33,14 +33,15 @@ In development
   - [x] Manage multimedia keys (Using [pynput](https://github.com/moses-palmer/pynput))
   - [ ] Add scan button + dialog to ask/confirm for directories to scan
     - [x] Store directories to scan in database
-  - [ ] Button to add current song album next in queue and play it
+  - [x] Button to add current song album next in queue and play it (double click album in browser)
   - [ ] Allow selection of multiple items in playlist and to reorder them
-  - [ ] Add keyboard shortcuts
+  - [x] Add keyboard shortcuts
   - [ ] Add tray icon
   - [ ] Add mini player
   - [ ] Handle multi CD albums
   - [ ] Show notification on song change if window is not visible
   - [ ] Add mouse prev/next for prev/next song
+  - [ ] Add shortcut to select in browser the currently playing song
 - Playlist
   - [x] Save playlist on exit and restore it on start
   - [ ] Calling previous replays the same song if time position is > N seconds (to define)
