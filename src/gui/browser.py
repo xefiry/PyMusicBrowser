@@ -29,7 +29,6 @@ class BrowserWidget(QtWidgets.QWidget):
         layout.addWidget(self.song_list)
 
         for artist in database.get_artists(has_album=True):
-            print(type(artist))
             artist_item = QtWidgets.QTreeWidgetItem()
             artist_item.setText(0, str(artist.name))
             artist_item.setData(0, DATA, artist)

@@ -108,10 +108,8 @@ def get_artists(has_album: bool = False, has_song: bool = False) -> ModelSelect:
     result = Artist.select().distinct()
 
     if has_album:
-        print("join album")
         result = result.join(Album)
     elif has_song:
-        print("join song")
         result = result.join(Song)
 
     return result.order_by(Artist.name)
