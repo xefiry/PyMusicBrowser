@@ -20,6 +20,7 @@ class NavigationWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.search_bar = QtWidgets.QLineEdit()
+        self.search_bar.setPlaceholderText("Filter...")
         layout.addWidget(self.search_bar)
 
         self.clear_button = QtWidgets.QPushButton("Clear filters")
