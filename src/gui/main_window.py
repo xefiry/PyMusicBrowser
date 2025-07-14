@@ -111,6 +111,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.key_listener = keyboard.Listener(on_press=self.do_hadle_keypress)
         self.key_listener.start()
 
+    def update_ui(self) -> None:
+        self.playlist.update_ui()
+        self.song_info.update_ui()
+        self.controls.update_ui()
+
     def do_hadle_keypress(self, key):
         if key == keyboard.Key.media_previous:
             self.controls.do_previous()
@@ -118,11 +123,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.controls.do_play_pause()
         elif key == keyboard.Key.media_next:
             self.controls.do_next()
-
-    def update_ui(self) -> None:
-        self.playlist.update_ui()
-        self.song_info.update_ui()
-        self.controls.update_ui()
 
     def do_scan_directory(self) -> None:
         # open directory picker with known MUSIC_DIR setting

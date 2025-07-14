@@ -48,6 +48,27 @@ class NavigationWidget(QtWidgets.QWidget):
 
         self.update_data()
 
+    def update_data(self) -> None:
+        print("navigation.update_data")
+        self.item_list.clear()
+
+        for name, items in [
+            ("Album Artist", database.get_artists(has_album=True)),
+            ("Song Artist", database.get_artists(has_song=True)),
+            ("Genre", database.get_genres()),
+            ("Year", database.get_years()),  # TODO filter by decade and not by year
+        ]:
+            category = QtWidgets.QTreeWidgetItem()
+            category.setText(0, name)
+            self.item_list.addTopLevelItem(category)
+
+            for item in items:
+                filter = QtWidgets.QTreeWidgetItem()
+                filter.setText(0, str(item))
+                category.addChild(filter)
+
+        self.do_clear_filter()
+
     def do_search(self, input: str) -> None:
         hide_category: bool
         hide_filter: bool
@@ -86,24 +107,3 @@ class NavigationWidget(QtWidgets.QWidget):
             return
 
         self.filter_bar.setText(f"{parent_item.text(0)} | {item.text(0)}")
-
-    def update_data(self) -> None:
-        print("navigation.update_data")
-        self.item_list.clear()
-
-        for name, items in [
-            ("Album Artist", database.get_artists(has_album=True)),
-            ("Song Artist", database.get_artists(has_song=True)),
-            ("Genre", database.get_genres()),
-            ("Year", database.get_years()),  # TODO filter by decade and not by year
-        ]:
-            category = QtWidgets.QTreeWidgetItem()
-            category.setText(0, name)
-            self.item_list.addTopLevelItem(category)
-
-            for item in items:
-                filter = QtWidgets.QTreeWidgetItem()
-                filter.setText(0, str(item))
-                category.addChild(filter)
-
-        self.do_clear_filter()
