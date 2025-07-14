@@ -73,11 +73,7 @@ class PlaylistWidget(QtWidgets.QWidget):
         if event != QtGui.QKeySequence.StandardKey.Delete:
             return
 
-        indexes = self.song_list.selectedIndexes()
-        if len(indexes) == 0:
-            return
-        index = indexes[0].row()
-
+        index = self.song_list.currentRow()
         self.player.remove_song(index)
 
         self.update_ui(True)
