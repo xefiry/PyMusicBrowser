@@ -6,8 +6,6 @@ from ..player import Player
 DATA = -1
 INDEX = -2
 
-# TODO Allow selection of multiple items in playlist and to reorder them
-
 
 class PlaylistWidget(QtWidgets.QWidget):
     def __init__(self, parent: QtWidgets.QWidget, player: Player) -> None:
@@ -25,10 +23,13 @@ class PlaylistWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.song_list = QtWidgets.QListWidget()
+        self.song_list.setDragDropMode(
+            QtWidgets.QAbstractItemView.DragDropMode.InternalMove
+        )
+        self.song_list.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
+        )
         layout.addWidget(self.song_list)
-
-        _mode = QtWidgets.QAbstractItemView.DragDropMode.InternalMove
-        self.song_list.setDragDropMode(_mode)
 
         # Connect UI
 
@@ -73,8 +74,21 @@ class PlaylistWidget(QtWidgets.QWidget):
         if event != QtGui.QKeySequence.StandardKey.Delete:
             return
 
-        index = self.song_list.currentRow()
-        self.player.remove_song(index)
+        indexes = self.song_list.selectedIndexes()
+
+        if len(indexes) == 0:
+            return
+
+        index_list: list[int] = []
+
+        for index in indexes:
+            index_list.append(index.row())
+
+        # sort indexes in reverse
+        index_list.sort(reverse=True)
+
+        for index in index_list:
+            self.player.remove_song(index)
 
         self.update_ui(True)
 
