@@ -1,8 +1,9 @@
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import QIcon
 
-from ..database.setting import Setting, Key
+from ..database.setting import Key, Setting
 from ..player import Player, State
+from . import utils
 
 BUTTON_ICON = {
     "play": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStart),
@@ -149,22 +150,4 @@ class ControlsWidget(QtWidgets.QWidget):
         self.time_slider.setValue(time[0])
         self.time_slider.setRange(0, time[1])
         self.time_slider.blockSignals(False)
-        self.time_label.setText(f"{s_to_t(time[0])} / {s_to_t(time[1])}")
-
-
-def s_to_t(seconds: float) -> str:
-    """Convert a number of seconds to displayable time"""
-    result: str = ""
-
-    h = seconds // 3600
-    seconds = seconds % 3600
-
-    s = int(seconds % 60)
-    m = int(seconds // 60)
-
-    if h > 0:
-        result = f"{h}:{m:02}:{s:02}"
-    else:
-        result = f"{m}:{s:02}"
-
-    return result
+        self.time_label.setText(f"{utils.s_to_t(time[0])} / {utils.s_to_t(time[1])}")
