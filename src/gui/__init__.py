@@ -4,8 +4,6 @@ from PySide6 import QtWidgets
 
 from .main_window import MainWindow
 
-# TODO Add scan button + dialog to ask/confirm for directories to scan.
-#      If database is empty, show scan dialog when program opens.
 # TODO Add tray icon
 # TODO Add mini player
 # TODO Handle multi CD albums
