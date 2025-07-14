@@ -135,8 +135,26 @@ def get_songs(album: Album | None = None) -> ModelSelect:
     return result.order_by(Song.disk, Song.track, Song.name)
 
 
-def get_genre() -> ModelSelect:
+def get_genres() -> ModelSelect:
     return Genre.select().order_by(Genre.name)
+
+
+def get_years() -> list[str]:
+    years: list[int] = []
+    result: list[str] = []
+
+    for song in get_songs():
+        years.append(song.year)
+
+    # remove duplicates
+    years = list(set(years))
+
+    # convert to strings
+    result = list(map(str, years))
+
+    result.sort()
+
+    return result
 
 
 def print_stats() -> None:

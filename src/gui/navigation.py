@@ -39,17 +39,17 @@ class NavigationWidget(QtWidgets.QWidget):
         for name, items in [
             ("Album Artist", database.get_artists(has_album=True)),
             ("Song Artist", database.get_artists(has_song=True)),
-            ("Genre", database.get_genre()),
-            ("Year", ["TODO"]),
+            ("Genre", database.get_genres()),
+            ("Year", database.get_years()),  # TODO filter by decade and not by year
         ]:
-            x = QtWidgets.QTreeWidgetItem()
-            x.setText(0, name)
-            self.item_list.addTopLevelItem(x)
+            category = QtWidgets.QTreeWidgetItem()
+            category.setText(0, name)
+            self.item_list.addTopLevelItem(category)
 
-            for j in items:
-                y = QtWidgets.QTreeWidgetItem()
-                y.setText(0, f"{j}")
-                x.addChild(y)
+            for item in items:
+                filter = QtWidgets.QTreeWidgetItem()
+                filter.setText(0, str(item))
+                category.addChild(filter)
 
         self.do_clear_filter()
 
