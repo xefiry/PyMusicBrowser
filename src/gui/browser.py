@@ -4,6 +4,7 @@ from .. import database
 from ..database.album import Album
 from ..database.song import Song
 from ..player import Player
+from . import utils
 
 DATA = -1
 
@@ -29,7 +30,7 @@ class BrowserWidget(QtWidgets.QWidget):
 
         self.song_list = QtWidgets.QTreeWidget()
         self.song_list.setHeaderHidden(True)
-        self.song_list.setColumnCount(1)
+        self.song_list.setColumnCount(2)
         self.song_list.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
@@ -66,11 +67,15 @@ class BrowserWidget(QtWidgets.QWidget):
                 for song in database.get_songs(album):
                     song_item = QtWidgets.QTreeWidgetItem()
                     song_item.setText(0, f"{song.track} - {song.name}")
+                    song_item.setText(1, utils.s_to_t(song.duration))
                     song_item.setData(0, DATA, song)
                     album_item.addChild(song_item)
 
             artist_item.setExpanded(True)
-        pass
+
+        # Update column sizez to fit content
+        self.song_list.resizeColumnToContents(0)
+        self.song_list.resizeColumnToContents(1)
 
     def do_filter(self, input: str) -> None:
         self.filter = input
