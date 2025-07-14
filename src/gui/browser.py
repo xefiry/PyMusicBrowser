@@ -23,7 +23,7 @@ class BrowserWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.search_bar = QtWidgets.QLineEdit()
-        self.search_bar.setPlaceholderText("Search...")
+        self.search_bar.setPlaceholderText("Search library ...")
         layout.addWidget(self.search_bar)
 
         self.song_list = QtWidgets.QTreeWidget()
@@ -58,15 +58,26 @@ class BrowserWidget(QtWidgets.QWidget):
 
         # Status member variables
 
-        # ...
+        self.filter = ""
 
     def update_ui(self) -> None:
         pass
 
-    def do_search(self, input: str) -> None:
+    def do_filter(self, input: str) -> None:
+        self.filter = input
+        self.do_search(self.search_bar.text())
+
+    def do_search(self, input: str) -> None:  # TODO improve performances
         hide_song: bool
         hide_album: bool
         hide_artist: bool
+        match_search: bool
+        match_filter: bool
+        filter_category: str = ""
+        filter_value: str = ""
+
+        if self.filter != "":
+            filter_category, filter_value = self.filter.split(" | ")
 
         root = self.song_list.invisibleRootItem()
 
@@ -84,7 +95,35 @@ class BrowserWidget(QtWidgets.QWidget):
                     song = album.child(k)
                     song_data: Song = song.data(0, DATA)
 
-                    hide_song = not song_data.match(input)
+                    # check if the song matches with search input
+                    # if input is empty, it does matche
+                    match_search = song_data.match(input)
+
+                    # check if the song matches with filter set by navigator
+                    # if match filter is empty, it does match
+                    match_filter = (
+                        filter_category == ""
+                        or (
+                            filter_category == "Album Artist"
+                            and str(song_data.album.artist) == filter_value
+                        )
+                        or (
+                            filter_category == "Song Artist"
+                            and str(song_data.artist) == filter_value
+                        )
+                        or (
+                            filter_category == "Genre"
+                            and str(song_data.genre) == filter_value
+                        )
+                        or (
+                            filter_category == "Year"
+                            and str(song_data.year) == filter_value
+                        )
+                    )
+
+                    # hide the song if it does not match with both search and filter
+                    hide_song = not (match_search and match_filter)
+
                     song.setHidden(hide_song)
 
                     # don't hide album if we show (not hidden) at least one song

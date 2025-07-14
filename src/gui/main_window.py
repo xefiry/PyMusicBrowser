@@ -70,6 +70,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.update_ui)
         self.timer.start(UPDATE_DELAY)
 
+        # Connect UI
+
+        self.navigator.filter_bar.textChanged.connect(self.browser.do_filter)
+
         # Keyboard shortcuts
 
         # TODO Add shortcut to select in browser the currently playing song

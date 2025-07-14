@@ -20,7 +20,7 @@ class NavigationWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.search_bar = QtWidgets.QLineEdit()
-        self.search_bar.setPlaceholderText("Filter...")
+        self.search_bar.setPlaceholderText("Search filters ...")
         layout.addWidget(self.search_bar)
 
         self.clear_button = QtWidgets.QPushButton("Clear filters")
@@ -33,6 +33,7 @@ class NavigationWidget(QtWidgets.QWidget):
         layout.addWidget(self.item_list)
 
         self.filter_bar = QtWidgets.QLineEdit()
+        self.filter_bar.setPlaceholderText("<No active filter>")
         self.filter_bar.setReadOnly(True)
         layout.addWidget(self.filter_bar)
 
@@ -89,14 +90,14 @@ class NavigationWidget(QtWidgets.QWidget):
     def do_clear_filter(self) -> None:
         self.search_bar.setText("")
         self.item_list.setCurrentItem(None)  # type: ignore
-        self.filter_bar.setText("<No active filter>")
+        self.filter_bar.setText("")
 
     def do_select_item(self, item: QtWidgets.QTreeWidgetItem) -> None:
         parent_item = item.parent()
         if parent_item is None:
             return
 
-        self.filter_bar.setText(f"Filter : {parent_item.text(0)} | {item.text(0)}")
+        self.filter_bar.setText(f"{parent_item.text(0)} | {item.text(0)}")
 
     def update_ui(self) -> None:
         pass
