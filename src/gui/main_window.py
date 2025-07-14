@@ -1,9 +1,12 @@
 from pynput import keyboard
 from PySide6 import QtCore, QtGui, QtWidgets
 
+from .. import database
+from ..database.setting import Key, Setting
 from ..player import Player
 from .browser import BrowserWidget
 from .controls import ControlsWidget
+from .directory_picker import DirectoryPicker
 from .navigation import NavigationWidget
 from .playlist import PlaylistWidget
 from .song_info import SongInfoWidget
@@ -19,6 +22,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(_icon)
         self.setWindowTitle("PyMusicBrowser")
 
+        if not database.has_songs():
+            self.do_scan_directory()
+
         self.player = Player()
 
         # UI content
@@ -28,6 +34,13 @@ class MainWindow(QtWidgets.QMainWindow):
         self.navigator = NavigationWidget(self, self.player)
         self.browser = BrowserWidget(self, self.player)
         self.controls = ControlsWidget(self, self.player)
+
+        # UI building => menu bar
+        self.menu_bar = QtWidgets.QMenuBar()
+        self.setMenuBar(self.menu_bar)
+
+        self.action_rescan = QtGui.QAction("Rescan database")
+        self.menu_bar.addAction(self.action_rescan)
 
         # UI building => Side = Playlist + Song info
 
@@ -76,6 +89,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Connect UI
 
+        self.action_rescan.triggered.connect(self.do_scan_directory)
         self.navigator.filter_bar.textChanged.connect(self.browser.do_filter)
 
         # Keyboard shortcuts
@@ -111,6 +125,37 @@ class MainWindow(QtWidgets.QMainWindow):
         self.navigator.update_ui()
         self.browser.update_ui()
         self.controls.update_ui()
+
+    def do_scan_directory(self) -> None:
+        # open directory picker with known MUSIC_DIR setting
+        setting = Setting.get_value(Key.MUSIC_DIR)
+
+        if setting == "":
+            dir_list = []
+        else:
+            dir_list = setting.split(";")
+
+        picker = DirectoryPicker(self, dir_list)
+
+        if picker.exec():
+            # store the obtained directory list in setting
+            dir_list = picker.get_dir_list()
+            Setting.upsert(Key.MUSIC_DIR, ";".join(dir_list))
+
+            splash = QtWidgets.QSplashScreen()
+            splash.show()
+            splash.showMessage("Database scan in progress")
+            database.scan(dir_list)
+            splash.finish(self)
+
+        if not database.has_songs():
+            QtWidgets.QMessageBox.information(
+                self,
+                "Empty database",
+                "There are no songs in the database. Please scan another directory.",
+            )
+
+        del picker
 
     def closeEvent(self, event):
         self.player.quit()

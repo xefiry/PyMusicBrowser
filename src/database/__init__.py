@@ -73,6 +73,7 @@ def _scan_file(file_path: str):
         except HeaderNotFoundError:
             _duration = 0
 
+        # TODO put default value to every field to avoid errors due to empty values ?
         _album = utils.get_str(tag, "album")
         _albumartist = utils.get_str(tag, "albumartist")
         _artist = utils.get_str(tag, "artist")
