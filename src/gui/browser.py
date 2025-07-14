@@ -174,6 +174,7 @@ class BrowserWidget(QtWidgets.QWidget):
                         if song_data.get_id() == playing_song.get_id():
                             self.song_list.clearSelection()
                             self.song_list.setCurrentItem(song)
+                            self.song_list.setFocus()
                             found = True
                             break
 
