@@ -1,7 +1,7 @@
 from peewee import fn
 
 from ..database.song import Song
-from ..database.setting import Setting
+from ..database.setting import Setting, Key
 
 INCREMENT = 5
 
@@ -35,11 +35,11 @@ class Playlist:
         cur = self.current_song
         songs = ",".join([str(song.get_id()) for song in self.song_list])
 
-        Setting.upsert("playlist", f"{cur}|{songs}")
+        Setting.upsert(Key.PLAYLIST, f"{cur}|{songs}")
 
     def load(self, playlist: str = "") -> None:
         if playlist == "":
-            playlist = Setting.get_value("playlist")
+            playlist = Setting.get_value(Key.PLAYLIST)
 
         if playlist == "":
             return

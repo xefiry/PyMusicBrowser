@@ -1,7 +1,7 @@
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import QIcon
 
-from ..database.setting import Setting
+from ..database.setting import Setting, Key
 from ..player import Player, State
 
 BUTTON_ICON = {
@@ -83,7 +83,7 @@ class ControlsWidget(QtWidgets.QWidget):
 
         # Status member variables
 
-        self.previous_volume = int(Setting.get_value("volume", "100"))
+        self.previous_volume = int(Setting.get_value(Key.VOLUME, "100"))
         self.set_volume(self.previous_volume)
 
     def update_ui(self) -> None:
@@ -126,7 +126,7 @@ class ControlsWidget(QtWidgets.QWidget):
 
     def set_volume(self, volume: int) -> None:
         self.player.set_volume(volume)
-        Setting.upsert("volume", str(volume))
+        Setting.upsert(Key.VOLUME, str(volume))
 
         self.volume_slider.blockSignals(True)
         self.volume_slider.setValue(volume)
