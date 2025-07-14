@@ -34,3 +34,4 @@ global shortcut = shortcut active even if the window is not active
 | Queue song/album and play it  | Enter or Double click in browser |                  |
 | Queue selected songs/albums   | ctrl + q                         |                  |
 | Focus playing song in browser | ctrl + l                         |                  |
+| Focus search bar              | ctrl + f                         |                  |

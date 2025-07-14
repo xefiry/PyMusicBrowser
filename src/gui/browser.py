@@ -148,12 +148,21 @@ class BrowserWidget(QtWidgets.QWidget):
 
             artist.setHidden(hide_artist)
 
+    def do_focus_search_bar(self) -> None:
+        self.search_bar.setFocus()
+        self.search_bar.selectAll()
+
     def do_focus_playing_song(self) -> None:
         playing_song = self.player.playlist.get_current()
         found: bool = False
 
         if playing_song is None:
             return
+
+        # clear search bar to make sure we can see playing song in list
+        self.search_bar.clear()
+
+        # TODO also clear navigation search bar/filter
 
         root = self.song_list.invisibleRootItem()
 
@@ -172,6 +181,8 @@ class BrowserWidget(QtWidgets.QWidget):
                         song_data: Song = song.data(0, DATA)
 
                         if song_data.get_id() == playing_song.get_id():
+                            # without this, successives call to do_focus_playing_song do not select the song
+                            self.song_list.setCurrentItem(root.child(0))
                             self.song_list.clearSelection()
                             self.song_list.setCurrentItem(song)
                             self.song_list.setFocus()

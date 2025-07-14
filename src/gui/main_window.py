@@ -99,6 +99,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("ctrl + s", self.controls.do_stop),
             ("ctrl + q", self.browser.do_queue_selected),
             ("ctrl + l", self.browser.do_focus_playing_song),
+            ("ctrl + f", self.browser.do_focus_search_bar),
         ]:
             tmp = QtGui.QShortcut(self)
             tmp.setKey(shortcut)
