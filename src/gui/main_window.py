@@ -93,11 +93,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # TODO Add mouse prev/next for prev/next song
         for shortcut, action in [
-            ("<", self.controls.do_previous),
             (" ", self.controls.do_play_pause),
+            ("<", self.controls.do_previous),
             (">", self.controls.do_next),
-            ("ctrl + p", self.controls.do_previous),
-            ("ctrl + n", self.controls.do_next),
             ("ctrl + s", self.controls.do_stop),
             ("ctrl + q", self.browser.do_queue_selected),
             ("ctrl + l", self.browser.do_focus_playing_song),
@@ -126,6 +124,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.controls.do_play_pause()
         elif key == keyboard.Key.media_next:
             self.controls.do_next()
+        elif key == keyboard.Key.media_stop:
+            self.controls.do_stop()
 
     def do_scan(self) -> None:
         # open directory picker with known MUSIC_DIR setting
