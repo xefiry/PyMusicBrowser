@@ -26,7 +26,7 @@ class Album(BaseModel):
             input == ""
             or utils.match_str(self.name, input)
             or utils.match_int(self.year, input)
-            or self.artist.match(input)
+            or (self.artist is not None and self.artist.match(input))
         )
 
     @staticmethod

@@ -99,9 +99,9 @@ class Song(BaseModel):
             input == ""
             or utils.match_str(self.name, input)
             or utils.match_int(self.year, input)
-            or self.genre.match(input)
-            or self.album.match(input)
-            or self.artist.match(input)
+            or (self.genre is not None and self.genre.match(input))
+            or (self.album is not None and self.album.match(input))
+            or (self.artist is not None and self.artist.match(input))
         )
 
     @staticmethod
