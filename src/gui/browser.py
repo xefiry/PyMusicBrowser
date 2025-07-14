@@ -24,6 +24,7 @@ class BrowserWidget(QtWidgets.QWidget):
 
         self.search_bar = QtWidgets.QLineEdit()
         self.search_bar.setPlaceholderText("Search library ...")
+        self.search_bar.setClearButtonEnabled(True)
         layout.addWidget(self.search_bar)
 
         self.song_list = QtWidgets.QTreeWidget()

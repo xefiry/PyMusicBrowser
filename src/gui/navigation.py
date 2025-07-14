@@ -21,21 +21,22 @@ class NavigationWidget(QtWidgets.QWidget):
 
         self.search_bar = QtWidgets.QLineEdit()
         self.search_bar.setPlaceholderText("Search filters ...")
+        self.search_bar.setClearButtonEnabled(True)
         layout.addWidget(self.search_bar)
 
         self.clear_button = QtWidgets.QPushButton("Clear filters")
         self.clear_button.setIcon(QIcon.fromTheme(QIcon.ThemeIcon.EditClear))
         layout.addWidget(self.clear_button)
 
-        self.item_list = QtWidgets.QTreeWidget()
-        self.item_list.setHeaderHidden(True)
-        self.item_list.setColumnCount(1)
-        layout.addWidget(self.item_list)
-
         self.filter_bar = QtWidgets.QLineEdit()
         self.filter_bar.setPlaceholderText("<No active filter>")
         self.filter_bar.setReadOnly(True)
         layout.addWidget(self.filter_bar)
+
+        self.item_list = QtWidgets.QTreeWidget()
+        self.item_list.setHeaderHidden(True)
+        self.item_list.setColumnCount(1)
+        layout.addWidget(self.item_list)
 
         for name, items in [
             ("Album Artist", database.get_artists(has_album=True)),
@@ -88,9 +89,9 @@ class NavigationWidget(QtWidgets.QWidget):
             category.setHidden(hide_category)
 
     def do_clear_filter(self) -> None:
-        self.search_bar.setText("")
+        self.search_bar.clear()
         self.item_list.setCurrentItem(None)  # type: ignore
-        self.filter_bar.setText("")
+        self.filter_bar.clear()
 
     def do_select_item(self, item: QtWidgets.QTreeWidgetItem) -> None:
         parent_item = item.parent()
