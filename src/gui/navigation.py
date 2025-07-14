@@ -55,8 +55,36 @@ class NavigationWidget(QtWidgets.QWidget):
 
         # Connect UI
 
+        self.search_bar.textChanged.connect(self.do_search)
         self.clear_button.clicked.connect(self.do_clear_filter)
         self.item_list.itemClicked.connect(self.do_select_item)
+
+    def do_search(self, input: str) -> None:
+        hide_category: bool
+        hide_filter: bool
+
+        root = self.item_list.invisibleRootItem()
+
+        for i in range(root.childCount()):
+            category = root.child(i)
+
+            hide_category = True
+
+            for j in range(category.childCount()):
+                filter = category.child(j)
+
+                # ToDo: ignore accentuated characters
+                hide_filter = input.lower() not in filter.text(0).lower()
+
+                filter.setHidden(hide_filter)
+
+                # don't hide category if we show (not hidden) at least one filter
+                hide_category = hide_category and hide_filter
+
+            # expand filter section if input is not empty and filter is not hidden
+            category.setExpanded(input != "" and not hide_category)
+
+            category.setHidden(hide_category)
 
     def do_clear_filter(self) -> None:
         self.search_bar.setText("")
