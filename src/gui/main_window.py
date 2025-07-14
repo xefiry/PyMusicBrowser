@@ -86,7 +86,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Connect UI
 
-        self.action_rescan.triggered.connect(self.do_scan_directory)
+        self.action_rescan.triggered.connect(self.do_scan)
         self.navigator.filter_bar.textChanged.connect(self.browser.do_filter)
 
         # Keyboard shortcuts
@@ -111,7 +111,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Function calls
 
         if not database.has_songs():
-            self.do_scan_directory()
+            self.do_scan()
 
     def update_ui(self) -> None:
         self.playlist.update_ui()
@@ -126,7 +126,7 @@ class MainWindow(QtWidgets.QMainWindow):
         elif key == keyboard.Key.media_next:
             self.controls.do_next()
 
-    def do_scan_directory(self) -> None:
+    def do_scan(self) -> None:
         # open directory picker with known MUSIC_DIR setting
         setting = Setting.get_value(Key.MUSIC_DIR)
 
@@ -152,6 +152,9 @@ class MainWindow(QtWidgets.QMainWindow):
             database.scan(dir_list)
             splash.finish(self)
 
+            # restart updating
+            self.timer.start()
+
         del picker
 
         if not database.has_songs():
@@ -161,15 +164,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 "There are no songs in the database. Please scan another directory.",
             )
 
-        # and we clean playlist from non existent files
-        self.player.playlist.clean()
-
         # after rescanning, we update navigator and browser data
         self.navigator.update_data()
         self.browser.update_data()
 
-        # restart updating
-        self.timer.start()
+        # and we clean playlist from non existent files
+        self.player.playlist.clean()
 
     def closeEvent(self, event):
         self.player.quit()
