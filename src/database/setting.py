@@ -13,13 +13,13 @@ class Key(enum.StrEnum):
 
 class Setting(BaseModel):
     key = peewee.CharField(unique=True)
-    value = peewee.CharField(null=True)
+    value = peewee.CharField()
 
     def __str__(self) -> str:
         return f"{self.key} = {self.value}"
 
     @staticmethod
-    def upsert(key: Key, value: str | None) -> "Setting":
+    def upsert(key: Key, value: str) -> "Setting":
         setting = Setting.select().where(Setting.key == key)
 
         if setting.exists():
@@ -33,15 +33,12 @@ class Setting(BaseModel):
 
     @staticmethod
     def get_value(key: Key, default_value: str = "") -> str:
-        """Get setting with it's key. If not found or None, returns default value."""
+        """Get setting with it's key. If not foundreturns default value."""
 
         try:
             s = Setting.get(Setting.key == key)
 
-            if s.value is not None:
-                return s.value
-            else:
-                return default_value
+            return s.value
 
         except peewee.DoesNotExist:
             return default_value
