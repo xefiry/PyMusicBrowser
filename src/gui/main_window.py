@@ -152,14 +152,14 @@ class MainWindow(QtWidgets.QMainWindow):
             database.scan(dir_list)
             splash.finish(self)
 
+        del picker
+
         if not database.has_songs():
             QtWidgets.QMessageBox.information(
                 self,
                 "Empty database",
                 "There are no songs in the database. Please scan another directory.",
             )
-
-        del picker
 
         # and we clean playlist from non existent files
         self.player.playlist.clean()
