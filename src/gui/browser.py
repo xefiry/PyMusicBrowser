@@ -163,6 +163,6 @@ class BrowserWidget(QtWidgets.QWidget):
         # TODO add possibility to add whole album artist songs
 
         if type(data) is Song:
-            self.player.add_song(data.get_id())
+            self.player.add_song(data)
         elif type(data) is Album:
-            self.player.add_album(data.get_id())
+            self.player.add_album(data)

@@ -125,13 +125,16 @@ def get_albums(artist: Artist | None = None) -> ModelSelect:
     return result.order_by(Album.year, Album.name)
 
 
-def get_songs(album: Album | None = None) -> ModelSelect:
+def get_songs(album: Album | None = None, reverse: bool = False) -> ModelSelect:
     result = Song.select()
 
     if album is not None:
         result = result.where(Song.album == album)
 
-    return result.order_by(Song.disk, Song.track, Song.name)
+    if reverse:
+        return result.order_by(Song.disk.desc(), Song.track.desc(), Song.name.desc())
+    else:
+        return result.order_by(Song.disk, Song.track, Song.name)
 
 
 def get_genres() -> ModelSelect:
