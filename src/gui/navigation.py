@@ -4,6 +4,8 @@ from PySide6.QtGui import QIcon
 from ..player import Player
 from .. import database
 
+# TODO merge with browser to be able to access these fields from browser
+
 
 class NavigationWidget(QtWidgets.QWidget):
     def __init__(self, parent: QtWidgets.QWidget, player: Player) -> None:
