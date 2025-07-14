@@ -18,6 +18,8 @@ from .song import Song
 
 DATABASE_MODELS = [Artist, Album, Genre, Song]
 
+# FIXME Fix behaviour when there are no songs in the database
+
 
 def init() -> None:
     db.init(DATABASE_MODELS + [Setting])

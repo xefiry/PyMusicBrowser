@@ -18,6 +18,9 @@ class State(enum.Enum):
     PAUSE = 2
 
 
+# TODO Handle missing files
+
+
 class Player:
     def __init__(self) -> None:
         pygame.mixer.init()

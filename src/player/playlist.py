@@ -61,6 +61,7 @@ class Playlist:
 
         return self.song_list[self.current_song]
 
+    # TODO Calling previous replays the same song if time position is > N seconds (to define)
     def previous(self) -> bool:
         """Returns true if we could go back, false if not (at start of playlist)"""
         # If we are in the list, we go backward

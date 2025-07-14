@@ -2,6 +2,8 @@ import peewee
 
 from .base_model import BaseModel
 
+# TODO Use enum instead of string to call upsert/get_value
+
 
 class Setting(BaseModel):
     name = peewee.CharField(unique=True)

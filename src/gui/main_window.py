@@ -72,6 +72,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Keyboard shortcuts
 
+        # TODO Add shortcut to select in browser the currently playing song
+        # TODO Add mouse prev/next for prev/next song
         for shortcut, action in [
             ("<", self.controls.do_previous),
             (" ", self.controls.do_play_pause),

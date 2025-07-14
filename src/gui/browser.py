@@ -103,7 +103,7 @@ class BrowserWidget(QtWidgets.QWidget):
     def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
         data = item.data(0, DATA)
 
-        # ToDo: add possibility to add whole album artist songs
+        # TODO add possibility to add whole album artist songs
 
         if type(data) is Song:
             self.player.add_song(data.get_id())

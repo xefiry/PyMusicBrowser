@@ -40,7 +40,7 @@ class NavigationWidget(QtWidgets.QWidget):
             ("Album Artist", database.get_artists(has_album=True)),
             ("Song Artist", database.get_artists(has_song=True)),
             ("Genre", database.get_genre()),
-            ("Year", ["ToDo"]),
+            ("Year", ["TODO"]),
         ]:
             x = QtWidgets.QTreeWidgetItem()
             x.setText(0, name)

@@ -6,6 +6,8 @@ from ..player import Player
 DATA = -1
 INDEX = -2
 
+# TODO Allow selection of multiple items in playlist and to reorder them
+
 
 class PlaylistWidget(QtWidgets.QWidget):
     def __init__(self, parent: QtWidgets.QWidget, player: Player) -> None:
