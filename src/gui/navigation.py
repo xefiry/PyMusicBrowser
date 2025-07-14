@@ -38,28 +38,15 @@ class NavigationWidget(QtWidgets.QWidget):
         self.item_list.setColumnCount(1)
         layout.addWidget(self.item_list)
 
-        for name, items in [
-            ("Album Artist", database.get_artists(has_album=True)),
-            ("Song Artist", database.get_artists(has_song=True)),
-            ("Genre", database.get_genres()),
-            ("Year", database.get_years()),  # TODO filter by decade and not by year
-        ]:
-            category = QtWidgets.QTreeWidgetItem()
-            category.setText(0, name)
-            self.item_list.addTopLevelItem(category)
-
-            for item in items:
-                filter = QtWidgets.QTreeWidgetItem()
-                filter.setText(0, str(item))
-                category.addChild(filter)
-
-        self.do_clear_filter()
-
         # Connect UI
 
         self.search_bar.textChanged.connect(self.do_search)
         self.clear_button.clicked.connect(self.do_clear_filter)
         self.item_list.itemClicked.connect(self.do_select_item)
+
+        # Function calls
+
+        self.update_data()
 
     def do_search(self, input: str) -> None:
         hide_category: bool
@@ -100,5 +87,23 @@ class NavigationWidget(QtWidgets.QWidget):
 
         self.filter_bar.setText(f"{parent_item.text(0)} | {item.text(0)}")
 
-    def update_ui(self) -> None:
-        pass
+    def update_data(self) -> None:
+        print("navigation.update_data")
+        self.item_list.clear()
+
+        for name, items in [
+            ("Album Artist", database.get_artists(has_album=True)),
+            ("Song Artist", database.get_artists(has_song=True)),
+            ("Genre", database.get_genres()),
+            ("Year", database.get_years()),  # TODO filter by decade and not by year
+        ]:
+            category = QtWidgets.QTreeWidgetItem()
+            category.setText(0, name)
+            self.item_list.addTopLevelItem(category)
+
+            for item in items:
+                filter = QtWidgets.QTreeWidgetItem()
+                filter.setText(0, str(item))
+                category.addChild(filter)
+
+        self.do_clear_filter()

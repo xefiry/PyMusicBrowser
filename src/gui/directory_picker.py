@@ -54,7 +54,7 @@ class DirectoryPicker(QtWidgets.QDialog):
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
 
-        # function calls
+        # Function calls
 
         self.set_dir_list(dir_list)
 

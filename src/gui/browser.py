@@ -32,6 +32,23 @@ class BrowserWidget(QtWidgets.QWidget):
         self.song_list.setColumnCount(1)
         layout.addWidget(self.song_list)
 
+        # Connect UI
+
+        self.search_bar.textChanged.connect(self.do_search)
+        self.song_list.itemActivated.connect(self.do_play_song)
+
+        # Status member variables
+
+        self.filter = ""
+
+        # Function calls
+
+        self.update_data()
+
+    def update_data(self) -> None:
+        print("browser.update_data")
+        self.song_list.clear()
+
         for artist in database.get_artists(has_album=True):
             artist_item = QtWidgets.QTreeWidgetItem()
             artist_item.setText(0, str(artist.name))
@@ -51,17 +68,6 @@ class BrowserWidget(QtWidgets.QWidget):
                     album_item.addChild(song_item)
 
             artist_item.setExpanded(True)
-
-        # Connect UI
-
-        self.search_bar.textChanged.connect(self.do_search)
-        self.song_list.itemActivated.connect(self.do_play_song)
-
-        # Status member variables
-
-        self.filter = ""
-
-    def update_ui(self) -> None:
         pass
 
     def do_filter(self, input: str) -> None:

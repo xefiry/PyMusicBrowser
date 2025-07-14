@@ -122,8 +122,6 @@ class MainWindow(QtWidgets.QMainWindow):
     def update_ui(self) -> None:
         self.playlist.update_ui()
         self.song_info.update_ui()
-        self.navigator.update_ui()
-        self.browser.update_ui()
         self.controls.update_ui()
 
     def do_scan_directory(self) -> None:
@@ -156,6 +154,14 @@ class MainWindow(QtWidgets.QMainWindow):
             )
 
         del picker
+
+        # after rescanning, we update navigator and browser data
+        self.navigator.update_data()
+        self.browser.update_data()
+
+        # and we clean playlist from non existent files
+        # TODO code this to remove songs from the playlist that do not exist anymore
+        #  self.player.clean_playlist()
 
     def closeEvent(self, event):
         self.player.quit()
