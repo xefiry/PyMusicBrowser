@@ -164,6 +164,8 @@ class BrowserWidget(QtWidgets.QWidget):
         if playing_song is None:
             return
 
+        playing_song_id = str(playing_song.get_id())
+
         # clear search bar to make sure we can see playing song in list
         self.search_bar.clear()
 
@@ -183,9 +185,7 @@ class BrowserWidget(QtWidgets.QWidget):
                     for k in range(album.childCount()):
                         song = album.child(k)
 
-                        song_data: Song = song.data(0, DATA)
-
-                        if song_data.get_id() == playing_song.get_id():
+                        if song.data(0, DATA).get_id() == playing_song_id:
                             # without this, successives call to do_focus_playing_song do not select the song
                             self.song_list.setCurrentItem(root.child(0))
                             self.song_list.clearSelection()
