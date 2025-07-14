@@ -95,10 +95,6 @@ class Song(BaseModel):
 
         return result
 
-    @staticmethod
-    def get_random() -> "Song":
-        return Song.select().order_by(fn.Random()).get()
-
     def match(self, input: str) -> bool:
         return (
             input == ""
@@ -108,6 +104,10 @@ class Song(BaseModel):
             or (self.album is not None and self.album.match(input))
             or (self.artist is not None and self.artist.match(input))
         )
+
+    @staticmethod
+    def get_random() -> "Song":
+        return Song.select().order_by(fn.Random()).get()
 
     @staticmethod
     def get_file_mtime(file_path: str) -> int:
@@ -120,3 +120,7 @@ class Song(BaseModel):
             return -1
 
         return s.file_mtime
+
+    @staticmethod
+    def file_exists(file_path: peewee.CharField) -> bool:
+        return Song.select().where(Song.file_path == file_path).exists()

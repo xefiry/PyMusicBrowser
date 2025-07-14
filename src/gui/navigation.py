@@ -49,7 +49,6 @@ class NavigationWidget(QtWidgets.QWidget):
         self.update_data()
 
     def update_data(self) -> None:
-        print("navigation.update_data")
         self.item_list.clear()
 
         for name, items in [

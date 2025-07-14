@@ -103,3 +103,16 @@ class Playlist:
             return True
 
         return False
+
+    def clean(self) -> None:
+        # loop on reverse list
+        for index, song in reversed(list(enumerate(self.song_list))):
+            if not Song.file_exists(song.file_path):
+                self.song_list.pop(index)
+
+                # if the removed song is the current song or before
+                if index <= self.current_song:
+                    # we decrement the current song to follow
+                    self.current_song -= 1
+
+        self.populate(0)

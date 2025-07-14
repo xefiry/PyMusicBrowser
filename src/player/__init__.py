@@ -83,11 +83,13 @@ class Player:
         self.load_music()
 
     def add_song(self, song_id: int) -> None:
+        # TODO don't query data directly, use function from database
         song = Song.select().where(Song.id == song_id).get()  # type: ignore
         self.playlist.add_next(song)
         self.next()
 
     def add_album(self, album_id: int) -> None:
+        # TODO don't query data directly, use function from database
         songs = (
             Song.select()
             .join(Album)

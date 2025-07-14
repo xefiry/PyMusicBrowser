@@ -22,9 +22,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(_icon)
         self.setWindowTitle("PyMusicBrowser")
 
-        if not database.has_songs():
-            self.do_scan_directory()
-
         self.player = Player()
 
         # UI content
@@ -111,6 +108,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.key_listener = keyboard.Listener(on_press=self.do_hadle_keypress)
         self.key_listener.start()
 
+        # Function calls
+
+        if not database.has_songs():
+            self.do_scan_directory()
+
     def update_ui(self) -> None:
         self.playlist.update_ui()
         self.song_info.update_ui()
@@ -136,6 +138,10 @@ class MainWindow(QtWidgets.QMainWindow):
         picker = DirectoryPicker(self, dir_list)
 
         if picker.exec():
+            # stop any playing music, and the UI updates
+            self.player.stop()
+            self.timer.stop()
+
             # store the obtained directory list in setting
             dir_list = picker.get_dir_list()
             Setting.upsert(Key.MUSIC_DIR, ";".join(dir_list))
@@ -155,13 +161,15 @@ class MainWindow(QtWidgets.QMainWindow):
 
         del picker
 
+        # and we clean playlist from non existent files
+        self.player.playlist.clean()
+
         # after rescanning, we update navigator and browser data
         self.navigator.update_data()
         self.browser.update_data()
 
-        # and we clean playlist from non existent files
-        # TODO code this to remove songs from the playlist that do not exist anymore
-        #  self.player.clean_playlist()
+        # restart updating
+        self.timer.start()
 
     def closeEvent(self, event):
         self.player.quit()

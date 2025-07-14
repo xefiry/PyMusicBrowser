@@ -46,7 +46,6 @@ class BrowserWidget(QtWidgets.QWidget):
         self.update_data()
 
     def update_data(self) -> None:
-        print("browser.update_data")
         self.song_list.clear()
 
         for artist in database.get_artists(has_album=True):
