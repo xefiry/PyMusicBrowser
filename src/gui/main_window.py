@@ -15,6 +15,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
+        _icon = QtGui.QIcon.fromTheme(QtGui.QIcon.ThemeIcon.AudioCard)
+        self.setWindowIcon(_icon)
+        self.setWindowTitle("PyMusicBrowser")
+
         self.player = Player()
 
         # UI content
