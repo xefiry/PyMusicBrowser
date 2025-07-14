@@ -100,6 +100,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("ctrl + p", self.controls.do_previous),
             ("ctrl + n", self.controls.do_next),
             ("ctrl + s", self.controls.do_stop),
+            ("ctrl + q", self.browser.do_queue_selected),
         ]:
             tmp = QtGui.QShortcut(self)
             tmp.setKey(shortcut)

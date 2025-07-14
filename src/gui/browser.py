@@ -30,6 +30,9 @@ class BrowserWidget(QtWidgets.QWidget):
         self.song_list = QtWidgets.QTreeWidget()
         self.song_list.setHeaderHidden(True)
         self.song_list.setColumnCount(1)
+        self.song_list.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
+        )
         layout.addWidget(self.song_list)
 
         # Connect UI
@@ -146,6 +149,15 @@ class BrowserWidget(QtWidgets.QWidget):
             artist.setHidden(hide_artist)
 
     def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
+        self.queue_item(item)
+        self.player.next()
+
+    def do_queue_selected(self) -> None:
+        # the items are reversed because queue_item adds next to current song
+        for item in reversed(self.song_list.selectedItems()):
+            self.queue_item(item)
+
+    def queue_item(self, item: QtWidgets.QTreeWidgetItem) -> None:
         data = item.data(0, DATA)
 
         # TODO add possibility to add whole album artist songs
