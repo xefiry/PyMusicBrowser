@@ -1,7 +1,6 @@
-from peewee import fn
-
+from .. import database
+from ..database.setting import Key, Setting
 from ..database.song import Song
-from ..database.setting import Setting, Key
 
 INCREMENT = 5
 
@@ -15,27 +14,32 @@ class Playlist:
         self.populate(0)
 
     def populate(self, nb_elem: int) -> None:
+        # if there are no songs in the database, do nothing
+        if not database.has_songs():
+            return
+
         # if no current song, we set it to the start of the list
         if self.current_song == -1:
             self.current_song = 0
 
         for _ in range(nb_elem):
-            song = Song.select().order_by(fn.Random()).get()
+            song = Song.get_random()
             self.song_list.append(song)
 
         # If we don't have at least INCREMENT songs from the curent one we add some
         while len(self.song_list) - self.current_song < INCREMENT:
-            song = Song.select().order_by(fn.Random()).get()
+            song = Song.get_random()
             self.song_list.append(song)
 
     def __str__(self) -> str:
         return f"{self.current_song} - {self.song_list}"
 
     def save(self) -> None:
-        cur = self.current_song
-        songs = ",".join([str(song.get_id()) for song in self.song_list])
-
-        Setting.upsert(Key.PLAYLIST, f"{cur}|{songs}")
+        # don't save if playlist is empty
+        if len(self.song_list) > 0:
+            cur = self.current_song
+            songs = ",".join([str(song.get_id()) for song in self.song_list])
+            Setting.upsert(Key.PLAYLIST, f"{cur}|{songs}")
 
     def load(self, playlist: str = "") -> None:
         if playlist == "":
@@ -53,7 +57,11 @@ class Playlist:
         for song_id in songs.split(","):
             self.song_list.append(Song.get_by_id(song_id))
 
-    def get_current(self) -> Song:
+    def get_current(self) -> Song | None:
+        # if playlist is empty, return None
+        if len(self.song_list) == 0:
+            return None
+
         # if there is no current song selected and there are songs in the list
         # we set the first song as current
         if self.current_song == -1 and len(self.song_list) > 0:

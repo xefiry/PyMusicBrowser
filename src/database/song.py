@@ -1,4 +1,5 @@
 import peewee
+from peewee import fn
 
 from . import utils
 from .album import Album
@@ -93,6 +94,10 @@ class Song(BaseModel):
             )
 
         return result
+
+    @staticmethod
+    def get_random() -> "Song":
+        return Song.select().order_by(fn.Random()).get()
 
     def match(self, input: str) -> bool:
         return (

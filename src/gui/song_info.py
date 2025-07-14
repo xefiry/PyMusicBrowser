@@ -35,7 +35,7 @@ class SongInfoWidget(QtWidgets.QWidget):
 
     def update_ui(self) -> None:
         song = self.player.playlist.get_current()
-        if self.current_song_id != song.get_id():
+        if song is not None and self.current_song_id != song.get_id():
             self.current_song_id = song.get_id()
 
             # image = QtGui.QPixmap(song.get)

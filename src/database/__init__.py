@@ -18,8 +18,6 @@ from .song import Song
 
 DATABASE_MODELS = [Artist, Album, Genre, Song]
 
-# FIXME Fix behaviour when there are no songs in the database
-
 
 def init() -> None:
     db.init(DATABASE_MODELS + [Setting])
@@ -155,6 +153,10 @@ def get_years() -> list[str]:
     result.sort()
 
     return result
+
+
+def has_songs() -> bool:
+    return Song.select().count() != 0
 
 
 def print_stats() -> None:
