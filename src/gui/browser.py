@@ -148,6 +148,35 @@ class BrowserWidget(QtWidgets.QWidget):
 
             artist.setHidden(hide_artist)
 
+    def do_focus_playing_song(self) -> None:
+        playing_song = self.player.playlist.get_current()
+        found: bool = False
+
+        if playing_song is None:
+            return
+
+        root = self.song_list.invisibleRootItem()
+
+        for i in range(root.childCount()):
+            artist = root.child(i)
+
+            for j in range(artist.childCount()):
+                album = artist.child(j)
+                album.setExpanded(False)
+
+                # don't search in songs if we already found
+                if not found:
+                    for k in range(album.childCount()):
+                        song = album.child(k)
+
+                        song_data: Song = song.data(0, DATA)
+
+                        if song_data.get_id() == playing_song.get_id():
+                            self.song_list.clearSelection()
+                            self.song_list.setCurrentItem(song)
+                            found = True
+                            break
+
     def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
         self.queue_item(item)
         self.player.next()

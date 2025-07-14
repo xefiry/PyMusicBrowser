@@ -91,7 +91,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Keyboard shortcuts
 
-        # TODO Add shortcut to select in browser the currently playing song
         # TODO Add mouse prev/next for prev/next song
         for shortcut, action in [
             ("<", self.controls.do_previous),
@@ -101,6 +100,7 @@ class MainWindow(QtWidgets.QMainWindow):
             ("ctrl + n", self.controls.do_next),
             ("ctrl + s", self.controls.do_stop),
             ("ctrl + q", self.browser.do_queue_selected),
+            ("ctrl + l", self.browser.do_focus_playing_song),
         ]:
             tmp = QtGui.QShortcut(self)
             tmp.setKey(shortcut)
