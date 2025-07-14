@@ -190,6 +190,7 @@ class BrowserWidget(QtWidgets.QWidget):
                             break
 
     def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
+        # FIXME if item is an Artist, it plays next without adding any song
         self.queue_item(item)
         self.player.next()
 
