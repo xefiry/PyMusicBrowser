@@ -164,7 +164,7 @@ class BrowserWidget(QtWidgets.QWidget):
         if playing_song is None:
             return
 
-        playing_song_id = str(playing_song.get_id())
+        playing_song_id = playing_song.get_id()
 
         # clear search bar to make sure we can see playing song in list
         self.search_bar.clear()
