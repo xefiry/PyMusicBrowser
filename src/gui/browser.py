@@ -31,6 +31,8 @@ class BrowserWidget(QtWidgets.QWidget):
         layout.addWidget(center_widget)
 
         center_layout = QtWidgets.QVBoxLayout(center_widget)
+        center_layout.setContentsMargins(0, 0, 0, 0)
+        center_layout.setSpacing(0)
         center_widget.setLayout(center_layout)
 
         self.search_bar = QtWidgets.QLineEdit()
