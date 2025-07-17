@@ -1,8 +1,8 @@
 from PySide6 import QtWidgets
 from PySide6.QtGui import QIcon
 
-from ..player import Player
 from .. import database
+from ..player import Player
 
 # TODO merge with browser to be able to access these fields from browser
 
@@ -30,6 +30,7 @@ class NavigationWidget(QtWidgets.QWidget):
         self.clear_button.setIcon(QIcon.fromTheme(QIcon.ThemeIcon.EditClear))
         layout.addWidget(self.clear_button)
 
+        # TODO allow selection of multiple filters with setSelectionMode(SelectionMode.MultiSelection)
         self.item_list = QtWidgets.QTreeWidget()
         self.item_list.setHeaderHidden(True)
         self.item_list.setColumnCount(1)
