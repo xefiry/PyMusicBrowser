@@ -38,7 +38,7 @@ class SongInfoWidget(QtWidgets.QWidget):
         if song is not None and self.current_song_id != song.get_id():
             self.current_song_id = song.get_id()
 
-            pixmap = utils.get_cover(str(song.file_path), 300)
+            pixmap = utils.get_cover(song, 300)
             self.song_cover.setPixmap(pixmap)
 
             self.song_info.setText(f"""{song.track} - {song.name}

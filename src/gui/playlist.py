@@ -146,4 +146,4 @@ class PlaylistWidget(QtWidgets.QWidget):
             item.setData(DATA, song)
             item.setData(INDEX, nb)
             item.setText(f"{prefix} {song}")
-            item.setIcon(utils.get_cover(str(song.file_path), ICON_SIZE))
+            item.setIcon(utils.get_cover(song, ICON_SIZE))
