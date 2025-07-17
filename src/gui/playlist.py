@@ -1,10 +1,13 @@
-from PySide6 import QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtWidgets
 
 from ..database.song import Song
 from ..player import Player
+from . import utils
 
 DATA = -1
 INDEX = -2
+
+ICON_SIZE = 40
 
 
 class PlaylistWidget(QtWidgets.QWidget):
@@ -23,6 +26,7 @@ class PlaylistWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
         self.song_list = QtWidgets.QListWidget()
+        self.song_list.setIconSize(QtCore.QSize(ICON_SIZE, ICON_SIZE))
         self.song_list.setDragDropMode(
             QtWidgets.QAbstractItemView.DragDropMode.InternalMove
         )
@@ -142,3 +146,4 @@ class PlaylistWidget(QtWidgets.QWidget):
             item.setData(DATA, song)
             item.setData(INDEX, nb)
             item.setText(f"{prefix} {song}")
+            item.setIcon(utils.get_cover(str(song.file_path), ICON_SIZE))

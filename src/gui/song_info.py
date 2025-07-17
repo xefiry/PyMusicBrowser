@@ -1,7 +1,7 @@
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtWidgets
 
-from ..database import utils
 from ..player import Player
+from . import utils
 
 
 class SongInfoWidget(QtWidgets.QWidget):
@@ -38,14 +38,7 @@ class SongInfoWidget(QtWidgets.QWidget):
         if song is not None and self.current_song_id != song.get_id():
             self.current_song_id = song.get_id()
 
-            # image = QtGui.QPixmap(song.get)
-            image_data = utils.get_cover(str(song.file_path))
-            pixmap = QtGui.QPixmap()
-
-            if image_data is not None:
-                pixmap.loadFromData(image_data.read())
-                pixmap = pixmap.scaled(300, 300)
-
+            pixmap = utils.get_cover(str(song.file_path), 300)
             self.song_cover.setPixmap(pixmap)
 
             self.song_info.setText(f"""{song.track} - {song.name}
