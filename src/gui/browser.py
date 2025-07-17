@@ -5,6 +5,7 @@ from ..database.album import Album
 from ..database.song import Song
 from ..player import Player
 from . import utils
+from .navigation import NavigationWidget
 
 DATA = -1
 
@@ -14,19 +15,28 @@ class BrowserWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.player = player
 
-        self.setMinimumWidth(600)
+        self.setMinimumWidth(800)
 
         # Build UI
 
-        layout = QtWidgets.QVBoxLayout(self)
+        layout = QtWidgets.QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
         self.setLayout(layout)
 
+        self.navigation = NavigationWidget(self, self.player)
+        layout.addWidget(self.navigation)
+
+        center_widget = QtWidgets.QWidget()
+        layout.addWidget(center_widget)
+
+        center_layout = QtWidgets.QVBoxLayout(center_widget)
+        center_widget.setLayout(center_layout)
+
         self.search_bar = QtWidgets.QLineEdit()
         self.search_bar.setPlaceholderText("Search library ...")
         self.search_bar.setClearButtonEnabled(True)
-        layout.addWidget(self.search_bar)
+        center_layout.addWidget(self.search_bar)
 
         self.song_list = QtWidgets.QTreeWidget()
         self.song_list.setHeaderHidden(True)
@@ -34,22 +44,21 @@ class BrowserWidget(QtWidgets.QWidget):
         self.song_list.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
-        layout.addWidget(self.song_list)
+        center_layout.addWidget(self.song_list)
 
         # Connect UI
 
+        self.navigation.item_list.itemSelectionChanged.connect(self.do_search)
         self.search_bar.textChanged.connect(self.do_search)
         self.song_list.itemActivated.connect(self.do_play_song)
-
-        # Status member variables
-
-        self.filter = ""
 
         # Function calls
 
         self.update_data()
 
     def update_data(self) -> None:
+        self.navigation.update_data()
+
         self.song_list.clear()
 
         for artist in database.get_artists(has_album=True):
@@ -77,11 +86,7 @@ class BrowserWidget(QtWidgets.QWidget):
         self.song_list.resizeColumnToContents(0)
         self.song_list.resizeColumnToContents(1)
 
-    def do_filter(self, input: str) -> None:
-        self.filter = input
-        self.do_search(self.search_bar.text())
-
-    def do_search(self, input: str) -> None:  # TODO improve performances
+    def do_search(self) -> None:  # TODO improve performances
         hide_song: bool
         hide_album: bool
         hide_artist: bool
@@ -90,8 +95,11 @@ class BrowserWidget(QtWidgets.QWidget):
         filter_category: str = ""
         filter_value: str = ""
 
-        if self.filter != "":
-            filter_category, filter_value = self.filter.split(" | ")
+        # get search strins from search bar
+        search_value = self.search_bar.text()
+
+        # and navigation bar
+        filter_category, filter_value = self.navigation.get_selected()
 
         root = self.song_list.invisibleRootItem()
 
@@ -111,7 +119,7 @@ class BrowserWidget(QtWidgets.QWidget):
 
                     # check if the song matches with search input
                     # if input is empty, it does matche
-                    match_search = song_data.match(input)
+                    match_search = song_data.match(search_value)
 
                     # check if the song matches with filter set by navigator
                     # if match filter is empty, it does match

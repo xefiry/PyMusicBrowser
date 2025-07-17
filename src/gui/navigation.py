@@ -30,11 +30,6 @@ class NavigationWidget(QtWidgets.QWidget):
         self.clear_button.setIcon(QIcon.fromTheme(QIcon.ThemeIcon.EditClear))
         layout.addWidget(self.clear_button)
 
-        self.filter_bar = QtWidgets.QLineEdit()
-        self.filter_bar.setPlaceholderText("<No active filter>")
-        self.filter_bar.setReadOnly(True)
-        layout.addWidget(self.filter_bar)
-
         self.item_list = QtWidgets.QTreeWidget()
         self.item_list.setHeaderHidden(True)
         self.item_list.setColumnCount(1)
@@ -44,11 +39,6 @@ class NavigationWidget(QtWidgets.QWidget):
 
         self.search_bar.textChanged.connect(self.do_search)
         self.clear_button.clicked.connect(self.do_clear_filter)
-        self.item_list.itemClicked.connect(self.do_select_item)
-
-        # Function calls
-
-        self.update_data()
 
     def update_data(self) -> None:
         self.item_list.clear()
@@ -100,11 +90,10 @@ class NavigationWidget(QtWidgets.QWidget):
     def do_clear_filter(self) -> None:
         self.search_bar.clear()
         self.item_list.setCurrentItem(None)  # type: ignore
-        self.filter_bar.clear()
 
-    def do_select_item(self, item: QtWidgets.QTreeWidgetItem) -> None:
-        parent_item = item.parent()
-        if parent_item is None:
-            return
+    def get_selected(self) -> tuple[str, str]:
+        current = self.item_list.currentItem()
+        if current is None or current.parent() is None:
+            return ("", "")
 
-        self.filter_bar.setText(f"{parent_item.text(0)} | {item.text(0)}")
+        return (current.parent().text(0), current.text(0))

@@ -7,7 +7,6 @@ from ..player import Player
 from .browser import BrowserWidget
 from .controls import ControlsWidget
 from .directory_picker import DirectoryPicker
-from .navigation import NavigationWidget
 from .playlist import PlaylistWidget
 from .song_info import SongInfoWidget
 
@@ -28,7 +27,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.playlist = PlaylistWidget(self, self.player)
         self.song_info = SongInfoWidget(self, self.player)
-        self.navigator = NavigationWidget(self, self.player)
         self.browser = BrowserWidget(self, self.player)
         self.controls = ControlsWidget(self, self.player)
 
@@ -52,7 +50,7 @@ class MainWindow(QtWidgets.QMainWindow):
         side_layout.addWidget(self.playlist)
         side_layout.addWidget(self.song_info)
 
-        # UI building => Top = Navigator + Browser + Side
+        # UI building => Top = Browser + Side
 
         top_widget = QtWidgets.QWidget()
 
@@ -61,7 +59,6 @@ class MainWindow(QtWidgets.QMainWindow):
         top_layout.setSpacing(0)
         top_widget.setLayout(top_layout)
 
-        top_layout.addWidget(self.navigator)
         top_layout.addWidget(self.browser)
         top_layout.addWidget(side_widget)
 
@@ -87,7 +84,6 @@ class MainWindow(QtWidgets.QMainWindow):
         # Connect UI
 
         self.action_rescan.triggered.connect(self.do_scan)
-        self.navigator.filter_bar.textChanged.connect(self.browser.do_filter)
 
         # Keyboard shortcuts
 
@@ -166,8 +162,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 "There are no songs in the database. Please scan another directory.",
             )
 
-        # after rescanning, we update navigator and browser data
-        self.navigator.update_data()
+        # after rescanning, we update browser data
         self.browser.update_data()
 
         # and we clean playlist from non existent files
