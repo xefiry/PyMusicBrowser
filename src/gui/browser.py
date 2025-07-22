@@ -88,7 +88,7 @@ class BrowserWidget(QtWidgets.QWidget):
         self.song_list.resizeColumnToContents(0)
         self.song_list.resizeColumnToContents(1)
 
-    def do_search(self) -> None:  # TODO improve performances
+    def do_search(self) -> None:
         hide_song: bool
         hide_album: bool
         hide_artist: bool

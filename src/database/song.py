@@ -95,7 +95,7 @@ class Song(BaseModel):
 
         return result
 
-    def match(self, input: str) -> bool:
+    def match(self, input: str) -> bool:  # TODO improve performances
         return (
             input == ""
             or utils.match_str(self.name, input)
