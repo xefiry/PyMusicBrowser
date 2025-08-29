@@ -4,7 +4,7 @@ A music browser/player
 
 ## Status
 
-In development
+In development ... or not anymore
 
 - Database : working
 - GUI : work in progress
