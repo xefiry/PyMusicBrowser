@@ -113,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.playlist.update_ui()
         self.song_info.update_ui()
         self.controls.update_ui()
+        self.browser.update_ui()
 
     def do_hadle_keypress(self, key):
         if key == keyboard.Key.media_previous:

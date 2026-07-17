@@ -42,7 +42,7 @@ class BrowserWidget(QtWidgets.QWidget):
 
         self.song_list = QtWidgets.QTreeWidget()
         self.song_list.setHeaderHidden(True)
-        self.song_list.setColumnCount(2)
+        self.song_list.setColumnCount(3)
         self.song_list.setSelectionMode(
             QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection
         )
@@ -77,16 +77,22 @@ class BrowserWidget(QtWidgets.QWidget):
 
                 for song in database.get_songs(album):
                     song_item = QtWidgets.QTreeWidgetItem()
-                    song_item.setText(0, f"{song.track} - {song.name}")
-                    song_item.setText(1, utils.s_to_t(song.duration))
+
+                    name = ""
+                    if song.disk is not None:
+                        name += f"CD {song.disk} - "
+                    if song.track is not None:
+                        name += f"{song.track} - "
+                    name += song.name
+
+                    song_item.setText(0, name)
+                    if song.artist.name != song.album.artist.name:
+                        song_item.setText(1, song.artist.name)
+                    song_item.setText(2, utils.s_to_t(song.duration))
                     song_item.setData(0, DATA, song)
                     album_item.addChild(song_item)
 
             artist_item.setExpanded(True)
-
-        # Update column sizez to fit content
-        self.song_list.resizeColumnToContents(0)
-        self.song_list.resizeColumnToContents(1)
 
     def do_search(self) -> None:
         hide_song: bool
@@ -223,3 +229,9 @@ class BrowserWidget(QtWidgets.QWidget):
             self.player.add_song(data)
         elif type(data) is Album:
             self.player.add_album(data)
+
+    def update_ui(self):
+        # Update column size to fit content
+        self.song_list.resizeColumnToContents(0)
+        self.song_list.resizeColumnToContents(1)
+        self.song_list.resizeColumnToContents(2)
