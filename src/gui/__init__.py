@@ -8,6 +8,7 @@ from .main_window import MainWindow
 # TODO Add mini player
 # TODO Handle multi CD albums
 # TODO Show notification on song change if window is not visible
+# TODO test other themes (check [qt-themes](https://github.com/beatreichenbach/qt-themes))
 
 
 def start() -> None:
