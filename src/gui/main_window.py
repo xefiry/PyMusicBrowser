@@ -1,3 +1,5 @@
+import base64
+
 from pynput import keyboard
 from PySide6 import QtCore, QtGui, QtWidgets
 
@@ -109,6 +111,16 @@ class MainWindow(QtWidgets.QMainWindow):
         if not database.has_songs():
             self.do_scan()
 
+        # get geometry/state from settings
+        geometry = Setting.get_value(Key.UI_GEOMETRY)
+        state = Setting.get_value(Key.UI_STATE)
+
+        # if it exists, use it
+        if geometry != "":
+            self.restoreGeometry(base64.b64decode(geometry.encode("utf-8")))
+        if state != "":
+            self.restoreState(base64.b64decode(state.encode("utf-8")))
+
     def update_ui(self) -> None:
         self.playlist.update_ui()
         self.song_info.update_ui()
@@ -172,5 +184,13 @@ class MainWindow(QtWidgets.QMainWindow):
     def closeEvent(self, event):
         self.player.quit()
         self.key_listener.stop()
+
+        # get current geometry/state as utf-8 str
+        geometry = base64.b64encode(self.saveGeometry().data()).decode("utf-8")
+        state = base64.b64encode(self.saveState().data()).decode("utf-8")
+
+        # and save them in settings
+        Setting.upsert(Key.UI_GEOMETRY, geometry)
+        Setting.upsert(Key.UI_STATE, state)
 
         QtWidgets.QWidget.closeEvent(self, event)

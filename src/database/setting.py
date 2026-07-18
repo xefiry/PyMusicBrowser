@@ -9,6 +9,8 @@ class Key(enum.StrEnum):
     MUSIC_DIR = "music_dir"
     PLAYLIST = "playlist"
     VOLUME = "volume"
+    UI_GEOMETRY = "ui_geometry"
+    UI_STATE = "ui_state"
 
 
 class Setting(BaseModel):
