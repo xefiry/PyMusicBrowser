@@ -97,6 +97,7 @@ class MainWindow(QMainWindow):
         self.quit_action = QAction(
             "Quit", icon=QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit)
         )
+        # FIXME does not work if the program is not visible
         self.quit_action.triggered.connect(self.close)
         self.menu.addAction(self.quit_action)
 
