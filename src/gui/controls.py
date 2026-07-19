@@ -82,10 +82,11 @@ class ControlsWidget(QtWidgets.QWidget):
         self.volume_button.pressed.connect(self.do_mute_volume)
         self.time_slider.valueChanged.connect(self.do_change_time)
 
-        # Status member variables
+        # Volume
 
-        self.previous_volume = int(Setting.get_value(Key.VOLUME, "100"))
-        self.set_volume(self.previous_volume)
+        self.volume = int(Setting.get_value(Key.VOLUME, "50"))
+        self.muted = Setting.get_value(Key.VOLUME_MUTED, "False") == "True"
+        self.set_volume(self.volume, self.muted)
 
     def update_ui(self) -> None:
         state = self.player.state
@@ -110,38 +111,40 @@ class ControlsWidget(QtWidgets.QWidget):
         self.player.stop()
 
     def do_change_volume(self) -> None:
-        volume = self.volume_slider.value()
-        self.set_volume(volume)
+        self.set_volume(self.volume_slider.value(), self.muted)
 
     def do_mute_volume(self) -> None:
-        volume = self.player.get_volume()
-        if volume != 0:
-            self.previous_volume = volume
-            self.set_volume(0)
-        else:
-            self.set_volume(self.previous_volume)
+        self.muted = not self.muted
+        self.set_volume(self.volume, self.muted)
 
     def do_change_time(self) -> None:
         time = self.time_slider.value()
         self.player.seek(time)
 
-    def set_volume(self, volume: int) -> None:
-        self.player.set_volume(volume)
+    def set_volume(self, volume: int, muted: bool) -> None:
+        self.volume = volume
+        self.muted = muted
         Setting.upsert(Key.VOLUME, str(volume))
+        Setting.upsert(Key.VOLUME_MUTED, str(muted))
+
+        if self.muted:
+            self.player.set_volume(0)
+        else:
+            self.player.set_volume(volume)
 
         self.volume_slider.blockSignals(True)
         self.volume_slider.setValue(volume)
         self.volume_slider.blockSignals(False)
         self.volume_label.setText(f"{volume} %")
 
-        if volume > 66:
+        if muted:
+            strength = "volMuted"
+        elif volume > 66:
             strength = "volHigh"
         elif volume > 33:
             strength = "volMedium"
-        elif volume > 0:
-            strength = "volLow"
         else:
-            strength = "volMuted"
+            strength = "volLow"
 
         self.volume_button.setIcon(BUTTON_ICON[strength])
 
