@@ -100,9 +100,9 @@ class MainWindow(QMainWindow):
         self.quit_action.triggered.connect(self.close)
         self.menu.addAction(self.quit_action)
 
-        tray = QSystemTrayIcon(icon=icon, parent=self, visible=True)
-        tray.setContextMenu(self.menu)
-        tray.activated.connect(self.do_handle_tray_click)
+        self.tray = QSystemTrayIcon(icon=icon, parent=self, visible=True)
+        self.tray.setContextMenu(self.menu)
+        self.tray.activated.connect(self.do_handle_tray_click)
 
         # Periodic update of the UI
 
@@ -154,7 +154,7 @@ class MainWindow(QMainWindow):
 
     def update_ui(self) -> None:
         self.playlist.update_ui()
-        self.song_info.update_ui()
+        self.song_info.update_ui(self.tray)
         self.controls.update_ui()
         self.browser.update_ui()
 

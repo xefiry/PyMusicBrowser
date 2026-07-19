@@ -1,4 +1,5 @@
 from PySide6 import QtCore, QtWidgets
+from PySide6.QtWidgets import QSystemTrayIcon
 
 from ..player import Player
 from . import utils
@@ -33,14 +34,18 @@ class SongInfoWidget(QtWidgets.QWidget):
 
         self.current_song_id = -1
 
-    def update_ui(self) -> None:
+    def update_ui(self, tray: QSystemTrayIcon) -> None:
         song = self.player.playlist.get_current()
-        if song is not None and self.current_song_id != song.get_id():
-            self.current_song_id = song.get_id()
+        if song is not None:
+            tray.setToolTip(f"""{self.player.state}
+{song.name} - {song.artist.name}""")
 
-            pixmap = utils.get_cover(song, 300)
-            self.song_cover.setPixmap(pixmap)
+            if self.current_song_id != song.get_id():
+                self.current_song_id = song.get_id()
 
-            self.song_info.setText(f"""{song.track} - {song.name}
+                pixmap = utils.get_cover(song, 300)
+                self.song_cover.setPixmap(pixmap)
+
+                self.song_info.setText(f"""{song.track} - {song.name}
 {song.album.name}
 {song.artist.name}""")

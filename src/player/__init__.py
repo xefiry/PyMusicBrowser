@@ -13,10 +13,10 @@ class Event(enum.IntEnum):
     SONG_END = 1
 
 
-class State(enum.Enum):
-    STOP = 0
-    PLAY = 1
-    PAUSE = 2
+class State(enum.StrEnum):
+    STOP = "Stopped"
+    PLAY = "Playing"
+    PAUSE = "Paused"
 
 
 # TODO Handle missing files
