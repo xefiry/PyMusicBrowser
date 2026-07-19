@@ -2,6 +2,8 @@ import base64
 
 from pynput import keyboard
 from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtGui import QAction, QIcon
+from PySide6.QtWidgets import QMenu, QSystemTrayIcon
 
 from .. import database
 from ..database.setting import Key, Setting
@@ -19,8 +21,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
-        _icon = QtGui.QIcon.fromTheme(QtGui.QIcon.ThemeIcon.AudioCard)
-        self.setWindowIcon(_icon)
+        icon = QIcon.fromTheme(QIcon.ThemeIcon.AudioCard)
+
+        self.setWindowIcon(icon)
         self.setWindowTitle("PyMusicBrowser")
 
         self.player = Player()
@@ -77,6 +80,19 @@ class MainWindow(QtWidgets.QMainWindow):
         main_layout.addWidget(top_widget)
         main_layout.addWidget(self.controls)
 
+        # Tray icon/menu
+
+        self.menu = QMenu()
+        self.quit_action = QAction(
+            "Quit", icon=QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit)
+        )
+        self.quit_action.triggered.connect(self.close)
+        self.menu.addAction(self.quit_action)
+
+        tray = QSystemTrayIcon(icon=icon, parent=self, visible=True)
+        tray.setContextMenu(self.menu)
+        tray.activated.connect(self.do_handle_tray_click)
+
         # Periodic update of the UI
 
         self.timer = QtCore.QTimer()
@@ -120,6 +136,10 @@ class MainWindow(QtWidgets.QMainWindow):
             self.restoreGeometry(base64.b64decode(geometry.encode("utf-8")))
         if state != "":
             self.restoreState(base64.b64decode(state.encode("utf-8")))
+
+    def do_handle_tray_click(self, reason: QSystemTrayIcon.ActivationReason) -> None:
+        if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
+            self.setVisible(not self.isVisible())
 
     def update_ui(self) -> None:
         self.playlist.update_ui()
