@@ -1,7 +1,7 @@
 from PySide6.QtGui import QIcon
 
 ICON = {
-    "main": QIcon.fromTheme(QIcon.ThemeIcon.AudioCard),
+    "main": QIcon("src/icons/main.svg"),
     "quit": QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit),
     "clear": QIcon.fromTheme(QIcon.ThemeIcon.EditClear),
     "play": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStart),
