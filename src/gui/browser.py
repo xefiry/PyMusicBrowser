@@ -211,24 +211,33 @@ class BrowserWidget(QtWidgets.QWidget):
                             break
 
     def do_play_song(self, item: QtWidgets.QTreeWidgetItem) -> None:
-        # FIXME if item is an Artist, it plays next without adding any song
-        self.queue_item(item)
-        self.player.next()
+        if self.queue_item(item):
+            self.player.next()
 
     def do_queue_selected(self) -> None:
         # the items are reversed because queue_item adds next to current song
         for item in reversed(self.song_list.selectedItems()):
             self.queue_item(item)
 
-    def queue_item(self, item: QtWidgets.QTreeWidgetItem) -> None:
-        data = item.data(0, DATA)
+    def queue_item(self, item: QtWidgets.QTreeWidgetItem) -> bool:
+        """Add item to queue (if it is a Song or an Album, orherwise it does nothing).
 
-        # TODO add possibility to add whole album artist songs
+        Args:
+            item (QtWidgets.QTreeWidgetItem): The item to queue
+
+        Returns:
+            bool: True if the item is queued. False if nothing is done
+        """
+        data = item.data(0, DATA)
 
         if type(data) is Song:
             self.player.add_song(data)
+            return True
         elif type(data) is Album:
             self.player.add_album(data)
+            return True
+        else:
+            return False
 
     def update_ui(self):
         # Update column size to fit content
