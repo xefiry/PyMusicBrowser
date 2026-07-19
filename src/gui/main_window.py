@@ -149,8 +149,6 @@ class MainWindow(QMainWindow):
             self.restoreState(base64.b64decode(state.encode("utf-8")))
 
     def quit(self) -> None:
-        # if the window is hidde, first show it
-        # if self.isHidden():
         self.show()
         self.close()
 
