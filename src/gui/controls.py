@@ -1,21 +1,9 @@
 from PySide6 import QtCore, QtWidgets
-from PySide6.QtGui import QIcon
 
 from ..database.setting import Key, Setting
 from ..player import Player, State
 from . import utils
-
-BUTTON_ICON = {
-    "play": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStart),
-    "pause": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackPause),
-    "prev": QIcon.fromTheme(QIcon.ThemeIcon.MediaSkipBackward),
-    "next": QIcon.fromTheme(QIcon.ThemeIcon.MediaSkipForward),
-    "stop": QIcon.fromTheme(QIcon.ThemeIcon.MediaPlaybackStop),
-    "volHigh": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeHigh),
-    "volMedium": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeMedium),
-    "volLow": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeLow),
-    "volMuted": QIcon.fromTheme(QIcon.ThemeIcon.AudioVolumeMuted),
-}
+from .icons import ICON
 
 
 class ControlsWidget(QtWidgets.QWidget):
@@ -42,14 +30,14 @@ class ControlsWidget(QtWidgets.QWidget):
             self.next_button,
             self.stop_button,
         ]:
-            b.setIcon(BUTTON_ICON[b.text()])
+            b.setIcon(ICON[b.text()])
             b.setText("")
             b.setFixedSize(40, 40)
             b.setFlat(True)
             layout.addWidget(b)
 
         self.volume_button = QtWidgets.QPushButton()
-        self.volume_button.setIcon(BUTTON_ICON["volHigh"])
+        self.volume_button.setIcon(ICON["volHigh"])
         self.volume_button.setFixedSize(25, 25)
         self.volume_button.setFlat(True)
         layout.addWidget(self.volume_button)
@@ -92,7 +80,7 @@ class ControlsWidget(QtWidgets.QWidget):
         state = self.player.state
 
         new_icon = "pause" if state == State.PLAY else "play"
-        self.play_button.setIcon(BUTTON_ICON[new_icon])
+        self.play_button.setIcon(ICON[new_icon])
 
         self.time_slider.setEnabled(state != State.STOP)
 
@@ -146,7 +134,7 @@ class ControlsWidget(QtWidgets.QWidget):
         else:
             strength = "volLow"
 
-        self.volume_button.setIcon(BUTTON_ICON[strength])
+        self.volume_button.setIcon(ICON[strength])
 
     def set_time(self, time: tuple[int, int]) -> None:
         self.time_slider.blockSignals(True)

@@ -3,7 +3,7 @@ import base64
 from pynput import keyboard
 from PySide6 import QtGui
 from PySide6.QtCore import QTimer
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QMainWindow,
@@ -22,6 +22,7 @@ from ..player import Player
 from .browser import BrowserWidget
 from .controls import ControlsWidget
 from .directory_picker import DirectoryPicker
+from .icons import ICON
 from .playlist import PlaylistWidget
 from .song_info import SongInfoWidget
 
@@ -32,9 +33,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        icon = QIcon.fromTheme(QIcon.ThemeIcon.AudioCard)
-
-        self.setWindowIcon(icon)
+        self.setWindowIcon(ICON["main"])
         self.setWindowTitle("PyMusicBrowser")
 
         self.player = Player()
@@ -94,13 +93,12 @@ class MainWindow(QMainWindow):
         # Tray icon/menu
 
         self.menu = QMenu()
-        self.quit_action = QAction(
-            "Quit", icon=QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit)
-        )
+
+        self.quit_action = QAction("Quit", icon=ICON["quit"])
         self.quit_action.triggered.connect(self.quit)
         self.menu.addAction(self.quit_action)
 
-        self.tray = QSystemTrayIcon(icon=icon, parent=self, visible=True)
+        self.tray = QSystemTrayIcon(icon=ICON["main"], parent=self, visible=True)
         self.tray.setContextMenu(self.menu)
         self.tray.activated.connect(self.do_handle_tray_click)
 

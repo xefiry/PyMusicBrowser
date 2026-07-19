@@ -1,10 +1,8 @@
 from PySide6 import QtWidgets
-from PySide6.QtGui import QIcon
 
 from .. import database
 from ..player import Player
-
-# TODO merge with browser to be able to access these fields from browser
+from .icons import ICON
 
 
 class NavigationWidget(QtWidgets.QWidget):
@@ -27,7 +25,7 @@ class NavigationWidget(QtWidgets.QWidget):
         layout.addWidget(self.search_bar)
 
         self.clear_button = QtWidgets.QPushButton("Clear filters")
-        self.clear_button.setIcon(QIcon.fromTheme(QIcon.ThemeIcon.EditClear))
+        self.clear_button.setIcon(ICON["clear"])
         layout.addWidget(self.clear_button)
 
         # TODO allow selection of multiple filters with setSelectionMode(SelectionMode.MultiSelection)
