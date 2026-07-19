@@ -94,6 +94,22 @@ class MainWindow(QMainWindow):
 
         self.menu = QMenu()
 
+        self.play_action = QAction("Play/Pause", icon=ICON["prev"])
+        self.play_action.triggered.connect(self.controls.do_play_pause)
+        self.menu.addAction(self.play_action)
+
+        self.prev_action = QAction("Previous song", icon=ICON["play"])
+        self.prev_action.triggered.connect(self.controls.do_previous)
+        self.menu.addAction(self.prev_action)
+
+        self.next_action = QAction("Next Song", icon=ICON["next"])
+        self.next_action.triggered.connect(self.controls.do_next)
+        self.menu.addAction(self.next_action)
+
+        self.stop_action = QAction("Stop", icon=ICON["stop"])
+        self.stop_action.triggered.connect(self.controls.do_stop)
+        self.menu.addAction(self.stop_action)
+
         self.quit_action = QAction("Quit", icon=ICON["quit"])
         self.quit_action.triggered.connect(self.quit)
         self.menu.addAction(self.quit_action)
