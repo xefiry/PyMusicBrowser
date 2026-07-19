@@ -12,7 +12,7 @@ def start() -> None:
     app = QtWidgets.QApplication(sys.argv)
 
     mw = MainWindow()
-    mw.show()
+    mw.hide()
 
     rv = app.exec()
 

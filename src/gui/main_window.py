@@ -97,8 +97,7 @@ class MainWindow(QMainWindow):
         self.quit_action = QAction(
             "Quit", icon=QIcon.fromTheme(QIcon.ThemeIcon.ApplicationExit)
         )
-        # FIXME does not work if the program is not visible
-        self.quit_action.triggered.connect(self.close)
+        self.quit_action.triggered.connect(self.quit)
         self.menu.addAction(self.quit_action)
 
         self.tray = QSystemTrayIcon(icon=icon, parent=self, visible=True)
@@ -148,6 +147,12 @@ class MainWindow(QMainWindow):
             self.restoreGeometry(base64.b64decode(geometry.encode("utf-8")))
         if state != "":
             self.restoreState(base64.b64decode(state.encode("utf-8")))
+
+    def quit(self) -> None:
+        # if the window is hidde, first show it
+        # if self.isHidden():
+        self.show()
+        self.close()
 
     def do_handle_tray_click(self, reason: QSystemTrayIcon.ActivationReason) -> None:
         if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
