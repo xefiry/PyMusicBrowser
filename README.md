@@ -35,3 +35,4 @@ global shortcut = shortcut active even if the window is not active
 | Queue selected songs/albums   | ctrl + q                         |                  |
 | Focus playing song in browser | ctrl + l                         |                  |
 | Focus search bar              | ctrl + f                         |                  |
+| Minimize to tray              | ctrl + m                         |                  |

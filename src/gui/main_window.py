@@ -139,6 +139,7 @@ class MainWindow(QMainWindow):
             ("ctrl + q", self.browser.do_queue_selected),
             ("ctrl + l", self.browser.do_focus_playing_song),
             ("ctrl + f", self.browser.do_focus_search_bar),
+            ("ctrl + m", self.do_toggle_tray),
         ]:
             tmp = QtGui.QShortcut(self)
             tmp.setKey(shortcut)
@@ -168,11 +169,14 @@ class MainWindow(QMainWindow):
 
     def do_handle_tray_click(self, reason: QSystemTrayIcon.ActivationReason) -> None:
         if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
-            self.setVisible(not self.isVisible())
+            self.do_toggle_tray()
 
-            # if visible, make sure it is in foreground
-            if self.isVisible():
-                self.activateWindow()
+    def do_toggle_tray(self) -> None:
+        self.setVisible(not self.isVisible())
+
+        # if visible, make sure it is in foreground
+        if self.isVisible():
+            self.activateWindow()
 
     def update_ui(self) -> None:
         self.playlist.update_ui()
