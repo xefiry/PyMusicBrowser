@@ -170,6 +170,10 @@ class MainWindow(QMainWindow):
         if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
             self.setVisible(not self.isVisible())
 
+            # if visible, make sure it is in foreground
+            if self.isVisible():
+                self.activateWindow()
+
     def update_ui(self) -> None:
         self.playlist.update_ui()
         self.song_info.update_ui(self.tray)
