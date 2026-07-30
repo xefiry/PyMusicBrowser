@@ -1,8 +1,9 @@
-from PySide6 import QtWidgets, QtCore
+from PySide6 import QtCore, QtWidgets
+from PySide6.QtWidgets import QDialog, QWidget
 
 
-class DirectoryPicker(QtWidgets.QDialog):
-    def __init__(self, parent: QtWidgets.QWidget, dir_list: list[str]) -> None:
+class DirectoryPicker(QDialog):
+    def __init__(self, parent: QWidget, dir_list: list[str]) -> None:
         super().__init__(parent=parent)
 
         self.setWindowTitle("List of directories to scan for music")
@@ -18,7 +19,7 @@ class DirectoryPicker(QtWidgets.QDialog):
         self.dir_list.setDragDropMode(_mode)
         layout.addWidget(self.dir_list)
 
-        buttons_widget = QtWidgets.QWidget()
+        buttons_widget = QWidget()
         layout.addWidget(buttons_widget)
 
         buttons_layout = QtWidgets.QHBoxLayout()
