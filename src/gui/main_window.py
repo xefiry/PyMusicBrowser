@@ -223,20 +223,20 @@ class MainWindow(QMainWindow):
             # restart updating
             self.timer.start()
 
+            if not database.has_songs():
+                QMessageBox.information(
+                    self,
+                    "Empty database",
+                    "There are no songs in the database. Please scan another directory.",
+                )
+
+            # after rescanning, we update browser data
+            self.browser.update_data()
+
+            # and we clean playlist from non existent files
+            self.player.playlist.clean()
+
         del picker
-
-        if not database.has_songs():
-            QMessageBox.information(
-                self,
-                "Empty database",
-                "There are no songs in the database. Please scan another directory.",
-            )
-
-        # after rescanning, we update browser data
-        self.browser.update_data()
-
-        # and we clean playlist from non existent files
-        self.player.playlist.clean()
 
     def closeEvent(self, event):
         self.player.quit()

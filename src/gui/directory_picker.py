@@ -1,50 +1,17 @@
-from PySide6 import QtCore, QtWidgets
-from PySide6.QtWidgets import QDialog, QWidget
+from PySide6 import QtUiTools, QtWidgets
+from PySide6.QtWidgets import QWidget
 
 
-class DirectoryPicker(QDialog):
+class DirectoryPicker:
     def __init__(self, parent: QWidget, dir_list: list[str]) -> None:
-        super().__init__(parent=parent)
+        loader = QtUiTools.QUiLoader()
+        self.ui = loader.load("src/gui/directory_picker.ui", parent)
 
-        self.setWindowTitle("List of directories to scan for music")
-        self.setFixedSize(500, 200)
-
-        # Build UI
-
-        layout = QtWidgets.QVBoxLayout(self)
-        self.setLayout(layout)
-
-        self.dir_list = QtWidgets.QListWidget()
-        _mode = QtWidgets.QAbstractItemView.DragDropMode.InternalMove
-        self.dir_list.setDragDropMode(_mode)
-        layout.addWidget(self.dir_list)
-
-        buttons_widget = QWidget()
-        layout.addWidget(buttons_widget)
-
-        buttons_layout = QtWidgets.QHBoxLayout()
-        buttons_layout.setContentsMargins(0, 0, 0, 0)
-        buttons_layout.setSpacing(0)
-        buttons_widget.setLayout(buttons_layout)
-
-        self.add_button = QtWidgets.QPushButton("Add")
-        buttons_layout.addWidget(self.add_button)
-
-        self.modify_button = QtWidgets.QPushButton("Modify")
-        self.modify_button.setEnabled(False)
-        buttons_layout.addWidget(self.modify_button)
-
-        self.remove_button = QtWidgets.QPushButton("Remove")
-        self.remove_button.setEnabled(False)
-        buttons_layout.addWidget(self.remove_button)
-
-        self.buttonBox = QtWidgets.QDialogButtonBox(self)
-        self.buttonBox.setOrientation(QtCore.Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(
-            QtWidgets.QDialogButtonBox.StandardButton.Cancel
-            | QtWidgets.QDialogButtonBox.StandardButton.Ok
-        )
-        layout.addWidget(self.buttonBox)
+        self.dir_list = self.ui.dir_list  # pyright: ignore[reportAttributeAccessIssue]
+        self.add_button = self.ui.add_button  # pyright: ignore[reportAttributeAccessIssue]
+        self.modify_button = self.ui.modify_button  # pyright: ignore[reportAttributeAccessIssue]
+        self.remove_button = self.ui.remove_button  # pyright: ignore[reportAttributeAccessIssue]
+        self.buttonBox = self.ui.buttonBox  # pyright: ignore[reportAttributeAccessIssue]
 
         # Connect UI
 
@@ -52,12 +19,15 @@ class DirectoryPicker(QDialog):
         self.add_button.clicked.connect(self.do_add_dir)
         self.modify_button.clicked.connect(self.do_modify_dir)
         self.remove_button.clicked.connect(self.do_remove_dir)
-        self.buttonBox.accepted.connect(self.accept)
-        self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.ui.accept)  # pyright: ignore[reportAttributeAccessIssue]
+        self.buttonBox.rejected.connect(self.ui.reject)  # pyright: ignore[reportAttributeAccessIssue]
 
         # Function calls
 
         self.set_dir_list(dir_list)
+
+    def exec(self) -> int:
+        return self.ui.exec()  # pyright: ignore[reportAttributeAccessIssue]
 
     def do_add_dir(self) -> None:
         dialog = QtWidgets.QFileDialog()
@@ -83,10 +53,6 @@ class DirectoryPicker(QDialog):
         self.remove_button.setEnabled(True)
 
     def set_dir_list(self, dir_list: list[str]) -> None:
-        # if list is empty, do nothing
-        if len(dir_list) == 0:
-            return
-
         for dir in dir_list:
             item = QtWidgets.QListWidgetItem(self.dir_list)
             item.setText(dir)
