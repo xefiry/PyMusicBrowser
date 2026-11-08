@@ -2,6 +2,7 @@ from . import database, gui
 
 # TODO Add logging
 
-if __name__ == "__main__":
+
+def main() -> None:
     database.init()
     gui.start()

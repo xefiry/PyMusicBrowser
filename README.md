@@ -20,14 +20,9 @@ In development
 
 ## How to run
 
-### With uv
+This project uses [uv](https://docs.astral.sh/uv/).
 
-- Run `uv run python -m src`
-
-### Without uv
-
-- Install dependencies listed in pyproject.toml
-- Run `python -m src`
+Run with `uv run pymusicbrowser`
 
 ## Shortcut list
 
