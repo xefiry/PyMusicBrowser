@@ -58,6 +58,7 @@ class BrowserWidget(QtWidgets.QWidget):
 
         self.update_data()
 
+    # FIXME : improve performance
     def update_data(self) -> None:
         self.navigation.update_data()
 

@@ -2,6 +2,14 @@
 
 A music browser/player
 
+## TODO
+
+- FIXME program crashes on start if the library exists but has no songs
+- check the source of "qt.gui.imageio: libpng warning: iCCP: profile 'icm': 1000000h: invalid rendering intent"
+- add all shortcuts as a menu item
+- make keyboard shortcuts customizable
+- clicking on top element from navigation (Album artist, Song artist, Genre, Year) expands all items in browser. Check why.
+
 ## Status
 
 In development
