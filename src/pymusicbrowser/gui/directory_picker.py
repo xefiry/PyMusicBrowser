@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget
 class DirectoryPicker:
     def __init__(self, parent: QWidget, dir_list: list[str]) -> None:
         loader = QtUiTools.QUiLoader()
-        self.ui = loader.load("src/gui/directory_picker.ui", parent)
+        self.ui = loader.load("src/pymusicbrowser/gui/directory_picker.ui", parent)
 
         self.dir_list = self.ui.dir_list  # pyright: ignore[reportAttributeAccessIssue]
         self.add_button = self.ui.add_button  # pyright: ignore[reportAttributeAccessIssue]
