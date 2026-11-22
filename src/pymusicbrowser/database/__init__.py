@@ -69,7 +69,11 @@ def _scan_file(file_path: str):
             tag = EasyID3()
 
         try:
-            _duration = MP3(file_path).info.length
+            _tmp = MP3(file_path).info
+            if _tmp is None:
+                _duration = 0
+            else:
+                _duration = _tmp.length
         except HeaderNotFoundError:
             _duration = 0
 

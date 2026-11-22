@@ -122,5 +122,5 @@ class Song(BaseModel):
         return s.file_mtime
 
     @staticmethod
-    def file_exists(file_path: peewee.CharField) -> bool:
+    def file_exists(file_path: str) -> bool:
         return Song.select().where(Song.file_path == file_path).exists()

@@ -1,8 +1,8 @@
 import peewee
 
+from . import utils
 from .artist import Artist
 from .base_model import BaseModel
-from . import utils
 
 
 class Album(BaseModel):
@@ -41,7 +41,12 @@ class Album(BaseModel):
         if album.exists():
             result = album.get()
             if year is not None:
-                result.year = min(result.year, year)
+                if result.year is None:
+                    # if the saved album has no year, save the "new" year
+                    result.year = year
+                else:
+                    # otherwise, save the smaller year
+                    result.year = min(result.year, year)
             result.save()
         else:
             result = Album.create(name=name, artist=artist, year=year, status=1)
