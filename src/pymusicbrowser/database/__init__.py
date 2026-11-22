@@ -6,7 +6,7 @@ from datetime import timedelta
 from mutagen.easyid3 import EasyID3
 from mutagen.id3._util import ID3NoHeaderError
 from mutagen.mp3 import MP3, HeaderNotFoundError
-from peewee import ModelSelect, fn
+from peewee import fn
 
 from . import base_model as db
 from . import utils
@@ -104,58 +104,51 @@ def _scan_file(file_path: str):
         )
 
 
-def get_artists(has_album: bool = False, has_song: bool = False) -> ModelSelect:
-    result = Artist.select().distinct()
+def get_artists(has_album: bool = False, has_song: bool = False) -> list[Artist]:
+    artists = Artist.select().distinct()
 
     if has_album:
-        result = result.join(Album)
+        artists = artists.join(Album)
     elif has_song:
-        result = result.join(Song)
+        artists = artists.join(Song)
 
-    return result.order_by(Artist.name)
+    return list(artists.order_by(Artist.name))
 
 
-def get_albums(artist: Artist | None = None) -> ModelSelect:
-    result = Album.select()
+def get_albums(artist: Artist | None = None) -> list[Album]:
+    albums = Album.select()
 
     if artist is not None:
-        result = result.where(Album.artist == artist)
+        albums = albums.where(Album.artist == artist)
 
-    return result.order_by(Album.year, Album.name)
+    return list(albums.order_by(Album.year, Album.name))
 
 
-def get_songs(album: Album | None = None, reverse: bool = False) -> ModelSelect:
-    result = Song.select()
+def get_songs(album: Album | None = None, reverse: bool = False) -> list[Song]:
+    songs = Song.select()
 
     if album is not None:
-        result = result.where(Song.album == album)
+        songs = songs.where(Song.album == album)
 
     if reverse:
-        return result.order_by(Song.disk.desc(), Song.track.desc(), Song.name.desc())
+        songs = songs.order_by(Song.disk.desc(), Song.track.desc(), Song.name.desc())
     else:
-        return result.order_by(Song.disk, Song.track, Song.name)
+        songs = songs.order_by(Song.disk, Song.track, Song.name)
+
+    return list(songs)
 
 
-def get_genres() -> ModelSelect:
-    return Genre.select().order_by(Genre.name)
+def get_genres() -> list[Genre]:
+    return list(Genre.select().order_by(Genre.name))
 
 
-def get_years() -> list[str]:
-    years: list[int] = []
-    result: list[str] = []
-
-    for song in get_songs():
-        years.append(song.year)
-
-    # remove duplicates
-    years = list(set(years))
-
-    # convert to strings
-    result = list(map(str, years))
-
-    result.sort()
-
-    return result
+def get_years() -> list[int]:
+    years = (
+        Song.select(fn.Distinct(Song.year))
+        .where(Song.year.is_null(False))
+        .order_by(Song.year)
+    )
+    return [y.year for y in years if y.year is not None]
 
 
 def has_songs() -> bool:
