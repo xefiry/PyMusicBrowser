@@ -23,7 +23,7 @@ class Player:
         self.playlist = Playlist()
         self.is_playing: bool = False
 
-        self.state = State.STOP
+        self.state: State = State.STOP
         self.cur_pos: int = 0
         self.volume: int = 100
 
