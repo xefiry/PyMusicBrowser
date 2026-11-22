@@ -1,43 +1,51 @@
-from PySide6 import QtUiTools, QtWidgets
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import (
+    QDialog,
+    QDialogButtonBox,
+    QFileDialog,
+    QListWidget,
+    QListWidgetItem,
+    QPushButton,
+    QWidget,
+)
+
+from .utils import get_child, load_widget_from_file
 
 
 class DirectoryPicker:
     def __init__(self, parent: QWidget, dir_list: list[str]) -> None:
-        loader = QtUiTools.QUiLoader()
-        self.ui = loader.load("src/pymusicbrowser/gui/directory_picker.ui", parent)
-
-        self.dir_list = self.ui.dir_list  # pyright: ignore[reportAttributeAccessIssue]
-        self.add_button = self.ui.add_button  # pyright: ignore[reportAttributeAccessIssue]
-        self.modify_button = self.ui.modify_button  # pyright: ignore[reportAttributeAccessIssue]
-        self.remove_button = self.ui.remove_button  # pyright: ignore[reportAttributeAccessIssue]
-        self.buttonBox = self.ui.buttonBox  # pyright: ignore[reportAttributeAccessIssue]
+        # Load UI
+        self.dialog = load_widget_from_file(
+            "src/pymusicbrowser/gui/directory_picker.ui", QDialog, parent
+        )
+        self.dir_list = get_child(self.dialog, QListWidget, "dir_list")
+        self.add_button = get_child(self.dialog, QPushButton, "add_button")
+        self.modify_button = get_child(self.dialog, QPushButton, "modify_button")
+        self.remove_button = get_child(self.dialog, QPushButton, "remove_button")
+        self.buttonBox = get_child(self.dialog, QDialogButtonBox, "buttonBox")
 
         # Connect UI
-
         self.dir_list.itemClicked.connect(self.do_enable_buttons)
         self.add_button.clicked.connect(self.do_add_dir)
         self.modify_button.clicked.connect(self.do_modify_dir)
         self.remove_button.clicked.connect(self.do_remove_dir)
-        self.buttonBox.accepted.connect(self.ui.accept)  # pyright: ignore[reportAttributeAccessIssue]
-        self.buttonBox.rejected.connect(self.ui.reject)  # pyright: ignore[reportAttributeAccessIssue]
+        self.buttonBox.accepted.connect(self.dialog.accept)
+        self.buttonBox.rejected.connect(self.dialog.reject)
 
         # Function calls
-
         self.set_dir_list(dir_list)
 
     def exec(self) -> int:
-        return self.ui.exec()  # pyright: ignore[reportAttributeAccessIssue]
+        return self.dialog.exec()
 
     def do_add_dir(self) -> None:
-        dialog = QtWidgets.QFileDialog()
+        dialog = QFileDialog()
 
         if directory := dialog.getExistingDirectory():
-            item = QtWidgets.QListWidgetItem(self.dir_list)
+            item = QListWidgetItem(self.dir_list)
             item.setText(directory)
 
     def do_modify_dir(self) -> None:
-        dialog = QtWidgets.QFileDialog()
+        dialog = QFileDialog()
         index = self.dir_list.currentRow()
         selected = self.dir_list.item(index)
 
@@ -54,7 +62,7 @@ class DirectoryPicker:
 
     def set_dir_list(self, dir_list: list[str]) -> None:
         for dir in dir_list:
-            item = QtWidgets.QListWidgetItem(self.dir_list)
+            item = QListWidgetItem(self.dir_list)
             item.setText(dir)
 
     def get_dir_list(self) -> list[str]:

@@ -1,4 +1,5 @@
-from PySide6 import QtCore, QtGui
+from PySide6 import QtCore, QtGui, QtUiTools
+from PySide6.QtWidgets import QWidget
 
 from ..database import utils
 from ..database.song import Song
@@ -33,3 +34,37 @@ def get_cover(song: Song, size: int) -> QtGui.QPixmap:
         )
 
     return pixmap
+
+
+def load_widget_from_file[TWidget: QWidget](
+    path: str, widget_type: type[TWidget], parent: QWidget | None = None
+) -> TWidget:
+    """Load Qt widget from file.
+
+    Raises:
+        TypeError: If the loaded widget is not of the expected type.
+    """
+    loader = QtUiTools.QUiLoader()
+    result = loader.load(path, parent)
+
+    if not isinstance(result, widget_type):
+        raise TypeError(f"{path} is not a {widget_type.__name__}")
+
+    return result
+
+
+def get_child[TWidget: QWidget](
+    widget: QWidget, child_type: type[TWidget], child_name: str
+) -> TWidget:
+    """Get child of widget.
+
+    Raises:
+        RuntimeError: If the child is not found.
+    """
+    result = widget.findChild(child_type, child_name)
+    if result is None:
+        raise RuntimeError(
+            f"Could not find widget {child_name} ({child_type.__name__}) in {widget}"
+        )
+
+    return result
