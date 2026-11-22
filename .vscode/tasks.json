@@ -7,24 +7,14 @@
             "label": "Run PyMusicBrowser",
             "type": "shell",
             "command": "uv",
-            "args": [
-                "run",
-                "python",
-                "-m",
-                "src"
-            ],
-            "problemMatcher": [
-                "$python"
-            ]
+            "args": [ "run", "pymusicbrowser" ],
+            "problemMatcher": [ "$python" ]
         },
         {
             "label": "Run PySide6 designer",
             "type": "shell",
             "command": "uv",
-            "args": [
-                "run",
-                "pyside6-designer"
-            ],
+            "args": [ "run", "pyside6-designer" ],
             "isBackground": true,
             "problemMatcher": []
         }
