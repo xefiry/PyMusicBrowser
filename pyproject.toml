@@ -12,7 +12,6 @@ dependencies = [
     "peewee>=4.5.3",
     "pillow>=13.0.0",
     "pygame>=2.6.1",
-    "pynput>=1.8.2",
     "pyside6>=6.12.0",
 ]
 

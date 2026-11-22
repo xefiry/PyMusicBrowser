@@ -1,6 +1,5 @@
 import base64
 
-from pynput import keyboard
 from PySide6 import QtGui
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QAction
@@ -145,9 +144,6 @@ class MainWindow(QMainWindow):
             tmp.setKey(shortcut)
             tmp.activated.connect(action)
 
-        self.key_listener = keyboard.Listener(on_press=self.do_hadle_keypress)
-        self.key_listener.start()
-
         # Function calls
 
         if not database.has_songs():
@@ -183,16 +179,6 @@ class MainWindow(QMainWindow):
         self.song_info.update_ui(self.tray)
         self.controls.update_ui()
         self.browser.update_ui()
-
-    def do_hadle_keypress(self, key):
-        if key == keyboard.Key.media_previous:
-            self.controls.do_previous()
-        elif key == keyboard.Key.media_play_pause:
-            self.controls.do_play_pause()
-        elif key == keyboard.Key.media_next:
-            self.controls.do_next()
-        elif key == keyboard.Key.media_stop:
-            self.controls.do_stop()
 
     def do_scan(self) -> None:
         # open directory picker with known MUSIC_DIR setting
@@ -240,7 +226,6 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         self.player.quit()
-        self.key_listener.stop()
 
         # get current geometry/state as utf-8 str
         geometry = base64.b64encode(self.saveGeometry().data()).decode("utf-8")
