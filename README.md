@@ -26,16 +26,16 @@ Run with `uv run pymusicbrowser`
 
 ## Shortcut list
 
-global shortcut = shortcut active even if the window is not active
+~~global shortcut = shortcut active even if the window is not active~~ TODO
 
-| Action                        | Shortcut                         | Global shortcut  |
-| ----------------------------- | -------------------------------- | ---------------- |
-| Play/Pause                    | Space                            | Media play/pause |
-| Previous song                 | <                                | Media previous   |
-| Next song                     | >                                | Media next       |
-| Stop                          | ctrl + s                         | Media stop       |
-| Queue song/album and play it  | Enter or Double click in browser |                  |
-| Queue selected songs/albums   | ctrl + q                         |                  |
-| Focus playing song in browser | ctrl + l                         |                  |
-| Focus search bar              | ctrl + f                         |                  |
-| Minimize to tray              | ctrl + m                         |                  |
+| Action                        | Shortcut                           | Global shortcut      |
+| ----------------------------- | ---------------------------------- | -------------------- |
+| Play/Pause                    | Space or Middle click on tray icon | ~~Media play/pause~~ |
+| Previous song                 | <                                  | ~~Media previous~~   |
+| Next song                     | >                                  | ~~Media next~~       |
+| Stop                          | ctrl + s                           | ~~Media stop~~       |
+| Queue song/album and play it  | Enter or Double click in browser   |                      |
+| Queue selected songs/albums   | ctrl + q                           |                      |
+| Focus playing song in browser | ctrl + l                           |                      |
+| Focus search bar              | ctrl + f                           |                      |
+| Minimize to tray              | ctrl + m                           |                      |

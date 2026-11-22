@@ -4,6 +4,7 @@ from PySide6 import QtGui
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
+    QApplication,
     QHBoxLayout,
     QMainWindow,
     QMenu,
@@ -117,8 +118,14 @@ class MainWindow(QMainWindow):
         self.tray.setContextMenu(self.menu)
         self.tray.activated.connect(self.do_handle_tray_click)
 
-        # Periodic update of the UI
+        # Timer for the double click on the tray icon
+        self.tray_timer = QTimer()
+        self.tray_timer.setSingleShot(True)
+        self.tray_timer.setInterval(
+            QApplication.styleHints().mouseDoubleClickInterval()
+        )
 
+        # Periodic update of the UI
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_ui)
         self.timer.start(UPDATE_DELAY)
@@ -164,8 +171,20 @@ class MainWindow(QMainWindow):
         self.close()
 
     def do_handle_tray_click(self, reason: QSystemTrayIcon.ActivationReason) -> None:
-        if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
-            self.do_toggle_tray()
+        match reason:
+            case QSystemTrayIcon.ActivationReason.Trigger:
+                if self.tray_timer.isActive():
+                    self.tray_timer.stop()
+                    self.do_toggle_tray()
+                else:
+                    self.tray_timer.start()
+
+            case QSystemTrayIcon.ActivationReason.DoubleClick:
+                self.tray_timer.stop()
+                self.do_toggle_tray()
+
+            case QSystemTrayIcon.ActivationReason.MiddleClick:
+                self.controls.do_play_pause()
 
     def do_toggle_tray(self) -> None:
         self.setVisible(not self.isVisible())
