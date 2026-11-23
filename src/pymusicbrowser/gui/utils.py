@@ -1,4 +1,5 @@
 from PySide6 import QtCore, QtGui, QtUiTools
+from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QWidget
 
 from ..database import utils
@@ -53,9 +54,9 @@ def load_widget_from_file[TWidget: QWidget](
     return result
 
 
-def get_child[TWidget: QWidget](
-    widget: QWidget, child_type: type[TWidget], child_name: str
-) -> TWidget:
+def get_child[TObject: QObject](
+    widget: QWidget, child_type: type[TObject], child_name: str
+) -> TObject:
     """Get child of widget.
 
     Raises:
