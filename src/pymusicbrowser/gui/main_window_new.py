@@ -52,6 +52,12 @@ class MainWindow:
         self.button_stop = get_child(self.ui, QPushButton, "button_stop")
         self.button_play = get_child(self.ui, QPushButton, "button_play")
 
+        self.button_next.setIcon(ICON["next"])
+        self.button_prev.setIcon(ICON["prev"])
+        self.button_volume.setIcon(ICON["volMedium"])
+        self.button_stop.setIcon(ICON["stop"])
+        self.button_play.setIcon(ICON["play"])
+
     def show(self) -> None:
         self.ui.show()
 
